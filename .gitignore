@@ -1,0 +1,19 @@
+# Bytecode and compiled output
+bin/
+*.class
+
+# Log files
+*.log
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# IDE configurations
+.idea/
+.vscode/
+*.iml
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db

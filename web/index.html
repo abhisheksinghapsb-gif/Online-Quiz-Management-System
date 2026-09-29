@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Quiz Management System | AIT Pune (CIE-2)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Announcement Bar -->
+  <header class="institution-header">
+    <div class="header-container">
+      <div class="logo-area">
+        <div class="crest-badge">AIT</div>
+        <div>
+          <h1 class="inst-name">Army Institute of Technology, Pune</h1>
+          <p class="inst-sub">Department of Information Technology &bull; Skill Development Lab (BIT25434A0X)</p>
+        </div>
+      </div>
+      <div class="exam-tag">
+        <span class="pulse-dot"></span>
+        <span>CIE-2: Java Problem Solving &bull; SE IT</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Navigation Bar -->
+  <nav class="nav-bar">
+    <div class="nav-container">
+      <div class="nav-brand">
+        <span class="quiz-icon">⚡</span>
+        <span class="brand-text">QuizMaster<span>Java</span></span>
+      </div>
+      <div class="nav-links">
+        <button class="nav-btn active" data-tab="quizzes-tab">📋 Available Quizzes</button>
+        <button class="nav-btn" data-tab="active-quiz-tab" id="navActiveQuiz" style="display:none;">✍️ Active Quiz</button>
+        <button class="nav-btn" data-tab="results-tab">📊 Scorecards & History</button>
+        <button class="nav-btn" data-tab="faculty-tab">👩‍🏫 Faculty Portal</button>
+        <button class="nav-btn highlight-btn" data-tab="concepts-tab">🔬 Java CIE-2 Inspector</button>
+        <button class="nav-btn" data-tab="viva-tab">🎓 Viva Guide</button>
+      </div>
+      <div class="user-pill" id="userPill">
+        <span class="avatar">👨‍🎓</span>
+        <div class="user-meta">
+          <span class="user-name" id="userNameLabel">Abhishekh Kumar</span>
+          <span class="user-roll" id="userRollLabel">Roll: 3101 &bull; SE IT A</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- App Main Content Container -->
+  <main class="app-container">
+
+    <!-- TAB 1: QUIZZES EXPLORER -->
+    <section class="tab-content active" id="quizzes-tab">
+      <div class="hero-card">
+        <div class="hero-text">
+          <h2>Academic Assessment Portal</h2>
+          <p>Explore pre-loaded quizzes covering Unit III (OOP, Interfaces, Polymorphism) and Unit IV (Exception Handling). Practice under Standard Linear Grading or Competitive Exam Negative Marking.</p>
+        </div>
+        <div class="quick-stats">
+          <div class="stat-box">
+            <span class="stat-num" id="statQuizCount">3</span>
+            <span class="stat-lbl">Active Quizzes</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num" id="statQuestionCount">11</span>
+            <span class="stat-lbl">Questions</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num">100%</span>
+            <span class="stat-lbl">Java Core</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter / Search Toolbar -->
+      <div class="filter-toolbar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="quizSearchInput" placeholder="Search quizzes by topic (e.g. Polymorphism, Exceptions, OOP)...">
+        </div>
+        <div class="filter-group">
+          <label>Difficulty:</label>
+          <select id="difficultyFilter">
+            <option value="ALL">All Levels</option>
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Age Group:</label>
+          <select id="ageGroupFilter">
+            <option value="ALL">All Age Groups</option>
+            <option value="Kids (8-12)">Kids (8-12)</option>
+            <option value="Teens (13-17)">Teens (13-17)</option>
+            <option value="College (18-22)">College (18-22)</option>
+            <option value="Competitive / Pro (20+)">Competitive / Pro (20+)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Quiz Grid -->
+      <div class="quiz-grid" id="quizGrid">
+        <!-- Rendered by JavaScript -->
+      </div>
+    </section>
+
+    <!-- TAB 2: ACTIVE QUIZ RUNNER -->
+    <section class="tab-content" id="active-quiz-tab">
+      <div class="quiz-runner-header">
+        <div>
+          <span class="badge badge-primary" id="activeQuizBadge">JAVA-OOP</span>
+          <h2 id="activeQuizTitle" class="mt-1">OOP, Interfaces & Polymorphism</h2>
+          <p id="activeQuizDesc" class="text-muted">Unit III Assessment</p>
+        </div>
+        <div class="quiz-meta-side">
+          <div class="policy-selector-box">
+            <label>Grading Policy (Strategy Pattern):</label>
+            <select id="activePolicySelect">
+              <option value="standard">Standard Linear (No Penalty)</option>
+              <option value="competitive">Competitive (25% Negative Penalty)</option>
+            </select>
+          </div>
+          <div class="timer-badge" id="quizTimer">
+            ⏱️ <span id="timeDisplay">10:00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question Cards Form -->
+      <form id="quizForm">
+        <div id="questionsContainer" class="questions-list">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <div class="quiz-submit-bar">
+          <button type="button" class="btn btn-secondary" id="btnCancelQuiz">Cancel & Back</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitQuiz">Submit Assessment & Evaluate 🚀</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- TAB 3: RESULTS & SCORECARD -->
+    <section class="tab-content" id="results-tab">
+      <div class="section-title-wrap">
+        <h2>Performance Scorecards & Audit Trail</h2>
+        <p class="text-muted">Review comprehensive score reports, percentage, awarded grade, and itemized answer analysis.</p>
+      </div>
+
+      <!-- Latest Attempt Scorecard (if any) -->
+      <div id="latestScorecardContainer">
+        <div class="empty-state">
+          <span class="empty-icon">📝</span>
+          <h3>No Assessment Attempted Yet</h3>
+          <p>Select any quiz from the Available Quizzes tab to take your first evaluation.</p>
+          <button class="btn btn-primary" onclick="switchTab('quizzes-tab')">Browse Quizzes</button>
+        </div>
+      </div>
+
+      <!-- Previous Attempts History Table -->
+      <div class="history-section mt-4">
+        <h3>Cumulative History Log</h3>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Attempt ID</th>
+                <th>Quiz ID</th>
+                <th>Quiz Title</th>
+                <th>Student</th>
+                <th>Score</th>
+                <th>Percentage</th>
+                <th>Grade</th>
+                <th>Date & Time</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: FACULTY PORTAL -->
+    <section class="tab-content" id="faculty-tab">
+      <div class="faculty-banner">
+        <div>
+          <h2>Faculty Assessment Administration</h2>
+          <p>Author custom quizzes, append polymorphic questions (MCQ, True/False, Numeric), and review department-wide submission analytics.</p>
+        </div>
+        <div class="faculty-actions">
+          <button class="btn btn-accent" id="btnOpenCreateQuiz">➕ Create New Quiz</button>
+        </div>
+      </div>
+
+      <!-- Faculty Quizzes Overview -->
+      <div class="faculty-subheading mt-4">
+        <h3>Managed Assessment Repositories</h3>
+      </div>
+      <div class="faculty-quizzes-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Quiz ID</th>
+              <th>Title</th>
+              <th>Target Age</th>
+              <th>Topic</th>
+              <th>Difficulty</th>
+              <th>Questions</th>
+              <th>Total Marks</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="facultyQuizzesTableBody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- All Student Submissions Table -->
+      <div class="faculty-subheading mt-5">
+        <h3>Student Submissions & Score Matrix</h3>
+      </div>
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Attempt ID</th>
+              <th>Student Name</th>
+              <th>Roll No</th>
+              <th>Quiz Target</th>
+              <th>Earned Score</th>
+              <th>Percentage</th>
+              <th>Letter Grade</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody id="facultySubmissionsTableBody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 5: JAVA CIE-2 CONCEPT DEFENSE & TEST INSPECTOR -->
+    <section class="tab-content" id="concepts-tab">
+      <div class="inspector-header">
+        <div>
+          <h2>Java Unit III & IV CIE-2 Concept Defense</h2>
+          <p class="text-muted">Live inspection of Object-Oriented design patterns, abstract classes, interfaces, dynamic method dispatch, and custom exceptions.</p>
+        </div>
+        <div>
+          <button class="btn btn-primary" id="btnRunAutomatedTests">▶️ Run Automated Concept Test Matrix</button>
+        </div>
+      </div>
+
+      <!-- Concept Cards Grid -->
+      <div class="concepts-grid">
+        <!-- Concept 1 -->
+        <div class="concept-card">
+          <div class="concept-badge">Unit III &bull; Abstract Class</div>
+          <h3>Question & User Hierarchy</h3>
+          <p><code>Question</code> encapsulates <code>id</code>, <code>marks</code>, <code>topic</code>, and enforces abstract <code>displayQuestion()</code> and <code>checkAnswer()</code>.</p>
+          <div class="code-pill">abstract class Question { abstract boolean checkAnswer(String s); }</div>
+        </div>
+
+        <!-- Concept 2 -->
+        <div class="concept-card">
+          <div class="concept-badge">Unit III &bull; Interface</div>
+          <h3>QuizOperations & QuizEvaluator</h3>
+          <p>Decouples quiz CRUD operations and encapsulates scoring algorithms via the <strong>Strategy Design Pattern</strong>.</p>
+          <div class="code-pill">interface QuizEvaluator { double evaluateScore(QuizAttempt a); }</div>
+        </div>
+
+        <!-- Concept 3 -->
+        <div class="concept-card">
+          <div class="concept-badge">Unit III &bull; Polymorphism</div>
+          <h3>Dynamic Method Dispatch</h3>
+          <p>Overriding in <code>MCQ</code>, <code>TrueFalse</code>, and <code>Numeric</code>; method overloading in <code>searchQuiz(topic)</code> and <code>searchQuiz(topic, level)</code>.</p>
+          <div class="code-pill">q.checkAnswer(ans) // Dynamic binding at runtime</div>
+        </div>
+
+        <!-- Concept 4 -->
+        <div class="concept-card">
+          <div class="concept-badge">Unit IV &bull; Exception Handling</div>
+          <h3>Checked Domain Exceptions</h3>
+          <p>Hierarchy rooted at <code>QuizException</code>: <code>QuizNotFoundException</code>, <code>DuplicateQuizException</code>, <code>InvalidOptionException</code>, etc.</p>
+          <div class="code-pill">try { ... } catch (InvalidOptionException e) { ... }</div>
+        </div>
+      </div>
+
+      <!-- Test Trace Console Window -->
+      <div class="terminal-card mt-4">
+        <div class="terminal-bar">
+          <div class="term-dots">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+          </div>
+          <span class="term-title">Automated Concept Test Matrix &bull; JVM Execution Trace</span>
+          <span class="term-status" id="testSuiteStatus">Ready</span>
+        </div>
+        <pre class="terminal-body" id="testSuiteOutput">Click "Run Automated Concept Test Matrix" above to execute all 5 exception scenarios, method overloading, dynamic dispatch, and try-catch-finally trace live in Java!</pre>
+      </div>
+    </section>
+
+    <!-- TAB 6: VIVA PREPARATION & FAQS -->
+    <section class="tab-content" id="viva-tab">
+      <div class="section-title-wrap">
+        <h2>CIE-2 Individual Viva Preparation Guide</h2>
+        <p class="text-muted">Model answers for Mrs. Trupti Najan's questions from the CIE-2 evaluation rubric.</p>
+      </div>
+
+      <div class="accordion" id="vivaAccordion">
+        <!-- Q1 -->
+        <div class="accordion-item">
+          <button class="accordion-header">1. Why did you use an abstract class in your application? <span>+</span></button>
+          <div class="accordion-body">
+            <p><strong>Answer:</strong> We created the abstract class <code>Question</code> because all questions share state (<code>id</code>, <code>questionText</code>, <code>marks</code>, <code>topic</code>, <code>difficulty</code>) and helper logic (<code>displayHeader()</code>), but a generic question cannot be answered directly. By declaring <code>displayQuestion()</code> and <code>checkAnswer()</code> as <code>abstract</code>, we enforce subclass implementation in <code>MultipleChoiceQuestion</code>, <code>TrueFalseQuestion</code>, and <code>NumericQuestion</code> while preventing illegal instantiation of a naked question.</p>
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="accordion-item">
+          <button class="accordion-header">2. Where is polymorphism used? Explain with the relevant method/class. <span>+</span></button>
+          <div class="accordion-body">
+            <p><strong>Answer:</strong> Polymorphism is used in both forms:
+            <br><strong>Runtime (Method Overriding):</strong> When iterating over <code>List&lt;Question&gt;</code>, calling <code>q.displayQuestion()</code> and <code>q.checkAnswer(ans)</code> uses dynamic method dispatch. Also, <code>QuizEvaluator</code> swaps between <code>StandardGradingPolicy</code> and <code>NegativeMarkingGradingPolicy</code> at runtime.
+            <br><strong>Compile-Time (Method Overloading):</strong> <code>QuizOperations.searchQuiz(String topic)</code> vs <code>searchQuiz(String topic, DifficultyLevel level)</code>, and overloaded <code>InputValidator.readInteger(...)</code> methods.</p>
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="accordion-item">
+          <button class="accordion-header">3. What is the difference between an interface and an abstract class? <span>+</span></button>
+          <div class="accordion-body">
+            <p><strong>Answer:</strong> An abstract class (<code>Question</code>, <code>User</code>) represents an <strong>IS-A</strong> relationship with instance variables, access modifiers, and constructors. An interface (<code>QuizOperations</code>, <code>QuizEvaluator</code>) represents a <strong>CAN-DO</strong> behavioral contract without instance state, supporting multiple implementations and loose coupling.</p>
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="accordion-item">
+          <button class="accordion-header">4. Why did you create the QuizEvaluator interface? <span>+</span></button>
+          <div class="accordion-body">
+            <p><strong>Answer:</strong> To implement the <strong>Strategy Design Pattern</strong>. Different exams require different grading rules: standard linear grading for internal tests vs negative marking for competitive exams. Abstracting this behind <code>QuizEvaluator</code> allows us to add new grading policies without modifying existing quiz conduction code (Open/Closed Principle).</p>
+          </div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="accordion-item">
+          <button class="accordion-header">5. What exception can occur in your application and how is it handled? <span>+</span></button>
+          <div class="accordion-body">
+            <p><strong>Answer:</strong> We built a custom checked exception hierarchy rooted at <code>QuizException</code>:
+            <br>&bull; <code>QuizNotFoundException</code>: non-existent quiz ID.
+            <br>&bull; <code>DuplicateQuizException</code>: duplicate ID during quiz creation.
+            <br>&bull; <code>InvalidOptionException</code>: illegal student choice (e.g. entering 'Z' on MCQ).
+            <br>&bull; <code>InvalidQuestionException</code>: negative marks or invalid options count.
+            <br>&bull; <code>EmptyQuizException</code>: taking a quiz with zero questions.
+            <br>All are intercepted with targeted <code>try-catch</code> blocks to prevent application crashes and guide the user.</p>
+          </div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="accordion-item">
+          <button class="accordion-header">6. What is the purpose of try, catch, and finally? <span>+</span></button>
+          <div class="accordion-body">
+            <p><strong>Answer:</strong> <code>try</code> isolates code that may produce exceptional states; <code>catch</code> intercepts and recovers from specific domain exceptions; <code>finally</code> guarantees unconditional execution for cleanup, closing resources, and logging audit confirmations.</p>
+          </div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="accordion-item">
+          <button class="accordion-header">7. Which part of the program did you implement? <span>+</span></button>
+          <div class="accordion-body">
+            <p><strong>Answer:</strong> Group roles are divided into: (1) Architecture & Abstract Base Classes, (2) Specialized Concrete Models, (3) Interfaces & Grading Policies, (4) Custom Exception Hierarchy & Input Validation, and (5) UI & Automated Test Suite.</p>
+          </div>
+        </div>
+
+        <!-- Q8 -->
+        <div class="accordion-item">
+          <button class="accordion-header">8. If one requirement changes, which class/method would you modify and why? <span>+</span></button>
+          <div class="accordion-body">
+            <p><strong>Answer:</strong> Because of loose coupling:
+            <br>&bull; Adding a new question type: create a subclass of <code>Question</code> (existing code untouched).
+            <br>&bull; Adding a new grading rule: create a class implementing <code>QuizEvaluator</code>.
+            <br>&bull; Switching to a Database: create <code>DatabaseQuizManager implements QuizOperations</code>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal: Create Quiz -->
+  <div class="modal-overlay" id="createQuizModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>➕ Create New Assessment</h3>
+        <button class="modal-close" onclick="closeModal('createQuizModal')">&times;</button>
+      </div>
+      <form id="createQuizForm">
+        <div class="form-group">
+          <label>Quiz ID (Unique):</label>
+          <input type="text" id="newQuizId" placeholder="e.g. JAVA-THR" required>
+        </div>
+        <div class="form-group">
+          <label>Quiz Title:</label>
+          <input type="text" id="newQuizTitle" placeholder="e.g. Multithreading & Synchronization" required>
+        </div>
+        <div class="form-group">
+          <label>Academic Topic:</label>
+          <input type="text" id="newQuizTopic" placeholder="e.g. Thread Lifecycle" required>
+        </div>
+        <div class="form-group">
+          <label>Difficulty Level:</label>
+          <select id="newQuizDiff">
+            <option value="Easy">Easy</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="Hard">Hard</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Target Age Group:</label>
+          <select id="newQuizAge">
+            <option value="Kids (8-12)">Kids (8-12)</option>
+            <option value="Teens (13-17)">Teens (13-17)</option>
+            <option value="College (18-22)" selected>College (18-22)</option>
+            <option value="Competitive / Pro (20+)">Competitive / Pro (20+)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Description:</label>
+          <textarea id="newQuizDesc" rows="3" placeholder="Brief outline of syllabus covered..."></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('createQuizModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Quiz</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add Question to Quiz -->
+  <div class="modal-overlay" id="addQuestionModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>➕ Add Question to <span id="addQuestionTargetQuizId">JAVA-OOP</span></h3>
+        <button class="modal-close" onclick="closeModal('addQuestionModal')">&times;</button>
+      </div>
+      <form id="addQuestionForm">
+        <input type="hidden" id="targetQuizIdHidden">
+        <div class="form-group">
+          <label>Question Type:</label>
+          <select id="newQueType" onchange="handleQuestionTypeChange()">
+            <option value="MCQ">Multiple Choice Question (MCQ)</option>
+            <option value="TF">True / False</option>
+            <option value="NUM">Numeric / Direct Value</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Question Prompt / Text:</label>
+          <textarea id="newQuePrompt" rows="2" placeholder="Enter problem statement..." required></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Marks:</label>
+            <input type="number" id="newQueMarks" value="5" min="1" max="100" required>
+          </div>
+          <div class="form-group">
+            <label>Difficulty:</label>
+            <select id="newQueDiff">
+              <option value="Easy">Easy</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Dynamic Form Fields depending on Question Type -->
+        <div id="dynamicQuestionFields">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('addQuestionModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Append Question</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <footer class="app-footer">
+    <p>Army Institute of Technology, Pune &bull; Department of Information Technology &bull; SE IT Java Laboratory CIE-2</p>
+    <p class="text-muted">Developed strictly in compliance with BIT25434A0X course syllabus under the guidance of Mrs. Trupti Najan</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
