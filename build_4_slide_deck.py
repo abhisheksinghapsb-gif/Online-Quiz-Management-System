@@ -474,8 +474,8 @@ def build_4_slide_presentation():
         # Row 1
         ("1. Institution Header & Navigation",
          [("Branding Crest", "AIT Pune crest & Department of IT badge with active CIE-2 examination status."),
-          ("Persistent Nav Bar", "5-tab navigation: Quizzes, Active Quiz, Score History, Faculty, and Concept Defense."),
-          ("Student Pill", "Displays active logged-in student name, roll number, and division in header.")],
+          ("Persistent Nav Bar", "5-tab navigation: Quizzes, Active Quiz, Score History, Faculty, and Viva Guide."),
+          ("Portal Branding", "Clean, modern institutional branding with persistent top-level navigation.")],
          "Header & Navigation", Inches(0.8), Inches(1.6)),
 
         ("2. Interactive Filter & Search Bar",
@@ -503,11 +503,11 @@ def build_4_slide_presentation():
           ("Submissions Log", "Tabulated history preserving all student attempt timestamps and scores.")],
          "Scorecard & Analytics", Inches(4.75), Inches(4.3)),
 
-        ("6. Faculty Management & CIE-2 Inspector",
+        ("6. Faculty Management & Question Authoring",
          [("Quiz Authoring Modal", "Allows instructors to create custom quizzes and append polymorphic questions."),
-          ("Live Viva Inspector", "Dedicated CIE-2 concept defense tab explaining OOP, interfaces, and exceptions."),
-          ("1-Click Concept Test", "Button to execute the automated concept verification matrix live in browser.")],
-         "Faculty & Concept Defense", Inches(8.7), Inches(4.3))
+          ("Dynamic Schema Control", "Add multiple choice, true/false, or numeric questions with custom marking."),
+          ("Submissions Audit Matrix", "Comprehensive gradebook table tracking attempts, grading policies, and results.")],
+         "Faculty & Authoring Portal", Inches(8.7), Inches(4.3))
     ]
 
     card_w4 = Inches(3.833)

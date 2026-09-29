@@ -40,15 +40,7 @@
         <button class="nav-btn" data-tab="active-quiz-tab" id="navActiveQuiz" style="display:none;">✍️ Active Quiz</button>
         <button class="nav-btn" data-tab="results-tab">📊 Scorecards & History</button>
         <button class="nav-btn" data-tab="faculty-tab">👩‍🏫 Faculty Portal</button>
-        <button class="nav-btn highlight-btn" data-tab="concepts-tab">🔬 Java CIE-2 Inspector</button>
         <button class="nav-btn" data-tab="viva-tab">🎓 Viva Guide</button>
-      </div>
-      <div class="user-pill" id="userPill">
-        <span class="avatar">👨‍🎓</span>
-        <div class="user-meta">
-          <span class="user-name" id="userNameLabel">Abhishekh Kumar</span>
-          <span class="user-roll" id="userRollLabel">Roll: 3101 &bull; SE IT A</span>
-        </div>
       </div>
     </div>
   </nav>
@@ -250,67 +242,6 @@
       </div>
     </section>
 
-    <!-- TAB 5: JAVA CIE-2 CONCEPT DEFENSE & TEST INSPECTOR -->
-    <section class="tab-content" id="concepts-tab">
-      <div class="inspector-header">
-        <div>
-          <h2>Java Unit III & IV CIE-2 Concept Defense</h2>
-          <p class="text-muted">Live inspection of Object-Oriented design patterns, abstract classes, interfaces, dynamic method dispatch, and custom exceptions.</p>
-        </div>
-        <div>
-          <button class="btn btn-primary" id="btnRunAutomatedTests">▶️ Run Automated Concept Test Matrix</button>
-        </div>
-      </div>
-
-      <!-- Concept Cards Grid -->
-      <div class="concepts-grid">
-        <!-- Concept 1 -->
-        <div class="concept-card">
-          <div class="concept-badge">Unit III &bull; Abstract Class</div>
-          <h3>Question & User Hierarchy</h3>
-          <p><code>Question</code> encapsulates <code>id</code>, <code>marks</code>, <code>topic</code>, and enforces abstract <code>displayQuestion()</code> and <code>checkAnswer()</code>.</p>
-          <div class="code-pill">abstract class Question { abstract boolean checkAnswer(String s); }</div>
-        </div>
-
-        <!-- Concept 2 -->
-        <div class="concept-card">
-          <div class="concept-badge">Unit III &bull; Interface</div>
-          <h3>QuizOperations & QuizEvaluator</h3>
-          <p>Decouples quiz CRUD operations and encapsulates scoring algorithms via the <strong>Strategy Design Pattern</strong>.</p>
-          <div class="code-pill">interface QuizEvaluator { double evaluateScore(QuizAttempt a); }</div>
-        </div>
-
-        <!-- Concept 3 -->
-        <div class="concept-card">
-          <div class="concept-badge">Unit III &bull; Polymorphism</div>
-          <h3>Dynamic Method Dispatch</h3>
-          <p>Overriding in <code>MCQ</code>, <code>TrueFalse</code>, and <code>Numeric</code>; method overloading in <code>searchQuiz(topic)</code> and <code>searchQuiz(topic, level)</code>.</p>
-          <div class="code-pill">q.checkAnswer(ans) // Dynamic binding at runtime</div>
-        </div>
-
-        <!-- Concept 4 -->
-        <div class="concept-card">
-          <div class="concept-badge">Unit IV &bull; Exception Handling</div>
-          <h3>Checked Domain Exceptions</h3>
-          <p>Hierarchy rooted at <code>QuizException</code>: <code>QuizNotFoundException</code>, <code>DuplicateQuizException</code>, <code>InvalidOptionException</code>, etc.</p>
-          <div class="code-pill">try { ... } catch (InvalidOptionException e) { ... }</div>
-        </div>
-      </div>
-
-      <!-- Test Trace Console Window -->
-      <div class="terminal-card mt-4">
-        <div class="terminal-bar">
-          <div class="term-dots">
-            <span class="dot red"></span>
-            <span class="dot yellow"></span>
-            <span class="dot green"></span>
-          </div>
-          <span class="term-title">Automated Concept Test Matrix &bull; JVM Execution Trace</span>
-          <span class="term-status" id="testSuiteStatus">Ready</span>
-        </div>
-        <pre class="terminal-body" id="testSuiteOutput">Click "Run Automated Concept Test Matrix" above to execute all 5 exception scenarios, method overloading, dynamic dispatch, and try-catch-finally trace live in Java!</pre>
-      </div>
-    </section>
 
     <!-- TAB 6: VIVA PREPARATION & FAQS -->
     <section class="tab-content" id="viva-tab">

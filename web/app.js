@@ -461,9 +461,9 @@ let timeLeftSeconds = 600;
 
 // Current User Context
 const currentUser = {
-  name: "Abhishekh Kumar",
-  rollNumber: "3101",
-  division: "SE IT A"
+  name: "Student",
+  rollNumber: "-",
+  division: "-"
 };
 
 // =============================================================================
@@ -478,8 +478,11 @@ document.addEventListener("DOMContentLoaded", () => {
   renderQuizGrid(quizzes);
   renderFacultyViews();
 
-  // Automated Test button
-  document.getElementById("btnRunAutomatedTests").addEventListener("click", runAutomatedTests);
+  // Automated Test button (optional check)
+  const btnTests = document.getElementById("btnRunAutomatedTests");
+  if (btnTests) {
+    btnTests.addEventListener("click", runAutomatedTests);
+  }
 });
 
 // =============================================================================
