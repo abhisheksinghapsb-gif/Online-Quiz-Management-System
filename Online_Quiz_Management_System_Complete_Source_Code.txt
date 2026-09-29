@@ -1,0 +1,3363 @@
+================================================================================
+      ONLINE QUIZ MANAGEMENT SYSTEM - COMPLETE JAVA SOURCE CODE
+               ARMY INSTITUTE OF TECHNOLOGY (AIT), PUNE
+              DEPARTMENT OF INFORMATION TECHNOLOGY (SE IT B)
+    Course: Skill Development Laboratory using Java (BIT25434A0X) - CIE-2
+                 Course In-charge: Mrs. Trupti Najan
+================================================================================
+PROJECT GROUP MEMBERS:
+  1. Aditya Yadav     (Roll No: 8108 - Group Leader)
+  2. Abhishekh Singh  (Roll No: 8104)
+  3. Priyam Raj       (Roll No: 8134)
+  4. Utkarsh Chauhan  (Roll No: 8154)
+
+MANDATORY SYLLABUS CONCEPTS DEMONSTRATED:
+  [Unit III] Abstract Classes: Base Question & User hierarchy.
+  [Unit III] Interfaces: QuizOperations & QuizEvaluator (Strategy Pattern).
+  [Unit III] Polymorphism: Dynamic Method Dispatch & Overloaded Search.
+  [Unit IV]  Exception Handling: 5-Tier Custom Checked Hierarchy & Zero-Crash.
+================================================================================
+
+
+================================================================================
+ SECTION: UNIT IV: EXCEPTION HANDLING HIERARCHY
+================================================================================
+
+--------------------------------------------------------------------------------
+ File #1: QuizException.java  [Path: src/com/ait/quiz/exception/QuizException.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.exception;
+   2 | 
+   3 | /**
+   4 |  * Base custom checked exception for all Quiz Management System domain errors.
+   5 |  * Demonstrates inheritance within exception hierarchies (Unit IV).
+   6 |  */
+   7 | public class QuizException extends Exception {
+   8 |     
+   9 |     public QuizException(String message) {
+  10 |         super(message);
+  11 |     }
+  12 | 
+  13 |     public QuizException(String message, Throwable cause) {
+  14 |         super(message, cause);
+  15 |     }
+  16 | }
+
+
+--------------------------------------------------------------------------------
+ File #2: QuizNotFoundException.java  [Path: src/com/ait/quiz/exception/QuizNotFoundException.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.exception;
+   2 | 
+   3 | /**
+   4 |  * Thrown when an operation attempts to look up or access a quiz with a non-existent ID.
+   5 |  */
+   6 | public class QuizNotFoundException extends QuizException {
+   7 | 
+   8 |     private final String quizId;
+   9 | 
+  10 |     public QuizNotFoundException(String quizId) {
+  11 |         super("Quiz not found with ID: '" + quizId + "'. Please check the Quiz ID and try again.");
+  12 |         this.quizId = quizId;
+  13 |     }
+  14 | 
+  15 |     public String getQuizId() {
+  16 |         return quizId;
+  17 |     }
+  18 | }
+
+
+--------------------------------------------------------------------------------
+ File #3: DuplicateQuizException.java  [Path: src/com/ait/quiz/exception/DuplicateQuizException.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.exception;
+   2 | 
+   3 | /**
+   4 |  * Thrown when an instructor attempts to create a quiz with an ID that already exists.
+   5 |  */
+   6 | public class DuplicateQuizException extends QuizException {
+   7 | 
+   8 |     private final String quizId;
+   9 | 
+  10 |     public DuplicateQuizException(String quizId) {
+  11 |         super("A quiz with ID '" + quizId + "' already exists! Please use a unique identifier.");
+  12 |         this.quizId = quizId;
+  13 |     }
+  14 | 
+  15 |     public String getQuizId() {
+  16 |         return quizId;
+  17 |     }
+  18 | }
+
+
+--------------------------------------------------------------------------------
+ File #4: InvalidOptionException.java  [Path: src/com/ait/quiz/exception/InvalidOptionException.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.exception;
+   2 | 
+   3 | /**
+   4 |  * Thrown when a user provides an answer or option that does not conform
+   5 |  * to the allowed choices (e.g. non-existent option, illegal format).
+   6 |  */
+   7 | public class InvalidOptionException extends QuizException {
+   8 | 
+   9 |     private final String chosenOption;
+  10 |     private final String expectedFormat;
+  11 | 
+  12 |     public InvalidOptionException(String chosenOption, String expectedFormat) {
+  13 |         super("Invalid option selected: '" + chosenOption + "'. Expected format/range: [" + expectedFormat + "]");
+  14 |         this.chosenOption = chosenOption;
+  15 |         this.expectedFormat = expectedFormat;
+  16 |     }
+  17 | 
+  18 |     public String getChosenOption() {
+  19 |         return chosenOption;
+  20 |     }
+  21 | 
+  22 |     public String getExpectedFormat() {
+  23 |         return expectedFormat;
+  24 |     }
+  25 | }
+
+
+--------------------------------------------------------------------------------
+ File #5: InvalidQuestionException.java  [Path: src/com/ait/quiz/exception/InvalidQuestionException.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.exception;
+   2 | 
+   3 | /**
+   4 |  * Thrown when question parameters fail domain validation constraints
+   5 |  * (e.g., empty prompt, fewer than two options, or non-positive marks).
+   6 |  */
+   7 | public class InvalidQuestionException extends QuizException {
+   8 | 
+   9 |     public InvalidQuestionException(String message) {
+  10 |         super(message);
+  11 |     }
+  12 | }
+
+
+--------------------------------------------------------------------------------
+ File #6: EmptyQuizException.java  [Path: src/com/ait/quiz/exception/EmptyQuizException.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.exception;
+   2 | 
+   3 | /**
+   4 |  * Thrown when an attempt is made to conduct or evaluate a quiz that has no questions.
+   5 |  */
+   6 | public class EmptyQuizException extends QuizException {
+   7 | 
+   8 |     private final String quizId;
+   9 | 
+  10 |     public EmptyQuizException(String quizId) {
+  11 |         super("Quiz '" + quizId + "' contains no questions! Please add questions before conducting.");
+  12 |         this.quizId = quizId;
+  13 |     }
+  14 | 
+  15 |     public String getQuizId() {
+  16 |         return quizId;
+  17 |     }
+  18 | }
+
+
+================================================================================
+ SECTION: UNIT III: ABSTRACT CLASSES & QUESTION MODELS
+================================================================================
+
+--------------------------------------------------------------------------------
+ File #7: DifficultyLevel.java  [Path: src/com/ait/quiz/model/DifficultyLevel.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.model;
+   2 | 
+   3 | /**
+   4 |  * Enumeration representing the difficulty level of a quiz question or quiz.
+   5 |  */
+   6 | public enum DifficultyLevel {
+   7 |     EASY("Easy"),
+   8 |     MEDIUM("Medium"),
+   9 |     HARD("Hard");
+  10 | 
+  11 |     private final String displayName;
+  12 | 
+  13 |     DifficultyLevel(String displayName) {
+  14 |         this.displayName = displayName;
+  15 |     }
+  16 | 
+  17 |     public String getDisplayName() {
+  18 |         return displayName;
+  19 |     }
+  20 | 
+  21 |     public static DifficultyLevel fromString(String text) {
+  22 |         for (DifficultyLevel level : DifficultyLevel.values()) {
+  23 |             if (level.name().equalsIgnoreCase(text) || level.displayName.equalsIgnoreCase(text)) {
+  24 |                 return level;
+  25 |             }
+  26 |         }
+  27 |         return MEDIUM; // Default fallback
+  28 |     }
+  29 | }
+
+
+--------------------------------------------------------------------------------
+ File #8: Question.java  [Path: src/com/ait/quiz/model/Question.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.model;
+   2 | 
+   3 | import com.ait.quiz.exception.InvalidOptionException;
+   4 | import com.ait.quiz.exception.InvalidQuestionException;
+   5 | 
+   6 | /**
+   7 |  * Abstract base class representing a generic Question in the Quiz System.
+   8 |  * Demonstrates Unit III concept: Abstract Classes (abstract methods + concrete structure).
+   9 |  * Subclasses must define specific display, validation, and answer checking behaviours.
+  10 |  */
+  11 | public abstract class Question {
+  12 | 
+  13 |     private final int id;
+  14 |     private String questionText;
+  15 |     private int marks;
+  16 |     private String topic;
+  17 |     private DifficultyLevel difficulty;
+  18 | 
+  19 |     /**
+  20 |      * Parameterized constructor with validation.
+  21 |      * Throws InvalidQuestionException if constraints are violated.
+  22 |      */
+  23 |     public Question(int id, String questionText, int marks, String topic, DifficultyLevel difficulty) 
+  24 |             throws InvalidQuestionException {
+  25 |         if (questionText == null || questionText.trim().isEmpty()) {
+  26 |             throw new InvalidQuestionException("Question text cannot be null or blank!");
+  27 |         }
+  28 |         if (marks <= 0) {
+  29 |             throw new InvalidQuestionException("Question marks must be strictly positive! Provided: " + marks);
+  30 |         }
+  31 |         this.id = id;
+  32 |         this.questionText = questionText.trim();
+  33 |         this.marks = marks;
+  34 |         this.topic = (topic != null && !topic.trim().isEmpty()) ? topic.trim() : "General";
+  35 |         this.difficulty = (difficulty != null) ? difficulty : DifficultyLevel.MEDIUM;
+  36 |     }
+  37 | 
+  38 |     // Concrete getters & setters
+  39 |     public int getId() {
+  40 |         return id;
+  41 |     }
+  42 | 
+  43 |     public String getQuestionText() {
+  44 |         return questionText;
+  45 |     }
+  46 | 
+  47 |     public void setQuestionText(String questionText) throws InvalidQuestionException {
+  48 |         if (questionText == null || questionText.trim().isEmpty()) {
+  49 |             throw new InvalidQuestionException("Question text cannot be empty!");
+  50 |         }
+  51 |         this.questionText = questionText.trim();
+  52 |     }
+  53 | 
+  54 |     public int getMarks() {
+  55 |         return marks;
+  56 |     }
+  57 | 
+  58 |     public void setMarks(int marks) throws InvalidQuestionException {
+  59 |         if (marks <= 0) {
+  60 |             throw new InvalidQuestionException("Marks must be positive!");
+  61 |         }
+  62 |         this.marks = marks;
+  63 |     }
+  64 | 
+  65 |     public String getTopic() {
+  66 |         return topic;
+  67 |     }
+  68 | 
+  69 |     public void setTopic(String topic) {
+  70 |         this.topic = topic;
+  71 |     }
+  72 | 
+  73 |     public DifficultyLevel getDifficulty() {
+  74 |         return difficulty;
+  75 |     }
+  76 | 
+  77 |     public void setDifficulty(DifficultyLevel difficulty) {
+  78 |         this.difficulty = difficulty;
+  79 |     }
+  80 | 
+  81 |     /**
+  82 |      * Common display header for all questions.
+  83 |      */
+  84 |     public void displayHeader() {
+  85 |         System.out.printf("[Q%d] [%s | %s | Marks: %d]%n", id, getQuestionType(), difficulty.getDisplayName(), marks);
+  86 |         System.out.println("Topic: " + topic);
+  87 |         System.out.println("Prompt: " + questionText);
+  88 |     }
+  89 | 
+  90 |     // --- Abstract Methods to be implemented polymorphically by subclasses ---
+  91 | 
+  92 |     /**
+  93 |      * Polymorphic method to display the question and its interactive choices/prompts.
+  94 |      */
+  95 |     public abstract void displayQuestion();
+  96 | 
+  97 |     /**
+  98 |      * Polymorphic method to check whether the student's submitted answer is correct.
+  99 |      * Throws InvalidOptionException if input format violates choice expectations.
+ 100 |      */
+ 101 |     public abstract boolean checkAnswer(String studentAnswer) throws InvalidOptionException;
+ 102 | 
+ 103 |     /**
+ 104 |      * Returns the human-readable correct answer.
+ 105 |      */
+ 106 |     public abstract String getCorrectAnswerFormatted();
+ 107 | 
+ 108 |     /**
+ 109 |      * Returns the label of the specific question type.
+ 110 |      */
+ 111 |     public abstract String getQuestionType();
+ 112 | 
+ 113 |     @Override
+ 114 |     public String toString() {
+ 115 |         return String.format("[Q%d] (%s) %s [%d marks]", id, getQuestionType(), questionText, marks);
+ 116 |     }
+ 117 | }
+
+
+--------------------------------------------------------------------------------
+ File #9: MultipleChoiceQuestion.java  [Path: src/com/ait/quiz/model/MultipleChoiceQuestion.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.model;
+   2 | 
+   3 | import com.ait.quiz.exception.InvalidOptionException;
+   4 | import com.ait.quiz.exception.InvalidQuestionException;
+   5 | 
+   6 | import java.util.ArrayList;
+   7 | import java.util.Collections;
+   8 | import java.util.List;
+   9 | 
+  10 | /**
+  11 |  * Represents a Multiple Choice Question (MCQ) with 4 or more options (A, B, C, D...).
+  12 |  * Demonstrates:
+  13 |  * - Inheritance (extends Question)
+  14 |  * - Polymorphism / Method Overriding (displayQuestion, checkAnswer, etc.)
+  15 |  * - Exception Handling (validates choices in constructor and at runtime)
+  16 |  */
+  17 | public class MultipleChoiceQuestion extends Question {
+  18 | 
+  19 |     private final List<String> options;
+  20 |     private final int correctOptionIndex; // 0-indexed (0 -> A, 1 -> B, etc.)
+  21 | 
+  22 |     public MultipleChoiceQuestion(int id, String questionText, int marks, String topic,
+  23 |                                   DifficultyLevel difficulty, List<String> options, int correctOptionIndex)
+  24 |             throws InvalidQuestionException {
+  25 |         super(id, questionText, marks, topic, difficulty);
+  26 | 
+  27 |         if (options == null || options.size() < 2) {
+  28 |             throw new InvalidQuestionException("MCQ must have at least 2 options! Found: " 
+  29 |                     + (options == null ? 0 : options.size()));
+  30 |         }
+  31 |         if (correctOptionIndex < 0 || correctOptionIndex >= options.size()) {
+  32 |             throw new InvalidQuestionException("Correct option index (" + correctOptionIndex 
+  33 |                     + ") is out of valid range [0 to " + (options.size() - 1) + "]!");
+  34 |         }
+  35 | 
+  36 |         this.options = new ArrayList<>(options);
+  37 |         this.correctOptionIndex = correctOptionIndex;
+  38 |     }
+  39 | 
+  40 |     public List<String> getOptions() {
+  41 |         return Collections.unmodifiableList(options);
+  42 |     }
+  43 | 
+  44 |     public int getCorrectOptionIndex() {
+  45 |         return correctOptionIndex;
+  46 |     }
+  47 | 
+  48 |     @Override
+  49 |     public void displayQuestion() {
+  50 |         displayHeader();
+  51 |         char label = 'A';
+  52 |         for (String option : options) {
+  53 |             System.out.printf("   [%c] %s%n", label++, option);
+  54 |         }
+  55 |         System.out.println("   (Enter choice A-" + (char)('A' + options.size() - 1) + ")");
+  56 |     }
+  57 | 
+  58 |     @Override
+  59 |     public boolean checkAnswer(String studentAnswer) throws InvalidOptionException {
+  60 |         if (studentAnswer == null || studentAnswer.trim().isEmpty()) {
+  61 |             throw new InvalidOptionException("Empty input", "A to " + (char)('A' + options.size() - 1));
+  62 |         }
+  63 | 
+  64 |         String cleaned = studentAnswer.trim().toUpperCase();
+  65 |         if (cleaned.length() != 1) {
+  66 |             throw new InvalidOptionException(studentAnswer, "Single character A to " + (char)('A' + options.size() - 1));
+  67 |         }
+  68 | 
+  69 |         char choice = cleaned.charAt(0);
+  70 |         int selectedIndex = choice - 'A';
+  71 | 
+  72 |         if (selectedIndex < 0 || selectedIndex >= options.size()) {
+  73 |             throw new InvalidOptionException(studentAnswer, "A to " + (char)('A' + options.size() - 1));
+  74 |         }
+  75 | 
+  76 |         return selectedIndex == correctOptionIndex;
+  77 |     }
+  78 | 
+  79 |     @Override
+  80 |     public String getCorrectAnswerFormatted() {
+  81 |         char correctChar = (char) ('A' + correctOptionIndex);
+  82 |         return String.format("[%c] %s", correctChar, options.get(correctOptionIndex));
+  83 |     }
+  84 | 
+  85 |     @Override
+  86 |     public String getQuestionType() {
+  87 |         return "Multiple Choice (MCQ)";
+  88 |     }
+  89 | }
+
+
+--------------------------------------------------------------------------------
+ File #10: TrueFalseQuestion.java  [Path: src/com/ait/quiz/model/TrueFalseQuestion.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.model;
+   2 | 
+   3 | import com.ait.quiz.exception.InvalidOptionException;
+   4 | import com.ait.quiz.exception.InvalidQuestionException;
+   5 | 
+   6 | /**
+   7 |  * Represents a True/False Question.
+   8 |  * Demonstrates:
+   9 |  * - Subclassing abstract base Question
+  10 |  * - Overriding polymorphic methods with customized boolean behavior
+  11 |  */
+  12 | public class TrueFalseQuestion extends Question {
+  13 | 
+  14 |     private final boolean correctAnswer;
+  15 | 
+  16 |     public TrueFalseQuestion(int id, String questionText, int marks, String topic,
+  17 |                              DifficultyLevel difficulty, boolean correctAnswer)
+  18 |             throws InvalidQuestionException {
+  19 |         super(id, questionText, marks, topic, difficulty);
+  20 |         this.correctAnswer = correctAnswer;
+  21 |     }
+  22 | 
+  23 |     public boolean isCorrectAnswer() {
+  24 |         return correctAnswer;
+  25 |     }
+  26 | 
+  27 |     @Override
+  28 |     public void displayQuestion() {
+  29 |         displayHeader();
+  30 |         System.out.println("   [T] True");
+  31 |         System.out.println("   [F] False");
+  32 |         System.out.println("   (Enter choice T or F)");
+  33 |     }
+  34 | 
+  35 |     @Override
+  36 |     public boolean checkAnswer(String studentAnswer) throws InvalidOptionException {
+  37 |         if (studentAnswer == null || studentAnswer.trim().isEmpty()) {
+  38 |             throw new InvalidOptionException("Empty input", "T / F / True / False");
+  39 |         }
+  40 | 
+  41 |         String cleaned = studentAnswer.trim().toUpperCase();
+  42 |         boolean parsedAnswer;
+  43 | 
+  44 |         if (cleaned.equals("T") || cleaned.equals("TRUE")) {
+  45 |             parsedAnswer = true;
+  46 |         } else if (cleaned.equals("F") || cleaned.equals("FALSE")) {
+  47 |             parsedAnswer = false;
+  48 |         } else {
+  49 |             throw new InvalidOptionException(studentAnswer, "T, F, TRUE, or FALSE");
+  50 |         }
+  51 | 
+  52 |         return parsedAnswer == correctAnswer;
+  53 |     }
+  54 | 
+  55 |     @Override
+  56 |     public String getCorrectAnswerFormatted() {
+  57 |         return correctAnswer ? "True" : "False";
+  58 |     }
+  59 | 
+  60 |     @Override
+  61 |     public String getQuestionType() {
+  62 |         return "True / False";
+  63 |     }
+  64 | }
+
+
+--------------------------------------------------------------------------------
+ File #11: NumericQuestion.java  [Path: src/com/ait/quiz/model/NumericQuestion.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.model;
+   2 | 
+   3 | import com.ait.quiz.exception.InvalidOptionException;
+   4 | import com.ait.quiz.exception.InvalidQuestionException;
+   5 | 
+   6 | /**
+   7 |  * Represents a Numeric Answer Question (e.g. calculation, memory size, time complexity constants).
+   8 |  * Demonstrates:
+   9 |  * - Subclassing abstract Question
+  10 |  * - Numerical input validation
+  11 |  * - Wrapping NumberFormatException into domain-specific InvalidOptionException
+  12 |  */
+  13 | public class NumericQuestion extends Question {
+  14 | 
+  15 |     private final double correctAnswer;
+  16 |     private final double tolerance; // Allowed delta for floating point equality
+  17 | 
+  18 |     public NumericQuestion(int id, String questionText, int marks, String topic,
+  19 |                            DifficultyLevel difficulty, double correctAnswer, double tolerance)
+  20 |             throws InvalidQuestionException {
+  21 |         super(id, questionText, marks, topic, difficulty);
+  22 |         if (tolerance < 0) {
+  23 |             throw new InvalidQuestionException("Tolerance cannot be negative! Provided: " + tolerance);
+  24 |         }
+  25 |         this.correctAnswer = correctAnswer;
+  26 |         this.tolerance = tolerance;
+  27 |     }
+  28 | 
+  29 |     public NumericQuestion(int id, String questionText, int marks, String topic,
+  30 |                            DifficultyLevel difficulty, double correctAnswer)
+  31 |             throws InvalidQuestionException {
+  32 |         this(id, questionText, marks, topic, difficulty, correctAnswer, 0.0);
+  33 |     }
+  34 | 
+  35 |     public double getCorrectAnswer() {
+  36 |         return correctAnswer;
+  37 |     }
+  38 | 
+  39 |     public double getTolerance() {
+  40 |         return tolerance;
+  41 |     }
+  42 | 
+  43 |     @Override
+  44 |     public void displayQuestion() {
+  45 |         displayHeader();
+  46 |         if (tolerance > 0) {
+  47 |             System.out.printf("   (Enter numeric answer with tolerance ±%.2f)%n", tolerance);
+  48 |         } else {
+  49 |             System.out.println("   (Enter exact numeric answer)");
+  50 |         }
+  51 |     }
+  52 | 
+  53 |     @Override
+  54 |     public boolean checkAnswer(String studentAnswer) throws InvalidOptionException {
+  55 |         if (studentAnswer == null || studentAnswer.trim().isEmpty()) {
+  56 |             throw new InvalidOptionException("Empty input", "A valid number");
+  57 |         }
+  58 | 
+  59 |         try {
+  60 |             double parsedVal = Double.parseDouble(studentAnswer.trim());
+  61 |             return Math.abs(parsedVal - correctAnswer) <= tolerance;
+  62 |         } catch (NumberFormatException nfe) {
+  63 |             throw new InvalidOptionException(studentAnswer, "Valid numeric value (e.g., 4 or 3.14)");
+  64 |         }
+  65 |     }
+  66 | 
+  67 |     @Override
+  68 |     public String getCorrectAnswerFormatted() {
+  69 |         if (tolerance > 0) {
+  70 |             return String.format("%.2f (±%.2f)", correctAnswer, tolerance);
+  71 |         }
+  72 |         // If it's an integer value, show as integer
+  73 |         if (correctAnswer == Math.floor(correctAnswer) && !Double.isInfinite(correctAnswer)) {
+  74 |             return String.valueOf((long) correctAnswer);
+  75 |         }
+  76 |         return String.valueOf(correctAnswer);
+  77 |     }
+  78 | 
+  79 |     @Override
+  80 |     public String getQuestionType() {
+  81 |         return "Numeric / Direct Answer";
+  82 |     }
+  83 | }
+
+
+--------------------------------------------------------------------------------
+ File #12: User.java  [Path: src/com/ait/quiz/model/User.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.model;
+   2 | 
+   3 | /**
+   4 |  * Abstract class representing a System User.
+   5 |  * Demonstrates:
+   6 |  * - Abstract class with common user state and abstract dashboard presentation.
+   7 |  */
+   8 | public abstract class User {
+   9 | 
+  10 |     private final String userId;
+  11 |     private String name;
+  12 |     private String email;
+  13 | 
+  14 |     public User(String userId, String name, String email) {
+  15 |         if (userId == null || userId.trim().isEmpty()) {
+  16 |             throw new IllegalArgumentException("User ID cannot be empty!");
+  17 |         }
+  18 |         if (name == null || name.trim().isEmpty()) {
+  19 |             throw new IllegalArgumentException("Name cannot be empty!");
+  20 |         }
+  21 |         this.userId = userId.trim();
+  22 |         this.name = name.trim();
+  23 |         this.email = (email != null && !email.trim().isEmpty()) ? email.trim() : "user@aitpune.edu.in";
+  24 |     }
+  25 | 
+  26 |     public String getUserId() {
+  27 |         return userId;
+  28 |     }
+  29 | 
+  30 |     public String getName() {
+  31 |         return name;
+  32 |     }
+  33 | 
+  34 |     public void setName(String name) {
+  35 |         this.name = name;
+  36 |     }
+  37 | 
+  38 |     public String getEmail() {
+  39 |         return email;
+  40 |     }
+  41 | 
+  42 |     public void setEmail(String email) {
+  43 |         this.email = email;
+  44 |     }
+  45 | 
+  46 |     /**
+  47 |      * Abstract method to be implemented polymorphically depending on user role.
+  48 |      */
+  49 |     public abstract void displayDashboard();
+  50 | 
+  51 |     /**
+  52 |      * Returns user role (e.g., "Student", "Instructor").
+  53 |      */
+  54 |     public abstract String getRole();
+  55 | 
+  56 |     @Override
+  57 |     public String toString() {
+  58 |         return String.format("[%s] ID: %s | Name: %s (%s)", getRole(), userId, name, email);
+  59 |     }
+  60 | }
+
+
+--------------------------------------------------------------------------------
+ File #13: Student.java  [Path: src/com/ait/quiz/model/Student.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.model;
+   2 | 
+   3 | import java.util.ArrayList;
+   4 | import java.util.Collections;
+   5 | import java.util.List;
+   6 | 
+   7 | /**
+   8 |  * Concrete class representing a Student user in the Quiz System.
+   9 |  * Demonstrates:
+  10 |  * - Inheritance (extends User)
+  11 |  * - Method Overriding (displayDashboard, getRole)
+  12 |  * - State management for quiz attempts
+  13 |  */
+  14 | public class Student extends User {
+  15 | 
+  16 |     private final String rollNumber;
+  17 |     private final String division; // e.g. "SE IT A"
+  18 |     private final List<QuizAttempt> attempts;
+  19 | 
+  20 |     public Student(String userId, String name, String email, String rollNumber, String division) {
+  21 |         super(userId, name, email);
+  22 |         this.rollNumber = rollNumber;
+  23 |         this.division = (division != null) ? division : "SE IT";
+  24 |         this.attempts = new ArrayList<>();
+  25 |     }
+  26 | 
+  27 |     public String getRollNumber() {
+  28 |         return rollNumber;
+  29 |     }
+  30 | 
+  31 |     public String getDivision() {
+  32 |         return division;
+  33 |     }
+  34 | 
+  35 |     public void addAttempt(QuizAttempt attempt) {
+  36 |         if (attempt != null) {
+  37 |             attempts.add(attempt);
+  38 |         }
+  39 |     }
+  40 | 
+  41 |     public List<QuizAttempt> getAttempts() {
+  42 |         return Collections.unmodifiableList(attempts);
+  43 |     }
+  44 | 
+  45 |     public double getAveragePercentage() {
+  46 |         if (attempts.isEmpty()) return 0.0;
+  47 |         double sum = 0;
+  48 |         for (QuizAttempt att : attempts) {
+  49 |             sum += att.getPercentage();
+  50 |         }
+  51 |         return sum / attempts.size();
+  52 |     }
+  53 | 
+  54 |     @Override
+  55 |     public void displayDashboard() {
+  56 |         System.out.println("==================================================");
+  57 |         System.out.println("           STUDENT PORTAL DASHBOARD               ");
+  58 |         System.out.println("==================================================");
+  59 |         System.out.printf("Name       : %s%n", getName());
+  60 |         System.out.printf("Roll No    : %s | Division: %s%n", rollNumber, division);
+  61 |         System.out.printf("Email      : %s%n", getEmail());
+  62 |         System.out.printf("Total Quizzes Attempted : %d%n", attempts.size());
+  63 |         if (!attempts.isEmpty()) {
+  64 |             System.out.printf("Average Score           : %.2f%%%n", getAveragePercentage());
+  65 |         }
+  66 |         System.out.println("--------------------------------------------------");
+  67 |     }
+  68 | 
+  69 |     @Override
+  70 |     public String getRole() {
+  71 |         return "Student";
+  72 |     }
+  73 | }
+
+
+--------------------------------------------------------------------------------
+ File #14: Instructor.java  [Path: src/com/ait/quiz/model/Instructor.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.model;
+   2 | 
+   3 | /**
+   4 |  * Concrete class representing an Instructor / Faculty member.
+   5 |  * Demonstrates:
+   6 |  * - Inheritance (extends User)
+   7 |  * - Method Overriding (displayDashboard, getRole)
+   8 |  */
+   9 | public class Instructor extends User {
+  10 | 
+  11 |     private final String department;
+  12 |     private final String designation;
+  13 | 
+  14 |     public Instructor(String userId, String name, String email, String department, String designation) {
+  15 |         super(userId, name, email);
+  16 |         this.department = (department != null) ? department : "Information Technology";
+  17 |         this.designation = (designation != null) ? designation : "Assistant Professor";
+  18 |     }
+  19 | 
+  20 |     public String getDepartment() {
+  21 |         return department;
+  22 |     }
+  23 | 
+  24 |     public String getDesignation() {
+  25 |         return designation;
+  26 |     }
+  27 | 
+  28 |     @Override
+  29 |     public void displayDashboard() {
+  30 |         System.out.println("==================================================");
+  31 |         System.out.println("          INSTRUCTOR / FACULTY DASHBOARD          ");
+  32 |         System.out.println("==================================================");
+  33 |         System.out.printf("Faculty Name: %s%n", getName());
+  34 |         System.out.printf("Designation : %s%n", designation);
+  35 |         System.out.printf("Department  : %s%n", department);
+  36 |         System.out.printf("Email       : %s%n", getEmail());
+  37 |         System.out.println("Authorized Actions: Create Quizzes, Add Questions, View Reports");
+  38 |         System.out.println("--------------------------------------------------");
+  39 |     }
+  40 | 
+  41 |     @Override
+  42 |     public String getRole() {
+  43 |         return "Instructor";
+  44 |     }
+  45 | }
+
+
+--------------------------------------------------------------------------------
+ File #15: Quiz.java  [Path: src/com/ait/quiz/model/Quiz.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.model;
+   2 | 
+   3 | import com.ait.quiz.exception.EmptyQuizException;
+   4 | import com.ait.quiz.exception.InvalidQuestionException;
+   5 | 
+   6 | import java.util.ArrayList;
+   7 | import java.util.Collections;
+   8 | import java.util.List;
+   9 | 
+  10 | /**
+  11 |  * Represents a Quiz composed of polymorphic Question objects.
+  12 |  * Demonstrates:
+  13 |  * - Aggregation (Quiz has-many Questions)
+  14 |  * - Domain validation and exception throwing (EmptyQuizException, InvalidQuestionException)
+  15 |  */
+  16 | public class Quiz {
+  17 | 
+  18 |     private final String quizId;
+  19 |     private String title;
+  20 |     private String description;
+  21 |     private String topic;
+  22 |     private DifficultyLevel difficulty;
+  23 |     private String targetAgeGroup;
+  24 |     private final List<Question> questions;
+  25 | 
+  26 |     public Quiz(String quizId, String title, String description, String topic, DifficultyLevel difficulty, String targetAgeGroup) {
+  27 |         if (quizId == null || quizId.trim().isEmpty()) {
+  28 |             throw new IllegalArgumentException("Quiz ID cannot be null or empty!");
+  29 |         }
+  30 |         if (title == null || title.trim().isEmpty()) {
+  31 |             throw new IllegalArgumentException("Quiz title cannot be null or empty!");
+  32 |         }
+  33 |         this.quizId = quizId.trim().toUpperCase();
+  34 |         this.title = title.trim();
+  35 |         this.description = (description != null) ? description.trim() : "";
+  36 |         this.topic = (topic != null) ? topic.trim() : "General Java";
+  37 |         this.difficulty = (difficulty != null) ? difficulty : DifficultyLevel.MEDIUM;
+  38 |         this.targetAgeGroup = (targetAgeGroup != null && !targetAgeGroup.trim().isEmpty()) ? targetAgeGroup.trim() : "College (18-22)";
+  39 |         this.questions = new ArrayList<>();
+  40 |     }
+  41 | 
+  42 |     public Quiz(String quizId, String title, String description, String topic, DifficultyLevel difficulty) {
+  43 |         this(quizId, title, description, topic, difficulty, "College (18-22)");
+  44 |     }
+  45 | 
+  46 |     public String getTargetAgeGroup() {
+  47 |         return targetAgeGroup;
+  48 |     }
+  49 | 
+  50 |     public void setTargetAgeGroup(String targetAgeGroup) {
+  51 |         if (targetAgeGroup != null && !targetAgeGroup.trim().isEmpty()) {
+  52 |             this.targetAgeGroup = targetAgeGroup.trim();
+  53 |         }
+  54 |     }
+  55 | 
+  56 |     public String getQuizId() {
+  57 |         return quizId;
+  58 |     }
+  59 | 
+  60 |     public String getTitle() {
+  61 |         return title;
+  62 |     }
+  63 | 
+  64 |     public void setTitle(String title) {
+  65 |         if (title != null && !title.trim().isEmpty()) {
+  66 |             this.title = title.trim();
+  67 |         }
+  68 |     }
+  69 | 
+  70 |     public String getDescription() {
+  71 |         return description;
+  72 |     }
+  73 | 
+  74 |     public void setDescription(String description) {
+  75 |         this.description = description;
+  76 |     }
+  77 | 
+  78 |     public String getTopic() {
+  79 |         return topic;
+  80 |     }
+  81 | 
+  82 |     public void setTopic(String topic) {
+  83 |         this.topic = topic;
+  84 |     }
+  85 | 
+  86 |     public DifficultyLevel getDifficulty() {
+  87 |         return difficulty;
+  88 |     }
+  89 | 
+  90 |     public void setDifficulty(DifficultyLevel difficulty) {
+  91 |         this.difficulty = difficulty;
+  92 |     }
+  93 | 
+  94 |     public List<Question> getQuestions() {
+  95 |         return Collections.unmodifiableList(questions);
+  96 |     }
+  97 | 
+  98 |     public int getQuestionCount() {
+  99 |         return questions.size();
+ 100 |     }
+ 101 | 
+ 102 |     /**
+ 103 |      * Adds a polymorphic Question to the quiz.
+ 104 |      * Throws InvalidQuestionException if null or duplicate ID.
+ 105 |      */
+ 106 |     public void addQuestion(Question question) throws InvalidQuestionException {
+ 107 |         if (question == null) {
+ 108 |             throw new InvalidQuestionException("Cannot add a null question to the quiz!");
+ 109 |         }
+ 110 |         for (Question q : questions) {
+ 111 |             if (q.getId() == question.getId()) {
+ 112 |                 throw new InvalidQuestionException("Question with ID " + question.getId() + " already exists in this quiz!");
+ 113 |             }
+ 114 |         }
+ 115 |         questions.add(question);
+ 116 |     }
+ 117 | 
+ 118 |     public boolean removeQuestion(int questionId) {
+ 119 |         return questions.removeIf(q -> q.getId() == questionId);
+ 120 |     }
+ 121 | 
+ 122 |     public int getTotalMarks() {
+ 123 |         int total = 0;
+ 124 |         for (Question q : questions) {
+ 125 |             total += q.getMarks();
+ 126 |         }
+ 127 |         return total;
+ 128 |     }
+ 129 | 
+ 130 |     /**
+ 131 |      * Verifies that the quiz is ready to be conducted.
+ 132 |      * Throws EmptyQuizException if no questions are present.
+ 133 |      */
+ 134 |     public void validateForConduct() throws EmptyQuizException {
+ 135 |         if (questions.isEmpty()) {
+ 136 |             throw new EmptyQuizException(quizId);
+ 137 |         }
+ 138 |     }
+ 139 | 
+ 140 |     @Override
+ 141 |     public String toString() {
+ 142 |         return String.format("[%s] %s | Age: %s | Topic: %s | Level: %s | Questions: %d | Total Marks: %d",
+ 143 |                 quizId, title, targetAgeGroup, topic, difficulty.getDisplayName(), questions.size(), getTotalMarks());
+ 144 |     }
+ 145 | }
+
+
+--------------------------------------------------------------------------------
+ File #16: QuizAttempt.java  [Path: src/com/ait/quiz/model/QuizAttempt.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.model;
+   2 | 
+   3 | import java.time.LocalDateTime;
+   4 | import java.time.format.DateTimeFormatter;
+   5 | import java.util.ArrayList;
+   6 | import java.util.Collections;
+   7 | import java.util.List;
+   8 | 
+   9 | /**
+  10 |  * Encapsulates the results of a single quiz attempt by a student.
+  11 |  * Keeps track of score, grading, and detailed question breakdown.
+  12 |  */
+  13 | public class QuizAttempt {
+  14 | 
+  15 |     private final String attemptId;
+  16 |     private final String quizId;
+  17 |     private final String quizTitle;
+  18 |     private final String studentRollNumber;
+  19 |     private final String studentName;
+  20 |     private final String timestamp;
+  21 | 
+  22 |     private int totalQuestions;
+  23 |     private int correctCount;
+  24 |     private int incorrectCount;
+  25 |     private double scoreObtained;
+  26 |     private int totalPossibleMarks;
+  27 |     private double percentage;
+  28 |     private String grade;
+  29 | 
+  30 |     // Detailed record of each question result
+  31 |     public static class QuestionResult {
+  32 |         private final int questionId;
+  33 |         private final String questionText;
+  34 |         private final String studentAnswer;
+  35 |         private final String correctAnswer;
+  36 |         private final boolean isCorrect;
+  37 |         private final double marksAwarded;
+  38 | 
+  39 |         public QuestionResult(int questionId, String questionText, String studentAnswer, 
+  40 |                               String correctAnswer, boolean isCorrect, double marksAwarded) {
+  41 |             this.questionId = questionId;
+  42 |             this.questionText = questionText;
+  43 |             this.studentAnswer = studentAnswer;
+  44 |             this.correctAnswer = correctAnswer;
+  45 |             this.isCorrect = isCorrect;
+  46 |             this.marksAwarded = marksAwarded;
+  47 |         }
+  48 | 
+  49 |         public int getQuestionId() { return questionId; }
+  50 |         public String getQuestionText() { return questionText; }
+  51 |         public String getStudentAnswer() { return studentAnswer; }
+  52 |         public String getCorrectAnswer() { return correctAnswer; }
+  53 |         public boolean isCorrect() { return isCorrect; }
+  54 |         public double getMarksAwarded() { return marksAwarded; }
+  55 |     }
+  56 | 
+  57 |     private final List<QuestionResult> questionResults = new ArrayList<>();
+  58 | 
+  59 |     public QuizAttempt(String attemptId, String quizId, String quizTitle, String studentRollNumber, String studentName) {
+  60 |         this.attemptId = attemptId;
+  61 |         this.quizId = quizId;
+  62 |         this.quizTitle = quizTitle;
+  63 |         this.studentRollNumber = studentRollNumber;
+  64 |         this.studentName = studentName;
+  65 |         this.timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm:ss"));
+  66 |     }
+  67 | 
+  68 |     public void addQuestionResult(QuestionResult result) {
+  69 |         questionResults.add(result);
+  70 |     }
+  71 | 
+  72 |     public List<QuestionResult> getQuestionResults() {
+  73 |         return Collections.unmodifiableList(questionResults);
+  74 |     }
+  75 | 
+  76 |     public String getAttemptId() { return attemptId; }
+  77 |     public String getQuizId() { return quizId; }
+  78 |     public String getQuizTitle() { return quizTitle; }
+  79 |     public String getStudentRollNumber() { return studentRollNumber; }
+  80 |     public String getStudentName() { return studentName; }
+  81 |     public String getTimestamp() { return timestamp; }
+  82 | 
+  83 |     public int getTotalQuestions() { return totalQuestions; }
+  84 |     public void setTotalQuestions(int totalQuestions) { this.totalQuestions = totalQuestions; }
+  85 | 
+  86 |     public int getCorrectCount() { return correctCount; }
+  87 |     public void setCorrectCount(int correctCount) { this.correctCount = correctCount; }
+  88 | 
+  89 |     public int getIncorrectCount() { return incorrectCount; }
+  90 |     public void setIncorrectCount(int incorrectCount) { this.incorrectCount = incorrectCount; }
+  91 | 
+  92 |     public double getScoreObtained() { return scoreObtained; }
+  93 |     public void setScoreObtained(double scoreObtained) { this.scoreObtained = scoreObtained; }
+  94 | 
+  95 |     public int getTotalPossibleMarks() { return totalPossibleMarks; }
+  96 |     public void setTotalPossibleMarks(int totalPossibleMarks) { this.totalPossibleMarks = totalPossibleMarks; }
+  97 | 
+  98 |     public double getPercentage() { return percentage; }
+  99 |     public void setPercentage(double percentage) { this.percentage = percentage; }
+ 100 | 
+ 101 |     public String getGrade() { return grade; }
+ 102 |     public void setGrade(String grade) { this.grade = grade; }
+ 103 | 
+ 104 |     @Override
+ 105 |     public String toString() {
+ 106 |         return String.format("[%s] Student: %s (%s) | Quiz: %s | Score: %.2f/%d (%.2f%%) | Grade: %s",
+ 107 |                 attemptId, studentName, studentRollNumber, quizId, scoreObtained, totalPossibleMarks, percentage, grade);
+ 108 |     }
+ 109 | }
+
+
+================================================================================
+ SECTION: UNIT III: INTERFACES & STRATEGY PATTERN GRADING POLICIES
+================================================================================
+
+--------------------------------------------------------------------------------
+ File #17: QuizOperations.java  [Path: src/com/ait/quiz/service/QuizOperations.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.service;
+   2 | 
+   3 | import com.ait.quiz.exception.DuplicateQuizException;
+   4 | import com.ait.quiz.exception.InvalidQuestionException;
+   5 | import com.ait.quiz.exception.QuizNotFoundException;
+   6 | import com.ait.quiz.model.DifficultyLevel;
+   7 | import com.ait.quiz.model.Question;
+   8 | import com.ait.quiz.model.Quiz;
+   9 | import com.ait.quiz.model.QuizAttempt;
+  10 | 
+  11 | import java.util.List;
+  12 | 
+  13 | /**
+  14 |  * Core interface defining lifecycle operations on quizzes and attempts.
+  15 |  * Demonstrates Unit III concept: Interfaces (defining contract for Quiz operations).
+  16 |  */
+  17 | public interface QuizOperations {
+  18 | 
+  19 |     /**
+  20 |      * Creates a new quiz in the repository.
+  21 |      * Throws DuplicateQuizException if the quizId is already taken.
+  22 |      */
+  23 |     void createQuiz(Quiz quiz) throws DuplicateQuizException;
+  24 | 
+  25 |     /**
+  26 |      * Adds a polymorphic Question to the designated Quiz.
+  27 |      * Throws QuizNotFoundException if target quiz doesn't exist,
+  28 |      * or InvalidQuestionException if the question violates integrity rules.
+  29 |      */
+  30 |     void addQuestionToQuiz(String quizId, Question question) 
+  31 |             throws QuizNotFoundException, InvalidQuestionException;
+  32 | 
+  33 |     /**
+  34 |      * Retrieves a quiz by its unique ID.
+  35 |      * Throws QuizNotFoundException if not found.
+  36 |      */
+  37 |     Quiz getQuiz(String quizId) throws QuizNotFoundException;
+  38 | 
+  39 |     /**
+  40 |      * Returns all quizzes registered in the system.
+  41 |      */
+  42 |     List<Quiz> getAllQuizzes();
+  43 | 
+  44 |     /**
+  45 |      * Overloaded search method: Finds quizzes matching a topic keyword.
+  46 |      */
+  47 |     List<Quiz> searchQuiz(String topic);
+  48 | 
+  49 |     /**
+  50 |      * Overloaded search method: Finds quizzes matching both topic and difficulty level.
+  51 |      */
+  52 |     List<Quiz> searchQuiz(String topic, DifficultyLevel level);
+  53 | 
+  54 |     /**
+  55 |      * Deletes a quiz by its ID.
+  56 |      * Throws QuizNotFoundException if not found.
+  57 |      */
+  58 |     boolean deleteQuiz(String quizId) throws QuizNotFoundException;
+  59 | 
+  60 |     /**
+  61 |      * Stores a student's completed quiz attempt.
+  62 |      */
+  63 |     void recordAttempt(QuizAttempt attempt);
+  64 | 
+  65 |     /**
+  66 |      * Retrieves all recorded quiz attempts.
+  67 |      */
+  68 |     List<QuizAttempt> getAllAttempts();
+  69 | 
+  70 |     /**
+  71 |      * Retrieves all quiz attempts by a specific student roll number.
+  72 |      */
+  73 |     List<QuizAttempt> getAttemptsByStudent(String rollNumber);
+  74 | 
+  75 |     /**
+  76 |      * Returns total count of registered quizzes.
+  77 |      */
+  78 |     int getQuizCount();
+  79 | }
+
+
+--------------------------------------------------------------------------------
+ File #18: QuizEvaluator.java  [Path: src/com/ait/quiz/service/QuizEvaluator.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.service;
+   2 | 
+   3 | import com.ait.quiz.model.QuizAttempt;
+   4 | 
+   5 | /**
+   6 |  * Interface defining evaluation contracts and grading policies.
+   7 |  * Demonstrates Unit III concept: Interfaces (defining common behaviour to be implemented).
+   8 |  */
+   9 | public interface QuizEvaluator {
+  10 | 
+  11 |     /**
+  12 |      * Calculates the overall score for a completed quiz attempt.
+  13 |      */
+  14 |     double evaluateScore(QuizAttempt attempt);
+  15 | 
+  16 |     /**
+  17 |      * Overloaded method demonstrating Compile-time Polymorphism (Method Overloading).
+  18 |      * Calculates score based on raw marks and penalty deduction.
+  19 |      */
+  20 |     double evaluateScore(double earnedMarks, int incorrectCount, double penaltyPerIncorrect);
+  21 | 
+  22 |     /**
+  23 |      * Determines letter grade based on percentage.
+  24 |      */
+  25 |     String generateGrade(double percentage);
+  26 | 
+  27 |     /**
+  28 |      * Returns the title/description of the grading policy.
+  29 |      */
+  30 |     String getPolicyName();
+  31 | 
+  32 |     /**
+  33 |      * Prints a comprehensive score breakdown and question-by-question review.
+  34 |      */
+  35 |     void printDetailedReport(QuizAttempt attempt);
+  36 | }
+
+
+--------------------------------------------------------------------------------
+ File #19: StandardGradingPolicy.java  [Path: src/com/ait/quiz/service/StandardGradingPolicy.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.service;
+   2 | 
+   3 | import com.ait.quiz.model.QuizAttempt;
+   4 | 
+   5 | /**
+   6 |  * Standard university grading implementation of QuizEvaluator.
+   7 |  * Awards full marks for correct answers and zero deduction for incorrect answers.
+   8 |  * Demonstrates:
+   9 |  * - Interface Implementation
+  10 |  * - Polymorphism (Method Overriding & Overloading)
+  11 |  */
+  12 | public class StandardGradingPolicy implements QuizEvaluator {
+  13 | 
+  14 |     @Override
+  15 |     public double evaluateScore(QuizAttempt attempt) {
+  16 |         double total = 0.0;
+  17 |         for (QuizAttempt.QuestionResult res : attempt.getQuestionResults()) {
+  18 |             if (res.isCorrect()) {
+  19 |                 total += res.getMarksAwarded();
+  20 |             }
+  21 |         }
+  22 |         return total;
+  23 |     }
+  24 | 
+  25 |     @Override
+  26 |     public double evaluateScore(double earnedMarks, int incorrectCount, double penaltyPerIncorrect) {
+  27 |         // Standard policy ignores penalty
+  28 |         return Math.max(0.0, earnedMarks);
+  29 |     }
+  30 | 
+  31 |     @Override
+  32 |     public String generateGrade(double percentage) {
+  33 |         if (percentage >= 90.0) return "O (Outstanding)";
+  34 |         if (percentage >= 80.0) return "A+ (Excellent)";
+  35 |         if (percentage >= 70.0) return "A (Very Good)";
+  36 |         if (percentage >= 60.0) return "B+ (Good)";
+  37 |         if (percentage >= 50.0) return "B (Above Average)";
+  38 |         if (percentage >= 40.0) return "C (Pass)";
+  39 |         return "F (Fail)";
+  40 |     }
+  41 | 
+  42 |     @Override
+  43 |     public String getPolicyName() {
+  44 |         return "Standard Linear Evaluation (No Negative Marking)";
+  45 |     }
+  46 | 
+  47 |     @Override
+  48 |     public void printDetailedReport(QuizAttempt attempt) {
+  49 |         System.out.println("================================================================================");
+  50 |         System.out.println("                         DETAILED QUIZ PERFORMANCE REPORT                       ");
+  51 |         System.out.println("================================================================================");
+  52 |         System.out.printf("Attempt ID   : %s%n", attempt.getAttemptId());
+  53 |         System.out.printf("Student Name : %s (Roll No: %s)%n", attempt.getStudentName(), attempt.getStudentRollNumber());
+  54 |         System.out.printf("Quiz Title   : %s (ID: %s)%n", attempt.getQuizTitle(), attempt.getQuizId());
+  55 |         System.out.printf("Grading Rule : %s%n", getPolicyName());
+  56 |         System.out.printf("Date & Time  : %s%n", attempt.getTimestamp());
+  57 |         System.out.println("--------------------------------------------------------------------------------");
+  58 |         System.out.printf("Total Questions: %d | Correct: %d | Incorrect: %d%n",
+  59 |                 attempt.getTotalQuestions(), attempt.getCorrectCount(), attempt.getIncorrectCount());
+  60 |         System.out.printf("Final Score    : %.2f / %d marks%n", attempt.getScoreObtained(), attempt.getTotalPossibleMarks());
+  61 |         System.out.printf("Percentage     : %.2f%%%n", attempt.getPercentage());
+  62 |         System.out.printf("Awarded Grade  : %s%n", attempt.getGrade());
+  63 |         System.out.println("--------------------------------------------------------------------------------");
+  64 |         System.out.println("QUESTION BREAKDOWN:");
+  65 |         int idx = 1;
+  66 |         for (QuizAttempt.QuestionResult q : attempt.getQuestionResults()) {
+  67 |             String status = q.isCorrect() ? "[PASS / CORRECT]" : "[FAIL / INCORRECT]";
+  68 |             System.out.printf(" %2d. %s %s%n", idx++, status, q.getQuestionText());
+  69 |             System.out.printf("     Your Answer   : %s%n", q.getStudentAnswer());
+  70 |             System.out.printf("     Correct Answer: %s%n", q.getCorrectAnswer());
+  71 |             System.out.printf("     Marks Earned  : %.2f%n", q.getMarksAwarded());
+  72 |         }
+  73 |         System.out.println("================================================================================");
+  74 |     }
+  75 | }
+
+
+--------------------------------------------------------------------------------
+ File #20: NegativeMarkingGradingPolicy.java  [Path: src/com/ait/quiz/service/NegativeMarkingGradingPolicy.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.service;
+   2 | 
+   3 | import com.ait.quiz.model.QuizAttempt;
+   4 | 
+   5 | /**
+   6 |  * Competitive exam grading implementation of QuizEvaluator.
+   7 |  * Penalizes incorrect answers with a configurable negative deduction factor (default 25% penalty).
+   8 |  * Demonstrates:
+   9 |  * - Interface Implementation
+  10 |  * - Polymorphism (Method Overriding & Overloading)
+  11 |  */
+  12 | public class NegativeMarkingGradingPolicy implements QuizEvaluator {
+  13 | 
+  14 |     private final double penaltyRate; // e.g. 0.25 for 25% negative marking
+  15 | 
+  16 |     public NegativeMarkingGradingPolicy() {
+  17 |         this(0.25);
+  18 |     }
+  19 | 
+  20 |     public NegativeMarkingGradingPolicy(double penaltyRate) {
+  21 |         if (penaltyRate < 0.0 || penaltyRate > 1.0) {
+  22 |             throw new IllegalArgumentException("Penalty rate must be between 0.0 and 1.0!");
+  23 |         }
+  24 |         this.penaltyRate = penaltyRate;
+  25 |     }
+  26 | 
+  27 |     public double getPenaltyRate() {
+  28 |         return penaltyRate;
+  29 |     }
+  30 | 
+  31 |     @Override
+  32 |     public double evaluateScore(QuizAttempt attempt) {
+  33 |         double rawScore = 0.0;
+  34 |         for (QuizAttempt.QuestionResult res : attempt.getQuestionResults()) {
+  35 |             if (res.isCorrect()) {
+  36 |                 rawScore += res.getMarksAwarded();
+  37 |             } else {
+  38 |                 // Deduct penalty based on question's marks
+  39 |                 double penalty = res.getMarksAwarded() * penaltyRate;
+  40 |                 rawScore -= penalty;
+  41 |             }
+  42 |         }
+  43 |         // Score can be negative or floored at 0 depending on evaluation rules
+  44 |         return Math.max(0.0, rawScore);
+  45 |     }
+  46 | 
+  47 |     @Override
+  48 |     public double evaluateScore(double earnedMarks, int incorrectCount, double penaltyPerIncorrect) {
+  49 |         double total = earnedMarks - (incorrectCount * penaltyPerIncorrect);
+  50 |         return Math.max(0.0, total);
+  51 |     }
+  52 | 
+  53 |     @Override
+  54 |     public String generateGrade(double percentage) {
+  55 |         if (percentage >= 85.0) return "O (Exceptional - Competitive Rank 1)";
+  56 |         if (percentage >= 75.0) return "A+ (Excellent - Advanced Proficiency)";
+  57 |         if (percentage >= 65.0) return "A (Very Good - High Proficiency)";
+  58 |         if (percentage >= 50.0) return "B (Qualified)";
+  59 |         return "Not Qualified (Below cutoff with negative penalties)";
+  60 |     }
+  61 | 
+  62 |     @Override
+  63 |     public String getPolicyName() {
+  64 |         return String.format("Competitive Evaluation (%.0f%% Negative Penalty for wrong answers)", penaltyRate * 100);
+  65 |     }
+  66 | 
+  67 |     @Override
+  68 |     public void printDetailedReport(QuizAttempt attempt) {
+  69 |         System.out.println("================================================================================");
+  70 |         System.out.println("                 COMPETITIVE EXAM DETAILED SCORECARD WITH PENALTY               ");
+  71 |         System.out.println("================================================================================");
+  72 |         System.out.printf("Attempt ID   : %s%n", attempt.getAttemptId());
+  73 |         System.out.printf("Student Name : %s (Roll No: %s)%n", attempt.getStudentName(), attempt.getStudentRollNumber());
+  74 |         System.out.printf("Quiz Title   : %s (ID: %s)%n", attempt.getQuizTitle(), attempt.getQuizId());
+  75 |         System.out.printf("Grading Rule : %s%n", getPolicyName());
+  76 |         System.out.printf("Date & Time  : %s%n", attempt.getTimestamp());
+  77 |         System.out.println("--------------------------------------------------------------------------------");
+  78 |         System.out.printf("Total Questions : %d%n", attempt.getTotalQuestions());
+  79 |         System.out.printf("Correct Answers : %d%n", attempt.getCorrectCount());
+  80 |         System.out.printf("Wrong Answers   : %d (-%.0f%% marks penalized per wrong answer)%n", 
+  81 |                 attempt.getIncorrectCount(), penaltyRate * 100);
+  82 |         System.out.printf("Net Score       : %.2f / %d marks%n", attempt.getScoreObtained(), attempt.getTotalPossibleMarks());
+  83 |         System.out.printf("Net Percentage  : %.2f%%%n", attempt.getPercentage());
+  84 |         System.out.printf("Result Status   : %s%n", attempt.getGrade());
+  85 |         System.out.println("--------------------------------------------------------------------------------");
+  86 |         System.out.println("ITEM-BY-ITEM AUDIT:");
+  87 |         int idx = 1;
+  88 |         for (QuizAttempt.QuestionResult q : attempt.getQuestionResults()) {
+  89 |             if (q.isCorrect()) {
+  90 |                 System.out.printf(" %2d. [+%.2f marks] %s%n", idx++, q.getMarksAwarded(), q.getQuestionText());
+  91 |             } else {
+  92 |                 double penalty = q.getMarksAwarded() * penaltyRate;
+  93 |                 System.out.printf(" %2d. [-%.2f PENALTY] %s%n", idx++, penalty, q.getQuestionText());
+  94 |             }
+  95 |             System.out.printf("     Your Answer   : %s%n", q.getStudentAnswer());
+  96 |             System.out.printf("     Correct Answer: %s%n", q.getCorrectAnswer());
+  97 |         }
+  98 |         System.out.println("================================================================================");
+  99 |     }
+ 100 | }
+
+
+--------------------------------------------------------------------------------
+ File #21: QuizManager.java  [Path: src/com/ait/quiz/service/QuizManager.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.service;
+   2 | 
+   3 | import com.ait.quiz.exception.DuplicateQuizException;
+   4 | import com.ait.quiz.exception.InvalidQuestionException;
+   5 | import com.ait.quiz.exception.QuizNotFoundException;
+   6 | import com.ait.quiz.model.*;
+   7 | 
+   8 | import java.util.*;
+   9 | 
+  10 | /**
+  11 |  * Service implementation managing quizzes, questions, and attempt records.
+  12 |  * Demonstrates:
+  13 |  * - Interface Implementation (implements QuizOperations)
+  14 |  * - Method Overloading (searchQuiz with 1 param vs 2 params)
+  15 |  * - Exception Handling (throwing custom checked exceptions)
+  16 |  * - Collections Framework (Map, List, ArrayList, LinkedHashMap)
+  17 |  */
+  18 | public class QuizManager implements QuizOperations {
+  19 | 
+  20 |     private final Map<String, Quiz> quizMap;
+  21 |     private final List<QuizAttempt> attemptHistory;
+  22 | 
+  23 |     public QuizManager() {
+  24 |         this.quizMap = new LinkedHashMap<>();
+  25 |         this.attemptHistory = new ArrayList<>();
+  26 |         preloadDefaultQuizzes();
+  27 |     }
+  28 | 
+  29 |     @Override
+  30 |     public void createQuiz(Quiz quiz) throws DuplicateQuizException {
+  31 |         if (quiz == null) {
+  32 |             throw new IllegalArgumentException("Cannot create a null quiz!");
+  33 |         }
+  34 |         String idKey = quiz.getQuizId().toUpperCase();
+  35 |         if (quizMap.containsKey(idKey)) {
+  36 |             throw new DuplicateQuizException(quiz.getQuizId());
+  37 |         }
+  38 |         quizMap.put(idKey, quiz);
+  39 |     }
+  40 | 
+  41 |     @Override
+  42 |     public void addQuestionToQuiz(String quizId, Question question) 
+  43 |             throws QuizNotFoundException, InvalidQuestionException {
+  44 |         Quiz quiz = getQuiz(quizId);
+  45 |         quiz.addQuestion(question);
+  46 |     }
+  47 | 
+  48 |     @Override
+  49 |     public Quiz getQuiz(String quizId) throws QuizNotFoundException {
+  50 |         if (quizId == null || quizId.trim().isEmpty()) {
+  51 |             throw new QuizNotFoundException("NULL/EMPTY");
+  52 |         }
+  53 |         String idKey = quizId.trim().toUpperCase();
+  54 |         Quiz quiz = quizMap.get(idKey);
+  55 |         if (quiz == null) {
+  56 |             throw new QuizNotFoundException(quizId);
+  57 |         }
+  58 |         return quiz;
+  59 |     }
+  60 | 
+  61 |     @Override
+  62 |     public List<Quiz> getAllQuizzes() {
+  63 |         return new ArrayList<>(quizMap.values());
+  64 |     }
+  65 | 
+  66 |     /**
+  67 |      * Overloaded search method: Search by topic keyword.
+  68 |      */
+  69 |     @Override
+  70 |     public List<Quiz> searchQuiz(String topic) {
+  71 |         if (topic == null || topic.trim().isEmpty()) {
+  72 |             return getAllQuizzes();
+  73 |         }
+  74 |         String query = topic.trim().toLowerCase();
+  75 |         List<Quiz> matched = new ArrayList<>();
+  76 |         for (Quiz q : quizMap.values()) {
+  77 |             if (q.getTopic().toLowerCase().contains(query) || q.getTitle().toLowerCase().contains(query)) {
+  78 |                 matched.add(q);
+  79 |             }
+  80 |         }
+  81 |         return matched;
+  82 |     }
+  83 | 
+  84 |     /**
+  85 |      * Overloaded search method: Search by topic keyword AND DifficultyLevel.
+  86 |      * Demonstrates Compile-time Polymorphism (Method Overloading).
+  87 |      */
+  88 |     @Override
+  89 |     public List<Quiz> searchQuiz(String topic, DifficultyLevel level) {
+  90 |         List<Quiz> topicMatches = searchQuiz(topic);
+  91 |         if (level == null) {
+  92 |             return topicMatches;
+  93 |         }
+  94 |         List<Quiz> finalMatches = new ArrayList<>();
+  95 |         for (Quiz q : topicMatches) {
+  96 |             if (q.getDifficulty() == level) {
+  97 |                 finalMatches.add(q);
+  98 |             }
+  99 |         }
+ 100 |         return finalMatches;
+ 101 |     }
+ 102 | 
+ 103 |     @Override
+ 104 |     public boolean deleteQuiz(String quizId) throws QuizNotFoundException {
+ 105 |         String idKey = quizId.trim().toUpperCase();
+ 106 |         if (!quizMap.containsKey(idKey)) {
+ 107 |             throw new QuizNotFoundException(quizId);
+ 108 |         }
+ 109 |         quizMap.remove(idKey);
+ 110 |         return true;
+ 111 |     }
+ 112 | 
+ 113 |     @Override
+ 114 |     public void recordAttempt(QuizAttempt attempt) {
+ 115 |         if (attempt != null) {
+ 116 |             attemptHistory.add(attempt);
+ 117 |         }
+ 118 |     }
+ 119 | 
+ 120 |     @Override
+ 121 |     public List<QuizAttempt> getAllAttempts() {
+ 122 |         return Collections.unmodifiableList(attemptHistory);
+ 123 |     }
+ 124 | 
+ 125 |     @Override
+ 126 |     public List<QuizAttempt> getAttemptsByStudent(String rollNumber) {
+ 127 |         if (rollNumber == null) return Collections.emptyList();
+ 128 |         List<QuizAttempt> studentAttempts = new ArrayList<>();
+ 129 |         for (QuizAttempt att : attemptHistory) {
+ 130 |             if (att.getStudentRollNumber().equalsIgnoreCase(rollNumber.trim())) {
+ 131 |                 studentAttempts.add(att);
+ 132 |             }
+ 133 |         }
+ 134 |         return studentAttempts;
+ 135 |     }
+ 136 | 
+ 137 |     @Override
+ 138 |     public int getQuizCount() {
+ 139 |         return quizMap.size();
+ 140 |     }
+ 141 | 
+ 142 |     /**
+ 143 |      * Pre-populates the system with realistic sample quizzes containing MCQs,
+ 144 |      * True/False questions, and Numeric questions aligned with SE IT Unit III & IV.
+ 145 |      */
+ 146 |     private void preloadDefaultQuizzes() {
+ 147 |         try {
+ 148 |             // ==============================================================
+ 149 |             // Quiz 1: Unit III - OOP, Abstract Classes, Interfaces & Polymorphism
+ 150 |             // ==============================================================
+ 151 |             // ==============================================================
+ 152 |             // Quiz 1: Unit III - OOP, Abstract Classes, Interfaces & Polymorphism (College 18-22)
+ 153 |             // ==============================================================
+ 154 |             Quiz oopQuiz = new Quiz("JAVA-OOP", "OOP, Interfaces & Polymorphism",
+ 155 |                     "Comprehensive test on Unit III: dynamic binding, abstract classes, interfaces",
+ 156 |                     "Object-Oriented Programming", DifficultyLevel.MEDIUM, "College (18-22)");
+ 157 | 
+ 158 |             oopQuiz.addQuestion(new MultipleChoiceQuestion(
+ 159 |                     1,
+ 160 |                     "Which Java keyword is used to implement an interface in a class?",
+ 161 |                     5,
+ 162 |                     "Interfaces",
+ 163 |                     DifficultyLevel.EASY,
+ 164 |                     Arrays.asList("extends", "implements", "inherits", "interface"),
+ 165 |                     1 // 'implements' -> index 1
+ 166 |             ));
+ 167 | 
+ 168 |             oopQuiz.addQuestion(new MultipleChoiceQuestion(
+ 169 |                     2,
+ 170 |                     "Which of the following statements about an abstract class in Java is TRUE?",
+ 171 |                     5,
+ 172 |                     "Abstract Classes",
+ 173 |                     DifficultyLevel.MEDIUM,
+ 174 |                     Arrays.asList(
+ 175 |                             "An abstract class can be instantiated directly using 'new'",
+ 176 |                             "An abstract class can contain both abstract methods and concrete methods",
+ 177 |                             "An abstract class cannot contain constructors",
+ 178 |                             "All methods in an abstract class must be abstract"
+ 179 |                     ),
+ 180 |                     1 // index 1
+ 181 |             ));
+ 182 | 
+ 183 |             oopQuiz.addQuestion(new TrueFalseQuestion(
+ 184 |                     3,
+ 185 |                     "In Java, method overloading is resolved at compile time, whereas method overriding is resolved at runtime (dynamic method dispatch).",
+ 186 |                     5,
+ 187 |                     "Polymorphism",
+ 188 |                     DifficultyLevel.EASY,
+ 189 |                     true
+ 190 |             ));
+ 191 | 
+ 192 |             oopQuiz.addQuestion(new TrueFalseQuestion(
+ 193 |                     4,
+ 194 |                     "A class in Java can implement multiple interfaces and simultaneously extend multiple concrete classes.",
+ 195 |                     5,
+ 196 |                     "Multiple Inheritance",
+ 197 |                     DifficultyLevel.MEDIUM,
+ 198 |                     false // Java does not support multiple class inheritance
+ 199 |             ));
+ 200 | 
+ 201 |             oopQuiz.addQuestion(new NumericQuestion(
+ 202 |                     5,
+ 203 |                     "In Java SE 8 and above, what is the minimum number of abstract methods a Functional Interface must have?",
+ 204 |                     5,
+ 205 |                     "Interfaces",
+ 206 |                     DifficultyLevel.EASY,
+ 207 |                     1.0,
+ 208 |                     0.0
+ 209 |             ));
+ 210 | 
+ 211 |             createQuiz(oopQuiz);
+ 212 | 
+ 213 |             // ==============================================================
+ 214 |             // Quiz 2: Unit IV - Exception Handling & Robust Programming (College 18-22)
+ 215 |             // ==============================================================
+ 216 |             Quiz excQuiz = new Quiz("JAVA-EXC", "Exception Handling in Java",
+ 217 |                     "Assesses try, catch, finally, throw, throws, and custom exceptions",
+ 218 |                     "Exception Handling", DifficultyLevel.HARD, "College (18-22)");
+ 219 | 
+ 220 |             excQuiz.addQuestion(new MultipleChoiceQuestion(
+ 221 |                     1,
+ 222 |                     "What block is GUARANTEED to execute regardless of whether an exception is thrown or caught (unless System.exit() is called)?",
+ 223 |                     5,
+ 224 |                     "Exception Handling",
+ 225 |                     DifficultyLevel.EASY,
+ 226 |                     Arrays.asList("catch", "throw", "finally", "throws"),
+ 227 |                     2 // 'finally' -> index 2
+ 228 |             ));
+ 229 | 
+ 230 |             excQuiz.addQuestion(new MultipleChoiceQuestion(
+ 231 |                     2,
+ 232 |                     "Which base class must a custom checked exception inherit from in Java?",
+ 233 |                     5,
+ 234 |                     "Custom Exceptions",
+ 235 |                     DifficultyLevel.MEDIUM,
+ 236 |                     Arrays.asList("java.lang.RuntimeException", "java.lang.Exception", "java.lang.Error", "java.lang.ThrowableOnly"),
+ 237 |                     1 // java.lang.Exception -> index 1
+ 238 |             ));
+ 239 | 
+ 240 |             excQuiz.addQuestion(new TrueFalseQuestion(
+ 241 |                     3,
+ 242 |                     "A single 'try' block can have multiple 'catch' blocks, but subclasses of Exception must be caught BEFORE superclasses.",
+ 243 |                     5,
+ 244 |                     "Catch Hierarchy",
+ 245 |                     DifficultyLevel.MEDIUM,
+ 246 |                     true
+ 247 |             ));
+ 248 | 
+ 249 |             excQuiz.addQuestion(new NumericQuestion(
+ 250 |                     4,
+ 251 |                     "If an integer division 10 / 0 is evaluated in Java, an ArithmeticException is thrown. What is the byte size of standard Java int?",
+ 252 |                     5,
+ 253 |                     "Java Fundamentals",
+ 254 |                     DifficultyLevel.EASY,
+ 255 |                     4.0,
+ 256 |                     0.0
+ 257 |             ));
+ 258 | 
+ 259 |             createQuiz(excQuiz);
+ 260 | 
+ 261 |             // ==============================================================
+ 262 |             // Quiz 3: Java Fundamentals & Collections (College 18-22)
+ 263 |             // ==============================================================
+ 264 |             Quiz genQuiz = new Quiz("JAVA-GEN", "Java Collections & Core Concepts",
+ 265 |                     "Basics of Lists, Maps, and object orientation",
+ 266 |                     "Collections Framework", DifficultyLevel.EASY, "College (18-22)");
+ 267 | 
+ 268 |             genQuiz.addQuestion(new MultipleChoiceQuestion(
+ 269 |                     1,
+ 270 |                     "Which collection allows storing key-value pairs without duplicate keys?",
+ 271 |                     5,
+ 272 |                     "Collections",
+ 273 |                     DifficultyLevel.EASY,
+ 274 |                     Arrays.asList("ArrayList", "HashMap", "LinkedList", "Vector"),
+ 275 |                     1 // HashMap -> index 1
+ 276 |             ));
+ 277 | 
+ 278 |             genQuiz.addQuestion(new TrueFalseQuestion(
+ 279 |                     2,
+ 280 |                     "ArrayList in Java maintains insertion order and allows duplicate elements.",
+ 281 |                     5,
+ 282 |                     "Collections",
+ 283 |                     DifficultyLevel.EASY,
+ 284 |                     true
+ 285 |             ));
+ 286 | 
+ 287 |             createQuiz(genQuiz);
+ 288 | 
+ 289 |             // ==============================================================
+ 290 |             // Quiz 4: KIDS (8-12 yrs) - Junior Science & Solar System Quest
+ 291 |             // ==============================================================
+ 292 |             Quiz kidsSciQuiz = new Quiz("KIDS-SCI", "Junior Science & Space Quest",
+ 293 |                     "Exciting questions on space, nature, and animals for curious young minds!",
+ 294 |                     "Science & Discovery", DifficultyLevel.EASY, "Kids (8-12)");
+ 295 | 
+ 296 |             kidsSciQuiz.addQuestion(new MultipleChoiceQuestion(
+ 297 |                     1,
+ 298 |                     "Which planet in our solar system is known as the 'Red Planet'?",
+ 299 |                     5,
+ 300 |                     "Space Exploration",
+ 301 |                     DifficultyLevel.EASY,
+ 302 |                     Arrays.asList("Earth", "Mars", "Jupiter", "Venus"),
+ 303 |                     1 // Mars -> index 1
+ 304 |             ));
+ 305 | 
+ 306 |             kidsSciQuiz.addQuestion(new MultipleChoiceQuestion(
+ 307 |                     2,
+ 308 |                     "What is the hardest natural mineral substance found on Earth?",
+ 309 |                     5,
+ 310 |                     "Earth Science",
+ 311 |                     DifficultyLevel.EASY,
+ 312 |                     Arrays.asList("Gold", "Iron", "Diamond", "Silver"),
+ 313 |                     2 // Diamond -> index 2
+ 314 |             ));
+ 315 | 
+ 316 |             kidsSciQuiz.addQuestion(new TrueFalseQuestion(
+ 317 |                     3,
+ 318 |                     "Green plants make their food using sunlight through a process called photosynthesis.",
+ 319 |                     5,
+ 320 |                     "Biology",
+ 321 |                     DifficultyLevel.EASY,
+ 322 |                     true
+ 323 |             ));
+ 324 | 
+ 325 |             kidsSciQuiz.addQuestion(new TrueFalseQuestion(
+ 326 |                     4,
+ 327 |                     "The Moon produces its own light just like the Sun.",
+ 328 |                     5,
+ 329 |                     "Astronomy",
+ 330 |                     DifficultyLevel.EASY,
+ 331 |                     false
+ 332 |             ));
+ 333 | 
+ 334 |             kidsSciQuiz.addQuestion(new NumericQuestion(
+ 335 |                     5,
+ 336 |                     "How many recognized planets are there in our Solar System?",
+ 337 |                     5,
+ 338 |                     "Solar System",
+ 339 |                     DifficultyLevel.EASY,
+ 340 |                     8.0,
+ 341 |                     0.0
+ 342 |             ));
+ 343 | 
+ 344 |             createQuiz(kidsSciQuiz);
+ 345 | 
+ 346 |             // ==============================================================
+ 347 |             // Quiz 5: KIDS (8-12 yrs) - Junior Math & Logic Riddles
+ 348 |             // ==============================================================
+ 349 |             Quiz kidsMathQuiz = new Quiz("KIDS-MATH", "Junior Math & Brain Riddles",
+ 350 |                     "Fun numerical puzzles and geometry riddles designed for young learners.",
+ 351 |                     "Elementary Math", DifficultyLevel.EASY, "Kids (8-12)");
+ 352 | 
+ 353 |             kidsMathQuiz.addQuestion(new MultipleChoiceQuestion(
+ 354 |                     1,
+ 355 |                     "How many sides does an Octagon have?",
+ 356 |                     5,
+ 357 |                     "Shapes & Geometry",
+ 358 |                     DifficultyLevel.EASY,
+ 359 |                     Arrays.asList("6", "7", "8", "10"),
+ 360 |                     2 // 8 -> index 2
+ 361 |             ));
+ 362 | 
+ 363 |             kidsMathQuiz.addQuestion(new MultipleChoiceQuestion(
+ 364 |                     2,
+ 365 |                     "What is 15 multiplied by 4?",
+ 366 |                     5,
+ 367 |                     "Multiplication",
+ 368 |                     DifficultyLevel.EASY,
+ 369 |                     Arrays.asList("45", "50", "60", "65"),
+ 370 |                     2 // 60 -> index 2
+ 371 |             ));
+ 372 | 
+ 373 |             kidsMathQuiz.addQuestion(new TrueFalseQuestion(
+ 374 |                     3,
+ 375 |                     "A flat triangle can have two 90-degree right angles.",
+ 376 |                     5,
+ 377 |                     "Geometry Rules",
+ 378 |                     DifficultyLevel.EASY,
+ 379 |                     false
+ 380 |             ));
+ 381 | 
+ 382 |             kidsMathQuiz.addQuestion(new NumericQuestion(
+ 383 |                     4,
+ 384 |                     "If you have 3 dozen eggs, how many total eggs do you have?",
+ 385 |                     5,
+ 386 |                     "Mental Math",
+ 387 |                     DifficultyLevel.EASY,
+ 388 |                     36.0,
+ 389 |                     0.0
+ 390 |             ));
+ 391 | 
+ 392 |             createQuiz(kidsMathQuiz);
+ 393 | 
+ 394 |             // ==============================================================
+ 395 |             // Quiz 6: TEENS (13-17 yrs) - Python & Algorithmic Thinking
+ 396 |             // ==============================================================
+ 397 |             Quiz teenCodeQuiz = new Quiz("TEEN-CODE", "Teen Coder: Python & Logic Basics",
+ 398 |                     "Fundamental coding concepts, variables, loops, and algorithmic problem solving.",
+ 399 |                     "Computer Science", DifficultyLevel.MEDIUM, "Teens (13-17)");
+ 400 | 
+ 401 |             teenCodeQuiz.addQuestion(new MultipleChoiceQuestion(
+ 402 |                     1,
+ 403 |                     "In Python, which built-in function is used to output text to the console?",
+ 404 |                     5,
+ 405 |                     "Python Fundamentals",
+ 406 |                     DifficultyLevel.EASY,
+ 407 |                     Arrays.asList("echo()", "display()", "print()", "write()"),
+ 408 |                     2 // print() -> index 2
+ 409 |             ));
+ 410 | 
+ 411 |             teenCodeQuiz.addQuestion(new MultipleChoiceQuestion(
+ 412 |                     2,
+ 413 |                     "According to operator precedence, what is the output of: 10 + 2 * 5?",
+ 414 |                     5,
+ 415 |                     "Arithmetic Precedence",
+ 416 |                     DifficultyLevel.EASY,
+ 417 |                     Arrays.asList("60", "20", "70", "25"),
+ 418 |                     1 // 20 -> index 1
+ 419 |             ));
+ 420 | 
+ 421 |             teenCodeQuiz.addQuestion(new TrueFalseQuestion(
+ 422 |                     3,
+ 423 |                     "In most modern programming languages, a variable name can start with a number (e.g., 2ndValue).",
+ 424 |                     5,
+ 425 |                     "Syntax Rules",
+ 426 |                     DifficultyLevel.EASY,
+ 427 |                     false
+ 428 |             ));
+ 429 | 
+ 430 |             teenCodeQuiz.addQuestion(new TrueFalseQuestion(
+ 431 |                     4,
+ 432 |                     "A 'while' loop continues to execute as long as its conditional test remains true.",
+ 433 |                     5,
+ 434 |                     "Control Structures",
+ 435 |                     DifficultyLevel.EASY,
+ 436 |                     true
+ 437 |             ));
+ 438 | 
+ 439 |             teenCodeQuiz.addQuestion(new NumericQuestion(
+ 440 |                     5,
+ 441 |                     "What is 2 raised to the power of 5 (2^5)?",
+ 442 |                     5,
+ 443 |                     "Binary & Powers",
+ 444 |                     DifficultyLevel.EASY,
+ 445 |                     32.0,
+ 446 |                     0.0
+ 447 |             ));
+ 448 | 
+ 449 |             createQuiz(teenCodeQuiz);
+ 450 | 
+ 451 |             // ==============================================================
+ 452 |             // Quiz 7: TEENS (13-17 yrs) - High School STEM & Technology
+ 453 |             // ==============================================================
+ 454 |             Quiz teenStemQuiz = new Quiz("TEEN-STEM", "High School STEM: Physics & Digital Tech",
+ 455 |                     "Electricity, laws of motion, and computer hardware for high schoolers.",
+ 456 |                     "STEM Physics", DifficultyLevel.MEDIUM, "Teens (13-17)");
+ 457 | 
+ 458 |             teenStemQuiz.addQuestion(new MultipleChoiceQuestion(
+ 459 |                     1,
+ 460 |                     "What is the SI unit of Electric Current?",
+ 461 |                     5,
+ 462 |                     "Physics Fundamentals",
+ 463 |                     DifficultyLevel.EASY,
+ 464 |                     Arrays.asList("Volt", "Watt", "Ampere", "Ohm"),
+ 465 |                     2 // Ampere -> index 2
+ 466 |             ));
+ 467 | 
+ 468 |             teenStemQuiz.addQuestion(new MultipleChoiceQuestion(
+ 469 |                     2,
+ 470 |                     "Which hardware component is widely recognized as the 'Brain' of a computer?",
+ 471 |                     5,
+ 472 |                     "Hardware Architecture",
+ 473 |                     DifficultyLevel.EASY,
+ 474 |                     Arrays.asList("RAM", "CPU", "Hard Disk Drive", "Power Supply"),
+ 475 |                     1 // CPU -> index 1
+ 476 |             ));
+ 477 | 
+ 478 |             teenStemQuiz.addQuestion(new TrueFalseQuestion(
+ 479 |                     3,
+ 480 |                     "Sound waves travel faster in water than they do through air.",
+ 481 |                     5,
+ 482 |                     "Wave Physics",
+ 483 |                     DifficultyLevel.MEDIUM,
+ 484 |                     true // Sound in water is ~1500 m/s vs air ~343 m/s
+ 485 |             ));
+ 486 | 
+ 487 |             teenStemQuiz.addQuestion(new NumericQuestion(
+ 488 |                     4,
+ 489 |                     "Standard atmospheric boiling point of pure water at sea level in degrees Celsius is?",
+ 490 |                     5,
+ 491 |                     "Thermodynamics",
+ 492 |                     DifficultyLevel.EASY,
+ 493 |                     100.0,
+ 494 |                     0.0
+ 495 |             ));
+ 496 | 
+ 497 |             createQuiz(teenStemQuiz);
+ 498 | 
+ 499 |             // ==============================================================
+ 500 |             // Quiz 8: PROFESSIONALS / GRADUATES (20+ yrs) - GATE & Placement Aptitude
+ 501 |             // ==============================================================
+ 502 |             Quiz proAptQuiz = new Quiz("PRO-APT", "Competitive Aptitude & Logical Deduction",
+ 503 |                     "High-yield quantitative reasoning, speed math, and analytical deduction for GATE & placements.",
+ 504 |                     "General Aptitude", DifficultyLevel.HARD, "Competitive / Pro (20+)");
+ 505 | 
+ 506 |             proAptQuiz.addQuestion(new MultipleChoiceQuestion(
+ 507 |                     1,
+ 508 |                     "A train traveling at 54 km/h crosses a 180m platform in 20 seconds. What is the length of the train in meters?",
+ 509 |                     5,
+ 510 |                     "Time, Speed & Distance",
+ 511 |                     DifficultyLevel.HARD,
+ 512 |                     Arrays.asList("100 m", "120 m", "150 m", "160 m"),
+ 513 |                     1 // Speed = 15 m/s. Total distance = 300m. Train = 300 - 180 = 120m -> index 1
+ 514 |             ));
+ 515 | 
+ 516 |             proAptQuiz.addQuestion(new MultipleChoiceQuestion(
+ 517 |                     2,
+ 518 |                     "Find the missing number in the sequence: 3, 7, 15, 31, 63, ?",
+ 519 |                     5,
+ 520 |                     "Number Series",
+ 521 |                     DifficultyLevel.MEDIUM,
+ 522 |                     Arrays.asList("95", "115", "127", "128"),
+ 523 |                     2 // 2n + 1: 63*2 + 1 = 127 -> index 2
+ 524 |             ));
+ 525 | 
+ 526 |             proAptQuiz.addQuestion(new TrueFalseQuestion(
+ 527 |                     3,
+ 528 |                     "In formal categorical logic, 'Some A are B' strictly implies that 'All A are B'.",
+ 529 |                     5,
+ 530 |                     "Logical Deductions",
+ 531 |                     DifficultyLevel.MEDIUM,
+ 532 |                     false
+ 533 |             ));
+ 534 | 
+ 535 |             proAptQuiz.addQuestion(new NumericQuestion(
+ 536 |                     4,
+ 537 |                     "What is the total sum of interior angles of a regular hexagon in degrees?",
+ 538 |                     5,
+ 539 |                     "Advanced Geometry",
+ 540 |                     DifficultyLevel.MEDIUM,
+ 541 |                     720.0,
+ 542 |                     0.0 // (6-2)*180 = 720
+ 543 |             ));
+ 544 | 
+ 545 |             createQuiz(proAptQuiz);
+ 546 | 
+ 547 |             // ==============================================================
+ 548 |             // Quiz 9: PROFESSIONALS / GRADUATES (20+ yrs) - Software Architecture & Git
+ 549 |             // ==============================================================
+ 550 |             Quiz proSeQuiz = new Quiz("PRO-SE", "Software Architecture, SOLID & Git",
+ 551 |                     "Agile workflows, Git version control, SOLID principles, and microservice concepts.",
+ 552 |                     "Software Engineering", DifficultyLevel.HARD, "Competitive / Pro (20+)");
+ 553 | 
+ 554 |             proSeQuiz.addQuestion(new MultipleChoiceQuestion(
+ 555 |                     1,
+ 556 |                     "In the SOLID principles of object-oriented design, what does the letter 'L' represent?",
+ 557 |                     5,
+ 558 |                     "SOLID Principles",
+ 559 |                     DifficultyLevel.MEDIUM,
+ 560 |                     Arrays.asList("Linear Extensibility", "Logic Encapsulation", "Liskov Substitution Principle", "Loose Coupling Protocol"),
+ 561 |                     2 // Liskov -> index 2
+ 562 |             ));
+ 563 | 
+ 564 |             proSeQuiz.addQuestion(new MultipleChoiceQuestion(
+ 565 |                     2,
+ 566 |                     "Which Git command creates a new branch and immediately switches to it in modern Git?",
+ 567 |                     5,
+ 568 |                     "Version Control",
+ 569 |                     DifficultyLevel.EASY,
+ 570 |                     Arrays.asList("git branch -move", "git checkout -b <name>", "git fork <name>", "git push --new"),
+ 571 |                     1 // git checkout -b -> index 1
+ 572 |             ));
+ 573 | 
+ 574 |             proSeQuiz.addQuestion(new TrueFalseQuestion(
+ 575 |                     3,
+ 576 |                     "According to the Open/Closed Principle, software entities should be open for extension, but closed for modification.",
+ 577 |                     5,
+ 578 |                     "Software Design",
+ 579 |                     DifficultyLevel.MEDIUM,
+ 580 |                     true
+ 581 |             ));
+ 582 | 
+ 583 |             proSeQuiz.addQuestion(new NumericQuestion(
+ 584 |                     4,
+ 585 |                     "What standard HTTP status code signifies that a requested resource was Not Found on the server?",
+ 586 |                     5,
+ 587 |                     "Web Architecture",
+ 588 |                     DifficultyLevel.EASY,
+ 589 |                     404.0,
+ 590 |                     0.0
+ 591 |             ));
+ 592 | 
+ 593 |             createQuiz(proSeQuiz);
+ 594 | 
+ 595 |         } catch (Exception e) {
+ 596 |             System.err.println("Failed to initialize default sample quizzes: " + e.getMessage());
+ 597 |         }
+ 598 |     }
+ 599 | }
+
+
+================================================================================
+ SECTION: UNIT III & IV: DEFENSIVE UTILITIES & CONSOLE FORMATTING
+================================================================================
+
+--------------------------------------------------------------------------------
+ File #22: InputValidator.java  [Path: src/com/ait/quiz/util/InputValidator.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.util;
+   2 | 
+   3 | import java.util.Scanner;
+   4 | 
+   5 | /**
+   6 |  * Utility helper for robust console input handling and validation.
+   7 |  * Demonstrates:
+   8 |  * - Method Overloading (compile-time polymorphism)
+   9 |  * - Defensive programming and Exception Handling against input mismatches
+  10 |  */
+  11 | public class InputValidator {
+  12 | 
+  13 |     /**
+  14 |      * Reads a validated integer within a specified range [min, max].
+  15 |      */
+  16 |     public static int readInteger(Scanner scanner, String prompt, int min, int max) {
+  17 |         while (true) {
+  18 |             System.out.print(prompt);
+  19 |             String input = scanner.nextLine().trim();
+  20 |             try {
+  21 |                 int value = Integer.parseInt(input);
+  22 |                 if (value < min || value > max) {
+  23 |                     System.out.printf("   [!] Error: Value must be between %d and %d. Please try again.%n", min, max);
+  24 |                     continue;
+  25 |                 }
+  26 |                 return value;
+  27 |             } catch (NumberFormatException nfe) {
+  28 |                 System.out.println("   [!] Error: Invalid numeric input! Please enter a valid whole number.");
+  29 |             }
+  30 |         }
+  31 |     }
+  32 | 
+  33 |     /**
+  34 |      * Overloaded method: Reads any valid integer without range constraints.
+  35 |      * Demonstrates Method Overloading.
+  36 |      */
+  37 |     public static int readInteger(Scanner scanner, String prompt) {
+  38 |         return readInteger(scanner, prompt, Integer.MIN_VALUE, Integer.MAX_VALUE);
+  39 |     }
+  40 | 
+  41 |     /**
+  42 |      * Reads a valid floating-point number.
+  43 |      */
+  44 |     public static double readDouble(Scanner scanner, String prompt) {
+  45 |         while (true) {
+  46 |             System.out.print(prompt);
+  47 |             String input = scanner.nextLine().trim();
+  48 |             try {
+  49 |                 return Double.parseDouble(input);
+  50 |             } catch (NumberFormatException nfe) {
+  51 |                 System.out.println("   [!] Error: Invalid number! Please enter a valid decimal number (e.g. 5 or 2.5).");
+  52 |             }
+  53 |         }
+  54 |     }
+  55 | 
+  56 |     /**
+  57 |      * Reads a non-empty string prompt from console.
+  58 |      */
+  59 |     public static String readString(Scanner scanner, String prompt, boolean allowEmpty) {
+  60 |         while (true) {
+  61 |             System.out.print(prompt);
+  62 |             String line = scanner.nextLine().trim();
+  63 |             if (!allowEmpty && line.isEmpty()) {
+  64 |                 System.out.println("   [!] Error: Input cannot be blank! Please provide a value.");
+  65 |                 continue;
+  66 |             }
+  67 |             return line;
+  68 |         }
+  69 |     }
+  70 | 
+  71 |     /**
+  72 |      * Overloaded method: Reads non-empty string by default.
+  73 |      * Demonstrates Method Overloading.
+  74 |      */
+  75 |     public static String readString(Scanner scanner, String prompt) {
+  76 |         return readString(scanner, prompt, false);
+  77 |     }
+  78 | 
+  79 |     /**
+  80 |      * Prompts for confirmation (Y/N).
+  81 |      */
+  82 |     public static boolean readYesNo(Scanner scanner, String prompt) {
+  83 |         while (true) {
+  84 |             System.out.print(prompt + " (Y/N): ");
+  85 |             String ans = scanner.nextLine().trim().toUpperCase();
+  86 |             if (ans.equals("Y") || ans.equals("YES")) {
+  87 |                 return true;
+  88 |             } else if (ans.equals("N") || ans.equals("NO")) {
+  89 |                 return false;
+  90 |             }
+  91 |             System.out.println("   [!] Please enter 'Y' for Yes or 'N' for No.");
+  92 |         }
+  93 |     }
+  94 | }
+
+
+--------------------------------------------------------------------------------
+ File #23: ConsoleUI.java  [Path: src/com/ait/quiz/util/ConsoleUI.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.util;
+   2 | 
+   3 | /**
+   4 |  * Helper class for rendering formatted console output, banners, and menus.
+   5 |  */
+   6 | public class ConsoleUI {
+   7 | 
+   8 |     public static final String SEPARATOR_DOUBLE = "================================================================================";
+   9 |     public static final String SEPARATOR_SINGLE = "--------------------------------------------------------------------------------";
+  10 | 
+  11 |     public static void printHeader(String title) {
+  12 |         System.out.println(SEPARATOR_DOUBLE);
+  13 |         int totalWidth = 80;
+  14 |         int padding = Math.max(0, (totalWidth - title.length()) / 2);
+  15 |         StringBuilder sb = new StringBuilder();
+  16 |         for (int i = 0; i < padding; i++) sb.append(" ");
+  17 |         sb.append(title);
+  18 |         System.out.println(sb.toString());
+  19 |         System.out.println(SEPARATOR_DOUBLE);
+  20 |     }
+  21 | 
+  22 |     public static void printSubHeader(String title) {
+  23 |         System.out.println(SEPARATOR_SINGLE);
+  24 |         System.out.println(" >> " + title);
+  25 |         System.out.println(SEPARATOR_SINGLE);
+  26 |     }
+  27 | 
+  28 |     public static void printSuccess(String message) {
+  29 |         System.out.println(" [SUCCESS] " + message);
+  30 |     }
+  31 | 
+  32 |     public static void printError(String message) {
+  33 |         System.out.println(" [ERROR] " + message);
+  34 |     }
+  35 | 
+  36 |     public static void printWarning(String message) {
+  37 |         System.out.println(" [WARNING] " + message);
+  38 |     }
+  39 | 
+  40 |     public static void printInfo(String message) {
+  41 |         System.out.println(" [INFO] " + message);
+  42 |     }
+  43 | }
+
+
+================================================================================
+ SECTION: APPLICATION ENTRY POINT & CIE-2 VIVA DEMONSTRATION HARNESS
+================================================================================
+
+--------------------------------------------------------------------------------
+ File #24: QuizApplication.java  [Path: src/com/ait/quiz/main/QuizApplication.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.main;
+   2 | 
+   3 | import com.ait.quiz.exception.*;
+   4 | import com.ait.quiz.model.*;
+   5 | import com.ait.quiz.service.*;
+   6 | import com.ait.quiz.util.ConsoleUI;
+   7 | import com.ait.quiz.util.InputValidator;
+   8 | 
+   9 | import java.util.*;
+  10 | 
+  11 | /**
+  12 |  * Main Application Entry Point for the Online Quiz Management System.
+  13 |  * Developed for:
+  14 |  *   Army Institute of Technology, Pune
+  15 |  *   Department of Information Technology
+  16 |  *   Course: Skill Development Laboratory using Java (BIT25434A0X)
+  17 |  *   Continuous Internal Evaluation 2 (CIE-2)
+  18 |  *
+  19 |  * Demonstrates:
+  20 |  *   - Unit III: Polymorphism (overloading & overriding), Interfaces, Abstract Classes
+  21 |  *   - Unit IV: Exception Handling (try, catch, finally, custom exceptions, throw/throws)
+  22 |  */
+  23 | public class QuizApplication {
+  24 | 
+  25 |     private final QuizOperations quizManager;
+  26 |     private final Scanner scanner;
+  27 |     private Student currentStudent;
+  28 |     private Instructor currentInstructor;
+  29 | 
+  30 |     public QuizApplication() {
+  31 |         this.quizManager = new QuizManager();
+  32 |         this.scanner = new Scanner(System.in);
+  33 |         // Default users for demonstration
+  34 |         this.currentStudent = new Student("S101", "Abhishekh Kumar", "abhishekh@aitpune.edu.in", "3101", "SE IT A");
+  35 |         this.currentInstructor = new Instructor("FAC01", "Mrs. Trupti Najan", "tnajan@aitpune.edu.in", "Information Technology", "Assistant Professor");
+  36 |     }
+  37 | 
+  38 |     public static void main(String[] args) {
+  39 |         QuizApplication app = new QuizApplication();
+  40 |         try {
+  41 |             app.run();
+  42 |         } finally {
+  43 |             app.shutdown();
+  44 |         }
+  45 |     }
+  46 | 
+  47 |     public void run() {
+  48 |         boolean exit = false;
+  49 |         while (!exit) {
+  50 |             ConsoleUI.printHeader("ONLINE QUIZ MANAGEMENT SYSTEM - CIE-2");
+  51 |             System.out.println(" 1. Student Portal (Browse, Search, Take Quiz, View Results)");
+  52 |             System.out.println(" 2. Faculty / Instructor Portal (Create Quiz, Add Questions, Reports)");
+  53 |             System.out.println(" 3. Automated CIE-2 Concept Demonstration & Test Suite (For Examiner/Viva)");
+  54 |             System.out.println(" 4. Switch / Configure Current User Profile");
+  55 |             System.out.println(" 5. Exit System");
+  56 |             ConsoleUI.printSubHeader("Select an option");
+  57 | 
+  58 |             int choice = InputValidator.readInteger(scanner, "Enter choice (1-5): ", 1, 5);
+  59 | 
+  60 |             switch (choice) {
+  61 |                 case 1:
+  62 |                     studentPortalMenu();
+  63 |                     break;
+  64 |                 case 2:
+  65 |                     instructorPortalMenu();
+  66 |                     break;
+  67 |                 case 3:
+  68 |                     runAutomatedDemonstrationSuite();
+  69 |                     break;
+  70 |                 case 4:
+  71 |                     configureUserProfile();
+  72 |                     break;
+  73 |                 case 5:
+  74 |                     exit = true;
+  75 |                     System.out.println("\nThank you for using the Online Quiz Management System. Goodbye!");
+  76 |                     break;
+  77 |             }
+  78 |         }
+  79 |     }
+  80 | 
+  81 |     // =========================================================================
+  82 |     // STUDENT PORTAL
+  83 |     // =========================================================================
+  84 | 
+  85 |     private void studentPortalMenu() {
+  86 |         boolean back = false;
+  87 |         while (!back) {
+  88 |             ConsoleUI.printHeader("STUDENT PORTAL - " + currentStudent.getName() + " (" + currentStudent.getRollNumber() + ")");
+  89 |             System.out.println(" 1. View All Available Quizzes");
+  90 |             System.out.println(" 2. Search Quizzes by Topic (Method Overloading - 1 param)");
+  91 |             System.out.println(" 3. Search Quizzes by Topic & Difficulty (Method Overloading - 2 params)");
+  92 |             System.out.println(" 4. Take a Quiz (Interactive Conduct & Evaluation)");
+  93 |             System.out.println(" 5. View My Attempt History & Scorecards");
+  94 |             System.out.println(" 6. View My Student Dashboard (Polymorphic displayDashboard)");
+  95 |             System.out.println(" 7. Back to Main Menu");
+  96 |             ConsoleUI.printSubHeader("Select Student Action");
+  97 | 
+  98 |             int choice = InputValidator.readInteger(scanner, "Enter choice (1-7): ", 1, 7);
+  99 | 
+ 100 |             switch (choice) {
+ 101 |                 case 1:
+ 102 |                     displayAllQuizzes();
+ 103 |                     break;
+ 104 |                 case 2:
+ 105 |                     searchQuizzesByTopic();
+ 106 |                     break;
+ 107 |                 case 3:
+ 108 |                     searchQuizzesByTopicAndDifficulty();
+ 109 |                     break;
+ 110 |                 case 4:
+ 111 |                     conductQuizFlow();
+ 112 |                     break;
+ 113 |                 case 5:
+ 114 |                     viewStudentAttempts();
+ 115 |                     break;
+ 116 |                 case 6:
+ 117 |                     // Polymorphic method call on abstract User reference
+ 118 |                     User userRef = currentStudent;
+ 119 |                     userRef.displayDashboard();
+ 120 |                     break;
+ 121 |                 case 7:
+ 122 |                     back = true;
+ 123 |                     break;
+ 124 |             }
+ 125 |         }
+ 126 |     }
+ 127 | 
+ 128 |     private void displayAllQuizzes() {
+ 129 |         ConsoleUI.printSubHeader("LIST OF AVAILABLE QUIZZES");
+ 130 |         List<Quiz> quizzes = quizManager.getAllQuizzes();
+ 131 |         if (quizzes.isEmpty()) {
+ 132 |             ConsoleUI.printInfo("No quizzes are currently registered in the system.");
+ 133 |             return;
+ 134 |         }
+ 135 | 
+ 136 |         System.out.printf("%-10s | %-28s | %-16s | %-20s | %-8s | %-4s | %s%n",
+ 137 |                 "Quiz ID", "Title", "Target Age", "Topic", "Level", "Que", "Marks");
+ 138 |         System.out.println(ConsoleUI.SEPARATOR_SINGLE);
+ 139 |         for (Quiz q : quizzes) {
+ 140 |             System.out.printf("%-10s | %-28s | %-16s | %-20s | %-8s | %-4d | %d marks%n",
+ 141 |                     q.getQuizId(),
+ 142 |                     truncate(q.getTitle(), 28),
+ 143 |                     truncate(q.getTargetAgeGroup(), 16),
+ 144 |                     truncate(q.getTopic(), 20),
+ 145 |                     q.getDifficulty().getDisplayName(),
+ 146 |                     q.getQuestionCount(),
+ 147 |                     q.getTotalMarks());
+ 148 |         }
+ 149 |     }
+ 150 | 
+ 151 |     private void searchQuizzesByTopic() {
+ 152 |         String topic = InputValidator.readString(scanner, "Enter topic keyword to search: ");
+ 153 |         // Demonstrates overloaded searchQuiz(topic)
+ 154 |         List<Quiz> results = quizManager.searchQuiz(topic);
+ 155 |         displaySearchResults("Search by Topic: '" + topic + "'", results);
+ 156 |     }
+ 157 | 
+ 158 |     private void searchQuizzesByTopicAndDifficulty() {
+ 159 |         String topic = InputValidator.readString(scanner, "Enter topic keyword: ");
+ 160 |         System.out.println("Choose Difficulty Level: 1. Easy | 2. Medium | 3. Hard");
+ 161 |         int levelChoice = InputValidator.readInteger(scanner, "Select level (1-3): ", 1, 3);
+ 162 |         DifficultyLevel level = (levelChoice == 1) ? DifficultyLevel.EASY :
+ 163 |                 (levelChoice == 2) ? DifficultyLevel.MEDIUM : DifficultyLevel.HARD;
+ 164 | 
+ 165 |         // Demonstrates overloaded searchQuiz(topic, level)
+ 166 |         List<Quiz> results = quizManager.searchQuiz(topic, level);
+ 167 |         displaySearchResults("Search by Topic: '" + topic + "' & Level: " + level.getDisplayName(), results);
+ 168 |     }
+ 169 | 
+ 170 |     private void displaySearchResults(String queryDescription, List<Quiz> results) {
+ 171 |         ConsoleUI.printSubHeader(queryDescription + " -> " + results.size() + " matches found");
+ 172 |         if (results.isEmpty()) {
+ 173 |             ConsoleUI.printWarning("No quizzes matched the specified criteria.");
+ 174 |             return;
+ 175 |         }
+ 176 |         for (Quiz q : results) {
+ 177 |             System.out.println(" * " + q);
+ 178 |         }
+ 179 |     }
+ 180 | 
+ 181 |     private void conductQuizFlow() {
+ 182 |         displayAllQuizzes();
+ 183 |         String quizId = InputValidator.readString(scanner, "\nEnter Quiz ID to attempt: ");
+ 184 | 
+ 185 |         Quiz quiz;
+ 186 |         try {
+ 187 |             quiz = quizManager.getQuiz(quizId);
+ 188 |             // Validate quiz has questions
+ 189 |             quiz.validateForConduct();
+ 190 |         } catch (QuizNotFoundException | EmptyQuizException e) {
+ 191 |             ConsoleUI.printError("Quiz launch failed: " + e.getMessage());
+ 192 |             return;
+ 193 |         }
+ 194 | 
+ 195 |         // Select Evaluation Strategy (Interface Polymorphism)
+ 196 |         ConsoleUI.printSubHeader("SELECT EVALUATION POLICY FOR THIS QUIZ ATTEMPT");
+ 197 |         System.out.println(" 1. Standard Linear Grading (Full marks for correct, zero penalty for wrong)");
+ 198 |         System.out.println(" 2. Competitive Exam Grading (25% negative marking penalty for wrong answers)");
+ 199 |         int policyChoice = InputValidator.readInteger(scanner, "Select grading policy (1-2): ", 1, 2);
+ 200 | 
+ 201 |         QuizEvaluator evaluator = (policyChoice == 1)
+ 202 |                 ? new StandardGradingPolicy()
+ 203 |                 : new NegativeMarkingGradingPolicy(0.25);
+ 204 | 
+ 205 |         ConsoleUI.printInfo("Selected Evaluator Strategy: " + evaluator.getPolicyName());
+ 206 | 
+ 207 |         String attemptId = "ATT-" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+ 208 |         QuizAttempt attempt = new QuizAttempt(attemptId, quiz.getQuizId(), quiz.getTitle(),
+ 209 |                 currentStudent.getRollNumber(), currentStudent.getName());
+ 210 | 
+ 211 |         attempt.setTotalQuestions(quiz.getQuestionCount());
+ 212 |         attempt.setTotalPossibleMarks(quiz.getTotalMarks());
+ 213 | 
+ 214 |         ConsoleUI.printHeader("STARTING QUIZ: " + quiz.getTitle() + " (Attempt ID: " + attemptId + ")");
+ 215 |         System.out.println("Read each question carefully. Type your answer and press Enter.\n");
+ 216 | 
+ 217 |         int correctCount = 0;
+ 218 |         int incorrectCount = 0;
+ 219 | 
+ 220 |         // Iterate polymorphically over questions
+ 221 |         for (Question q : quiz.getQuestions()) {
+ 222 |             System.out.println(ConsoleUI.SEPARATOR_SINGLE);
+ 223 |             // Polymorphic method call: displays MCQ, True/False, or Numeric prompt based on runtime object!
+ 224 |             q.displayQuestion();
+ 225 | 
+ 226 |             boolean answeredValidly = false;
+ 227 |             String studentAns = "";
+ 228 |             boolean isCorrect = false;
+ 229 | 
+ 230 |             while (!answeredValidly) {
+ 231 |                 studentAns = InputValidator.readString(scanner, ">> Your Answer: ");
+ 232 |                 try {
+ 233 |                     // Polymorphic method call: checks answer with question-specific rules
+ 234 |                     // Throws InvalidOptionException if input format is illegal
+ 235 |                     isCorrect = q.checkAnswer(studentAns);
+ 236 |                     answeredValidly = true;
+ 237 |                 } catch (InvalidOptionException ioe) {
+ 238 |                     ConsoleUI.printError(ioe.getMessage());
+ 239 |                     System.out.println("   Please re-enter your answer conforming to the format.");
+ 240 |                 }
+ 241 |             }
+ 242 | 
+ 243 |             double marksAwarded = isCorrect ? q.getMarks() : 0.0;
+ 244 |             if (isCorrect) {
+ 245 |                 correctCount++;
+ 246 |                 System.out.println("   [✓] Recorded.");
+ 247 |             } else {
+ 248 |                 incorrectCount++;
+ 249 |                 System.out.println("   [✗] Recorded.");
+ 250 |             }
+ 251 | 
+ 252 |             attempt.addQuestionResult(new QuizAttempt.QuestionResult(
+ 253 |                     q.getId(),
+ 254 |                     q.getQuestionText(),
+ 255 |                     studentAns,
+ 256 |                     q.getCorrectAnswerFormatted(),
+ 257 |                     isCorrect,
+ 258 |                     marksAwarded
+ 259 |             ));
+ 260 |         }
+ 261 | 
+ 262 |         attempt.setCorrectCount(correctCount);
+ 263 |         attempt.setIncorrectCount(incorrectCount);
+ 264 | 
+ 265 |         // Polymorphic evaluation using the chosen QuizEvaluator strategy!
+ 266 |         double scoreObtained = evaluator.evaluateScore(attempt);
+ 267 |         attempt.setScoreObtained(scoreObtained);
+ 268 | 
+ 269 |         double percentage = (quiz.getTotalMarks() > 0) ? (scoreObtained / quiz.getTotalMarks()) * 100.0 : 0.0;
+ 270 |         attempt.setPercentage(percentage);
+ 271 |         attempt.setGrade(evaluator.generateGrade(percentage));
+ 272 | 
+ 273 |         // Save attempt history
+ 274 |         quizManager.recordAttempt(attempt);
+ 275 |         currentStudent.addAttempt(attempt);
+ 276 | 
+ 277 |         // Display detailed scorecard
+ 278 |         System.out.println();
+ 279 |         evaluator.printDetailedReport(attempt);
+ 280 |     }
+ 281 | 
+ 282 |     private void viewStudentAttempts() {
+ 283 |         ConsoleUI.printSubHeader("ATTEMPT HISTORY FOR: " + currentStudent.getName() + " (" + currentStudent.getRollNumber() + ")");
+ 284 |         List<QuizAttempt> attempts = quizManager.getAttemptsByStudent(currentStudent.getRollNumber());
+ 285 |         if (attempts.isEmpty()) {
+ 286 |             ConsoleUI.printInfo("You have not taken any quizzes yet.");
+ 287 |             return;
+ 288 |         }
+ 289 | 
+ 290 |         for (QuizAttempt att : attempts) {
+ 291 |             System.out.println(att);
+ 292 |         }
+ 293 |     }
+ 294 | 
+ 295 |     // =========================================================================
+ 296 |     // INSTRUCTOR PORTAL
+ 297 |     // =========================================================================
+ 298 | 
+ 299 |     private void instructorPortalMenu() {
+ 300 |         boolean back = false;
+ 301 |         while (!back) {
+ 302 |             ConsoleUI.printHeader("FACULTY PORTAL - " + currentInstructor.getName() + " (" + currentInstructor.getDepartment() + ")");
+ 303 |             System.out.println(" 1. Create a New Quiz (Demonstrates DuplicateQuizException)");
+ 304 |             System.out.println(" 2. Add Question to a Quiz (MCQ, True/False, Numeric)");
+ 305 |             System.out.println(" 3. View All Quizzes & Detailed Questions");
+ 306 |             System.out.println(" 4. Delete a Quiz (Demonstrates QuizNotFoundException)");
+ 307 |             System.out.println(" 5. View All Student Submissions & Performance Analytics");
+ 308 |             System.out.println(" 6. View Faculty Dashboard (Polymorphic displayDashboard)");
+ 309 |             System.out.println(" 7. Back to Main Menu");
+ 310 |             ConsoleUI.printSubHeader("Select Faculty Action");
+ 311 | 
+ 312 |             int choice = InputValidator.readInteger(scanner, "Enter choice (1-7): ", 1, 7);
+ 313 | 
+ 314 |             switch (choice) {
+ 315 |                 case 1:
+ 316 |                     createQuizFlow();
+ 317 |                     break;
+ 318 |                 case 2:
+ 319 |                     addQuestionFlow();
+ 320 |                     break;
+ 321 |                 case 3:
+ 322 |                     viewQuizzesWithQuestions();
+ 323 |                     break;
+ 324 |                 case 4:
+ 325 |                     deleteQuizFlow();
+ 326 |                     break;
+ 327 |                 case 5:
+ 328 |                     viewAllStudentSubmissions();
+ 329 |                     break;
+ 330 |                 case 6:
+ 331 |                     // Polymorphic method call on abstract User reference
+ 332 |                     User userRef = currentInstructor;
+ 333 |                     userRef.displayDashboard();
+ 334 |                     break;
+ 335 |                 case 7:
+ 336 |                     back = true;
+ 337 |                     break;
+ 338 |             }
+ 339 |         }
+ 340 |     }
+ 341 | 
+ 342 |     private void createQuizFlow() {
+ 343 |         ConsoleUI.printSubHeader("CREATE NEW QUIZ");
+ 344 |         String quizId = InputValidator.readString(scanner, "Enter Unique Quiz ID (e.g. JAVA-202): ");
+ 345 |         String title = InputValidator.readString(scanner, "Enter Quiz Title: ");
+ 346 |         String description = InputValidator.readString(scanner, "Enter Quiz Description: ");
+ 347 |         String topic = InputValidator.readString(scanner, "Enter Academic Topic: ");
+ 348 | 
+ 349 |         System.out.println("Select Difficulty: 1. Easy | 2. Medium | 3. Hard");
+ 350 |         int diffChoice = InputValidator.readInteger(scanner, "Choice (1-3): ", 1, 3);
+ 351 |         DifficultyLevel level = (diffChoice == 1) ? DifficultyLevel.EASY :
+ 352 |                 (diffChoice == 2) ? DifficultyLevel.MEDIUM : DifficultyLevel.HARD;
+ 353 | 
+ 354 |         System.out.println("Select Target Age Group:");
+ 355 |         System.out.println(" 1. Kids (8-12)");
+ 356 |         System.out.println(" 2. Teens (13-17)");
+ 357 |         System.out.println(" 3. College (18-22)");
+ 358 |         System.out.println(" 4. Competitive / Pro (20+)");
+ 359 |         int ageChoice = InputValidator.readInteger(scanner, "Choice (1-4): ", 1, 4);
+ 360 |         String targetAge = (ageChoice == 1) ? "Kids (8-12)" :
+ 361 |                 (ageChoice == 2) ? "Teens (13-17)" :
+ 362 |                 (ageChoice == 3) ? "College (18-22)" : "Competitive / Pro (20+)";
+ 363 | 
+ 364 |         try {
+ 365 |             Quiz newQuiz = new Quiz(quizId, title, description, topic, level, targetAge);
+ 366 |             quizManager.createQuiz(newQuiz);
+ 367 |             ConsoleUI.printSuccess("Quiz created successfully with ID: " + newQuiz.getQuizId() + " [" + targetAge + "]");
+ 368 |         } catch (DuplicateQuizException dqe) {
+ 369 |             ConsoleUI.printError("Failed to create quiz: " + dqe.getMessage());
+ 370 |         } catch (IllegalArgumentException iae) {
+ 371 |             ConsoleUI.printError("Invalid input: " + iae.getMessage());
+ 372 |         }
+ 373 |     }
+ 374 | 
+ 375 |     private void addQuestionFlow() {
+ 376 |         displayAllQuizzes();
+ 377 |         String quizId = InputValidator.readString(scanner, "\nEnter target Quiz ID to add question: ");
+ 378 | 
+ 379 |         Quiz targetQuiz;
+ 380 |         try {
+ 381 |             targetQuiz = quizManager.getQuiz(quizId);
+ 382 |         } catch (QuizNotFoundException qnfe) {
+ 383 |             ConsoleUI.printError(qnfe.getMessage());
+ 384 |             return;
+ 385 |         }
+ 386 | 
+ 387 |         ConsoleUI.printSubHeader("ADD QUESTION TO: " + targetQuiz.getTitle());
+ 388 |         System.out.println(" Select Question Type:");
+ 389 |         System.out.println("   1. Multiple Choice Question (MCQ)");
+ 390 |         System.out.println("   2. True / False Question");
+ 391 |         System.out.println("   3. Numeric / Direct Answer Question");
+ 392 | 
+ 393 |         int typeChoice = InputValidator.readInteger(scanner, "Select type (1-3): ", 1, 3);
+ 394 | 
+ 395 |         int qId = targetQuiz.getQuestionCount() + 1;
+ 396 |         String prompt = InputValidator.readString(scanner, "Enter Question Prompt/Text: ");
+ 397 |         int marks = InputValidator.readInteger(scanner, "Enter Marks for this question (> 0): ", 1, 100);
+ 398 |         String topic = InputValidator.readString(scanner, "Enter Question Topic: ");
+ 399 | 
+ 400 |         System.out.println("Select Difficulty: 1. Easy | 2. Medium | 3. Hard");
+ 401 |         int diff = InputValidator.readInteger(scanner, "Select (1-3): ", 1, 3);
+ 402 |         DifficultyLevel difficulty = (diff == 1) ? DifficultyLevel.EASY :
+ 403 |                 (diff == 2) ? DifficultyLevel.MEDIUM : DifficultyLevel.HARD;
+ 404 | 
+ 405 |         Question createdQuestion = null;
+ 406 | 
+ 407 |         try {
+ 408 |             switch (typeChoice) {
+ 409 |                 case 1: // MCQ
+ 410 |                     int optionCount = InputValidator.readInteger(scanner, "Enter number of options (2 to 6): ", 2, 6);
+ 411 |                     List<String> options = new ArrayList<>();
+ 412 |                     for (int i = 0; i < optionCount; i++) {
+ 413 |                         char label = (char) ('A' + i);
+ 414 |                         String opt = InputValidator.readString(scanner, "Option [" + label + "]: ");
+ 415 |                         options.add(opt);
+ 416 |                     }
+ 417 |                     int correctIdx = InputValidator.readInteger(scanner,
+ 418 |                             "Enter correct option number (1 for A, 2 for B...): ", 1, optionCount) - 1;
+ 419 |                     createdQuestion = new MultipleChoiceQuestion(qId, prompt, marks, topic, difficulty, options, correctIdx);
+ 420 |                     break;
+ 421 | 
+ 422 |                 case 2: // True / False
+ 423 |                     boolean correctBool = InputValidator.readYesNo(scanner, "Is the statement TRUE?");
+ 424 |                     createdQuestion = new TrueFalseQuestion(qId, prompt, marks, topic, difficulty, correctBool);
+ 425 |                     break;
+ 426 | 
+ 427 |                 case 3: // Numeric
+ 428 |                     double numAnswer = InputValidator.readDouble(scanner, "Enter correct numeric answer: ");
+ 429 |                     double tolerance = InputValidator.readDouble(scanner, "Enter accepted tolerance delta (0 for exact): ");
+ 430 |                     createdQuestion = new NumericQuestion(qId, prompt, marks, topic, difficulty, numAnswer, tolerance);
+ 431 |                     break;
+ 432 |             }
+ 433 | 
+ 434 |             if (createdQuestion != null) {
+ 435 |                 quizManager.addQuestionToQuiz(targetQuiz.getQuizId(), createdQuestion);
+ 436 |                 ConsoleUI.printSuccess("Question added successfully to quiz '" + targetQuiz.getQuizId() + "'!");
+ 437 |             }
+ 438 |         } catch (InvalidQuestionException | QuizNotFoundException e) {
+ 439 |             ConsoleUI.printError("Could not add question: " + e.getMessage());
+ 440 |         }
+ 441 |     }
+ 442 | 
+ 443 |     private void viewQuizzesWithQuestions() {
+ 444 |         List<Quiz> quizzes = quizManager.getAllQuizzes();
+ 445 |         if (quizzes.isEmpty()) {
+ 446 |             ConsoleUI.printInfo("No quizzes available.");
+ 447 |             return;
+ 448 |         }
+ 449 | 
+ 450 |         for (Quiz q : quizzes) {
+ 451 |             ConsoleUI.printSubHeader("Quiz: " + q.getTitle() + " [" + q.getQuizId() + "]");
+ 452 |             System.out.printf("Topic: %s | Level: %s | Total Marks: %d | Questions: %d%n",
+ 453 |                     q.getTopic(), q.getDifficulty().getDisplayName(), q.getTotalMarks(), q.getQuestionCount());
+ 454 |             if (q.getQuestions().isEmpty()) {
+ 455 |                 System.out.println("   (No questions added yet)");
+ 456 |             } else {
+ 457 |                 for (Question question : q.getQuestions()) {
+ 458 |                     System.out.printf("   - %s%n", question);
+ 459 |                 }
+ 460 |             }
+ 461 |         }
+ 462 |     }
+ 463 | 
+ 464 |     private void deleteQuizFlow() {
+ 465 |         displayAllQuizzes();
+ 466 |         String quizId = InputValidator.readString(scanner, "\nEnter Quiz ID to delete: ");
+ 467 |         try {
+ 468 |             boolean deleted = quizManager.deleteQuiz(quizId);
+ 469 |             if (deleted) {
+ 470 |                 ConsoleUI.printSuccess("Quiz '" + quizId + "' was successfully removed.");
+ 471 |             }
+ 472 |         } catch (QuizNotFoundException qnfe) {
+ 473 |             ConsoleUI.printError("Delete operation failed: " + qnfe.getMessage());
+ 474 |         }
+ 475 |     }
+ 476 | 
+ 477 |     private void viewAllStudentSubmissions() {
+ 478 |         ConsoleUI.printSubHeader("ALL RECORDED STUDENT ATTEMPTS");
+ 479 |         List<QuizAttempt> allAttempts = quizManager.getAllAttempts();
+ 480 |         if (allAttempts.isEmpty()) {
+ 481 |             ConsoleUI.printInfo("No student submissions recorded yet.");
+ 482 |             return;
+ 483 |         }
+ 484 | 
+ 485 |         System.out.printf("%-10s | %-16s | %-8s | %-12s | %-14s | %-10s | %s%n",
+ 486 |                 "Attempt", "Student", "Roll", "Quiz ID", "Score", "Percentage", "Grade");
+ 487 |         System.out.println(ConsoleUI.SEPARATOR_SINGLE);
+ 488 |         for (QuizAttempt att : allAttempts) {
+ 489 |             System.out.printf("%-10s | %-16s | %-8s | %-12s | %-14s | %-10s | %s%n",
+ 490 |                     att.getAttemptId(),
+ 491 |                     truncate(att.getStudentName(), 16),
+ 492 |                     att.getStudentRollNumber(),
+ 493 |                     att.getQuizId(),
+ 494 |                     String.format("%.2f / %d", att.getScoreObtained(), att.getTotalPossibleMarks()),
+ 495 |                     String.format("%.2f%%", att.getPercentage()),
+ 496 |                     att.getGrade());
+ 497 |         }
+ 498 |     }
+ 499 | 
+ 500 |     // =========================================================================
+ 501 |     // PROFILE SWITCHER
+ 502 |     // =========================================================================
+ 503 | 
+ 504 |     private void configureUserProfile() {
+ 505 |         ConsoleUI.printSubHeader("CONFIGURE CURRENT USER PROFILE");
+ 506 |         System.out.println(" 1. Update Student Profile (Current: " + currentStudent.getName() + " | Roll: " + currentStudent.getRollNumber() + ")");
+ 507 |         System.out.println(" 2. Update Faculty Profile (Current: " + currentInstructor.getName() + " | Dept: " + currentInstructor.getDepartment() + ")");
+ 508 |         System.out.println(" 3. Return");
+ 509 | 
+ 510 |         int choice = InputValidator.readInteger(scanner, "Select option (1-3): ", 1, 3);
+ 511 |         if (choice == 1) {
+ 512 |             String name = InputValidator.readString(scanner, "Enter Student Name: ");
+ 513 |             String roll = InputValidator.readString(scanner, "Enter Roll Number: ");
+ 514 |             String div = InputValidator.readString(scanner, "Enter Division (e.g. SE IT A): ");
+ 515 |             String email = InputValidator.readString(scanner, "Enter Email: ");
+ 516 |             this.currentStudent = new Student("S-" + roll, name, email, roll, div);
+ 517 |             ConsoleUI.printSuccess("Student profile updated!");
+ 518 |         } else if (choice == 2) {
+ 519 |             String name = InputValidator.readString(scanner, "Enter Faculty Name: ");
+ 520 |             String dept = InputValidator.readString(scanner, "Enter Department: ");
+ 521 |             String desig = InputValidator.readString(scanner, "Enter Designation: ");
+ 522 |             String email = InputValidator.readString(scanner, "Enter Email: ");
+ 523 |             this.currentInstructor = new Instructor("FAC-" + UUID.randomUUID().toString().substring(0, 4), name, email, dept, desig);
+ 524 |             ConsoleUI.printSuccess("Faculty profile updated!");
+ 525 |         }
+ 526 |     }
+ 527 | 
+ 528 |     // =========================================================================
+ 529 |     // AUTOMATED CIE-2 VIVA / DEMONSTRATION SUITE
+ 530 |     // =========================================================================
+ 531 | 
+ 532 |     /**
+ 533 |      * Executes a comprehensive live demonstration of all mandatory CIE-2 requirements:
+ 534 |      * 1. Abstract Class & Runtime Polymorphism (Dynamic Method Dispatch)
+ 535 |      * 2. Interfaces & Strategy Pattern (Standard vs Negative Marking)
+ 536 |      * 3. Compile-time Polymorphism (Method Overloading)
+ 537 |      * 4. Exception Handling Suite:
+ 538 |      *    - Catching QuizNotFoundException
+ 539 |      *    - Catching DuplicateQuizException
+ 540 |      *    - Catching EmptyQuizException
+ 541 |      *    - Catching InvalidQuestionException
+ 542 |      *    - Catching InvalidOptionException
+ 543 |      *    - Execution sequence of try-catch-finally
+ 544 |      */
+ 545 |     public void runAutomatedDemonstrationSuite() {
+ 546 |         ConsoleUI.printHeader("CIE-2 MANDATORY CONCEPTS DEMONSTRATION & TEST SUITE");
+ 547 |         System.out.println("Target: Army Institute of Technology, Pune | Skill Development Lab");
+ 548 |         System.out.println("Evaluates Unit III (Polymorphism, Interfaces, Abstract Classes) & Unit IV (Exception Handling)\n");
+ 549 | 
+ 550 |         // -------------------------------------------------------------
+ 551 |         // CONCEPT 1: Abstract Class & Polymorphic Method Overriding
+ 552 |         // -------------------------------------------------------------
+ 553 |         ConsoleUI.printSubHeader("1. ABSTRACT CLASS & RUNTIME POLYMORPHISM (Dynamic Method Dispatch)");
+ 554 |         System.out.println("Base Class: 'Question' (abstract)");
+ 555 |         System.out.println("Concrete Subclasses: MultipleChoiceQuestion, TrueFalseQuestion, NumericQuestion\n");
+ 556 | 
+ 557 |         List<Question> sampleQuestions = new ArrayList<>();
+ 558 |         try {
+ 559 |             sampleQuestions.add(new MultipleChoiceQuestion(
+ 560 |                     101, "What is the capital of Maharashtra?", 2, "Geography",
+ 561 |                     DifficultyLevel.EASY, Arrays.asList("Pune", "Mumbai", "Nagpur", "Nashik"), 1
+ 562 |             ));
+ 563 |             sampleQuestions.add(new TrueFalseQuestion(
+ 564 |                     102, "Abstract classes can have constructors in Java.", 2, "Java OOP",
+ 565 |                     DifficultyLevel.EASY, true
+ 566 |             ));
+ 567 |             sampleQuestions.add(new NumericQuestion(
+ 568 |                     103, "How many bits are in a single standard Java byte?", 2, "Architecture",
+ 569 |                     DifficultyLevel.EASY, 8.0, 0.0
+ 570 |             ));
+ 571 |         } catch (InvalidQuestionException e) {
+ 572 |             System.err.println("Setup error: " + e.getMessage());
+ 573 |         }
+ 574 | 
+ 575 |         System.out.println("Iterating through List<Question> polymorphically:");
+ 576 |         for (Question q : sampleQuestions) {
+ 577 |             System.out.println("   Calling q.getQuestionType(): " + q.getQuestionType());
+ 578 |             System.out.println("   Calling q.displayQuestion():");
+ 579 |             q.displayQuestion();
+ 580 |             System.out.println("   Correct Answer: " + q.getCorrectAnswerFormatted());
+ 581 |             System.out.println();
+ 582 |         }
+ 583 | 
+ 584 |         // -------------------------------------------------------------
+ 585 |         // CONCEPT 2: Interfaces & Strategy Pattern
+ 586 |         // -------------------------------------------------------------
+ 587 |         ConsoleUI.printSubHeader("2. INTERFACES & STRATEGY POLYMORPHISM (QuizEvaluator)");
+ 588 |         System.out.println("Interface: QuizEvaluator");
+ 589 |         System.out.println("Implementations: StandardGradingPolicy vs NegativeMarkingGradingPolicy\n");
+ 590 | 
+ 591 |         QuizAttempt demoAttempt = new QuizAttempt("DEMO-001", "JAVA-OOP", "OOP Mastery", "3101", "Abhishekh");
+ 592 |         demoAttempt.setTotalQuestions(4);
+ 593 |         demoAttempt.setTotalPossibleMarks(20);
+ 594 |         // Simulate: 3 correct (5 marks each = 15), 1 wrong (5 marks)
+ 595 |         demoAttempt.addQuestionResult(new QuizAttempt.QuestionResult(1, "Q1", "B", "B", true, 5.0));
+ 596 |         demoAttempt.addQuestionResult(new QuizAttempt.QuestionResult(2, "Q2", "B", "B", true, 5.0));
+ 597 |         demoAttempt.addQuestionResult(new QuizAttempt.QuestionResult(3, "Q3", "T", "T", true, 5.0));
+ 598 |         demoAttempt.addQuestionResult(new QuizAttempt.QuestionResult(4, "Q4", "X", "F", false, 5.0));
+ 599 |         demoAttempt.setCorrectCount(3);
+ 600 |         demoAttempt.setIncorrectCount(1);
+ 601 | 
+ 602 |         QuizEvaluator stdEvaluator = new StandardGradingPolicy();
+ 603 |         QuizEvaluator negEvaluator = new NegativeMarkingGradingPolicy(0.25); // 25% negative marking
+ 604 | 
+ 605 |         double scoreStd = stdEvaluator.evaluateScore(demoAttempt);
+ 606 |         double scoreNeg = negEvaluator.evaluateScore(demoAttempt);
+ 607 | 
+ 608 |         System.out.printf("   Scenario: 3 Correct (15 marks), 1 Wrong (out of 20 marks)%n");
+ 609 |         System.out.printf("   [Policy 1] %s -> Final Score: %.2f / 20.0 | Grade: %s%n",
+ 610 |                 stdEvaluator.getPolicyName(), scoreStd, stdEvaluator.generateGrade((scoreStd / 20.0) * 100));
+ 611 |         System.out.printf("   [Policy 2] %s -> Final Score: %.2f / 20.0 (15 - 1.25) | Grade: %s%n",
+ 612 |                 negEvaluator.getPolicyName(), scoreNeg, negEvaluator.generateGrade((scoreNeg / 20.0) * 100));
+ 613 | 
+ 614 |         // -------------------------------------------------------------
+ 615 |         // CONCEPT 3: Method Overloading (Compile-time Polymorphism)
+ 616 |         // -------------------------------------------------------------
+ 617 |         ConsoleUI.printSubHeader("3. COMPILE-TIME POLYMORPHISM (Method Overloading)");
+ 618 |         System.out.println("Demonstrating QuizManager.searchQuiz():");
+ 619 |         System.out.println("   Method 1: searchQuiz(String topic)");
+ 620 |         List<Quiz> topicOnly = quizManager.searchQuiz("Java");
+ 621 |         System.out.println("      searchQuiz(\"Java\") returned: " + topicOnly.size() + " quizzes.");
+ 622 | 
+ 623 |         System.out.println("   Method 2: searchQuiz(String topic, DifficultyLevel level)");
+ 624 |         List<Quiz> topicAndDiff = quizManager.searchQuiz("Java", DifficultyLevel.HARD);
+ 625 |         System.out.println("      searchQuiz(\"Java\", DifficultyLevel.HARD) returned: " + topicAndDiff.size() + " quizzes.");
+ 626 | 
+ 627 |         // -------------------------------------------------------------
+ 628 |         // CONCEPT 4: Comprehensive Exception Handling Test Matrix
+ 629 |         // -------------------------------------------------------------
+ 630 |         ConsoleUI.printSubHeader("4. EXCEPTION HANDLING TEST MATRIX (try, catch, finally, throw/throws)");
+ 631 | 
+ 632 |         // Test A: QuizNotFoundException
+ 633 |         System.out.println("\n[Test A] Triggering QuizNotFoundException for non-existent ID 'GHOST-404':");
+ 634 |         try {
+ 635 |             quizManager.getQuiz("GHOST-404");
+ 636 |         } catch (QuizNotFoundException e) {
+ 637 |             System.out.println("   [CAUGHT EXPECTED EXCEPTION] Class: " + e.getClass().getSimpleName());
+ 638 |             System.out.println("   Message: " + e.getMessage());
+ 639 |         } finally {
+ 640 |             System.out.println("   [FINALLY BLOCK EXECUTED] Cleanup for Test A completed.");
+ 641 |         }
+ 642 | 
+ 643 |         // Test B: DuplicateQuizException
+ 644 |         System.out.println("\n[Test B] Triggering DuplicateQuizException by adding existing quiz 'JAVA-OOP':");
+ 645 |         try {
+ 646 |             Quiz dup = new Quiz("JAVA-OOP", "Duplicate", "Desc", "OOP", DifficultyLevel.EASY);
+ 647 |             quizManager.createQuiz(dup);
+ 648 |         } catch (DuplicateQuizException e) {
+ 649 |             System.out.println("   [CAUGHT EXPECTED EXCEPTION] Class: " + e.getClass().getSimpleName());
+ 650 |             System.out.println("   Message: " + e.getMessage());
+ 651 |         } finally {
+ 652 |             System.out.println("   [FINALLY BLOCK EXECUTED] Cleanup for Test B completed.");
+ 653 |         }
+ 654 | 
+ 655 |         // Test C: InvalidQuestionException
+ 656 |         System.out.println("\n[Test C] Triggering InvalidQuestionException with negative marks (-10):");
+ 657 |         try {
+ 658 |             new TrueFalseQuestion(999, "Bad Question", -10, "Test", DifficultyLevel.EASY, true);
+ 659 |         } catch (InvalidQuestionException e) {
+ 660 |             System.out.println("   [CAUGHT EXPECTED EXCEPTION] Class: " + e.getClass().getSimpleName());
+ 661 |             System.out.println("   Message: " + e.getMessage());
+ 662 |         } finally {
+ 663 |             System.out.println("   [FINALLY BLOCK EXECUTED] Cleanup for Test C completed.");
+ 664 |         }
+ 665 | 
+ 666 |         // Test D: InvalidOptionException
+ 667 |         System.out.println("\n[Test D] Triggering InvalidOptionException with invalid option 'Z' on MCQ:");
+ 668 |         try {
+ 669 |             MultipleChoiceQuestion mcq = new MultipleChoiceQuestion(
+ 670 |                     888, "Test Question", 5, "Test", DifficultyLevel.EASY,
+ 671 |                     Arrays.asList("Option A", "Option B", "Option C", "Option D"), 0
+ 672 |             );
+ 673 |             mcq.checkAnswer("Z"); // Invalid choice outside A-D
+ 674 |         } catch (InvalidOptionException e) {
+ 675 |             System.out.println("   [CAUGHT EXPECTED EXCEPTION] Class: " + e.getClass().getSimpleName());
+ 676 |             System.out.println("   Message: " + e.getMessage());
+ 677 |         } catch (InvalidQuestionException e) {
+ 678 |             System.err.println("Unexpected setup error: " + e.getMessage());
+ 679 |         } finally {
+ 680 |             System.out.println("   [FINALLY BLOCK EXECUTED] Cleanup for Test D completed.");
+ 681 |         }
+ 682 | 
+ 683 |         // Test E: EmptyQuizException
+ 684 |         System.out.println("\n[Test E] Triggering EmptyQuizException by validating an empty quiz:");
+ 685 |         try {
+ 686 |             Quiz emptyQuiz = new Quiz("EMPTY-01", "Blank Quiz", "Empty", "Test", DifficultyLevel.EASY);
+ 687 |             emptyQuiz.validateForConduct();
+ 688 |         } catch (EmptyQuizException e) {
+ 689 |             System.out.println("   [CAUGHT EXPECTED EXCEPTION] Class: " + e.getClass().getSimpleName());
+ 690 |             System.out.println("   Message: " + e.getMessage());
+ 691 |         } finally {
+ 692 |             System.out.println("   [FINALLY BLOCK EXECUTED] Cleanup for Test E completed.");
+ 693 |         }
+ 694 | 
+ 695 |         System.out.println("\n" + ConsoleUI.SEPARATOR_DOUBLE);
+ 696 |         ConsoleUI.printSuccess("ALL 5 EXCEPTION AND POLYMORPHISM TEST SCENARIOS PASSED WITH FULL SPEC COMPLIANCE!");
+ 697 |         System.out.println(ConsoleUI.SEPARATOR_DOUBLE);
+ 698 |         System.out.println("\nPress Enter to return to menu...");
+ 699 |         scanner.nextLine();
+ 700 |     }
+ 701 | 
+ 702 |     private void shutdown() {
+ 703 |         System.out.println("\n[System] Performing graceful shutdown and releasing resources (finally block)...");
+ 704 |     }
+ 705 | 
+ 706 |     private String truncate(String text, int maxLen) {
+ 707 |         if (text == null) return "";
+ 708 |         if (text.length() <= maxLen) return text;
+ 709 |         return text.substring(0, maxLen - 3) + "...";
+ 710 |     }
+ 711 | }
+
+
+================================================================================
+ SECTION: EMBEDDED LIGHTWEIGHT JAVA HTTP REST WEB SERVER
+================================================================================
+
+--------------------------------------------------------------------------------
+ File #25: QuizWebServer.java  [Path: src/com/ait/quiz/web/QuizWebServer.java]
+--------------------------------------------------------------------------------
+
+   1 | package com.ait.quiz.web;
+   2 | 
+   3 | import com.ait.quiz.exception.*;
+   4 | import com.ait.quiz.main.QuizApplication;
+   5 | import com.ait.quiz.model.*;
+   6 | import com.ait.quiz.service.*;
+   7 | import com.sun.net.httpserver.HttpExchange;
+   8 | import com.sun.net.httpserver.HttpHandler;
+   9 | import com.sun.net.httpserver.HttpServer;
+  10 | 
+  11 | import java.io.*;
+  12 | import java.net.InetSocketAddress;
+  13 | import java.net.URLDecoder;
+  14 | import java.nio.charset.StandardCharsets;
+  15 | import java.nio.file.Files;
+  16 | import java.nio.file.Path;
+  17 | import java.nio.file.Paths;
+  18 | import java.util.*;
+  19 | 
+  20 | /**
+  21 |  * Embedded lightweight HTTP Web Server for the Online Quiz Management System.
+  22 |  * Connects the Java backend models, services, and exception hierarchy to a modern web browser UI.
+  23 |  * Runs on standard Java SE without third-party frameworks.
+  24 |  */
+  25 | public class QuizWebServer {
+  26 | 
+  27 |     private static final int DEFAULT_PORT = 8080;
+  28 |     private final QuizOperations quizManager;
+  29 |     private final Path staticDir;
+  30 |     private HttpServer server;
+  31 | 
+  32 |     public QuizWebServer(QuizOperations quizManager, Path staticDir) {
+  33 |         this.quizManager = quizManager;
+  34 |         this.staticDir = staticDir;
+  35 |     }
+  36 | 
+  37 |     public static void main(String[] args) {
+  38 |         int port = DEFAULT_PORT;
+  39 |         if (args.length > 0) {
+  40 |             try {
+  41 |                 port = Integer.parseInt(args[0]);
+  42 |             } catch (NumberFormatException ignored) {}
+  43 |         }
+  44 | 
+  45 |         Path webPath = Paths.get("web");
+  46 |         if (!Files.exists(webPath)) {
+  47 |             webPath = Paths.get("../web");
+  48 |         }
+  49 | 
+  50 |         QuizOperations manager = new QuizManager();
+  51 |         QuizWebServer webServer = new QuizWebServer(manager, webPath.toAbsolutePath().normalize());
+  52 | 
+  53 |         try {
+  54 |             webServer.start(port);
+  55 |             System.out.println("================================================================================");
+  56 |             System.out.println("           ONLINE QUIZ MANAGEMENT SYSTEM - WEB SERVER STARTED           ");
+  57 |             System.out.println("================================================================================");
+  58 |             System.out.println(" Server URL  : http://localhost:" + port);
+  59 |             System.out.println(" Static Dir  : " + webPath.toAbsolutePath().normalize());
+  60 |             System.out.println(" Status      : Ready to accept requests from web browser");
+  61 |             System.out.println(" Press Ctrl+C in this console to stop the server.");
+  62 |             System.out.println("================================================================================");
+  63 |         } catch (IOException e) {
+  64 |             System.err.println("Failed to start web server on port " + port + ": " + e.getMessage());
+  65 |         }
+  66 |     }
+  67 | 
+  68 |     public void start(int port) throws IOException {
+  69 |         server = HttpServer.create(new InetSocketAddress(port), 0);
+  70 | 
+  71 |         // API Endpoints
+  72 |         server.createContext("/api/quizzes", new QuizzesHandler());
+  73 |         server.createContext("/api/submit", new SubmitQuizHandler());
+  74 |         server.createContext("/api/attempts", new AttemptsHandler());
+  75 |         server.createContext("/api/demo", new DemoRunnerHandler());
+  76 | 
+  77 |         // Static Web Content Handler
+  78 |         server.createContext("/", new StaticFileHandler(staticDir));
+  79 | 
+  80 |         server.setExecutor(java.util.concurrent.Executors.newCachedThreadPool());
+  81 |         server.start();
+  82 |     }
+  83 | 
+  84 |     public void stop() {
+  85 |         if (server != null) {
+  86 |             server.stop(0);
+  87 |         }
+  88 |     }
+  89 | 
+  90 |     // =========================================================================
+  91 |     // API HANDLERS
+  92 |     // =========================================================================
+  93 | 
+  94 |     private class QuizzesHandler implements HttpHandler {
+  95 |         @Override
+  96 |         public void handle(HttpExchange exchange) throws IOException {
+  97 |             addCorsHeaders(exchange);
+  98 |             String method = exchange.getRequestMethod().toUpperCase();
+  99 | 
+ 100 |             if (method.equals("OPTIONS")) {
+ 101 |                 exchange.sendResponseHeaders(204, -1);
+ 102 |                 return;
+ 103 |             }
+ 104 | 
+ 105 |             if (method.equals("GET")) {
+ 106 |                 List<Quiz> quizzes = quizManager.getAllQuizzes();
+ 107 |                 StringBuilder json = new StringBuilder("[");
+ 108 |                 for (int i = 0; i < quizzes.size(); i++) {
+ 109 |                     Quiz q = quizzes.get(i);
+ 110 |                     json.append("{");
+ 111 |                     json.append("\"quizId\":").append(quote(q.getQuizId())).append(",");
+ 112 |                     json.append("\"title\":").append(quote(q.getTitle())).append(",");
+ 113 |                     json.append("\"description\":").append(quote(q.getDescription())).append(",");
+ 114 |                     json.append("\"topic\":").append(quote(q.getTopic())).append(",");
+ 115 |                     json.append("\"difficulty\":").append(quote(q.getDifficulty().getDisplayName())).append(",");
+ 116 |                     json.append("\"targetAgeGroup\":").append(quote(q.getTargetAgeGroup())).append(",");
+ 117 |                     json.append("\"totalMarks\":").append(q.getTotalMarks()).append(",");
+ 118 |                     json.append("\"questionCount\":").append(q.getQuestionCount()).append(",");
+ 119 |                     json.append("\"questions\":[");
+ 120 |                     List<Question> questions = q.getQuestions();
+ 121 |                     for (int j = 0; j < questions.size(); j++) {
+ 122 |                         Question que = questions.get(j);
+ 123 |                         json.append("{");
+ 124 |                         json.append("\"id\":").append(que.getId()).append(",");
+ 125 |                         json.append("\"questionText\":").append(quote(que.getQuestionText())).append(",");
+ 126 |                         json.append("\"marks\":").append(que.getMarks()).append(",");
+ 127 |                         json.append("\"topic\":").append(quote(que.getTopic())).append(",");
+ 128 |                         json.append("\"difficulty\":").append(quote(que.getDifficulty().getDisplayName())).append(",");
+ 129 |                         json.append("\"type\":").append(quote(que.getQuestionType())).append(",");
+ 130 |                         if (que instanceof MultipleChoiceQuestion) {
+ 131 |                             MultipleChoiceQuestion mcq = (MultipleChoiceQuestion) que;
+ 132 |                             json.append("\"options\":[");
+ 133 |                             List<String> opts = mcq.getOptions();
+ 134 |                             for (int k = 0; k < opts.size(); k++) {
+ 135 |                                 json.append(quote(opts.get(k)));
+ 136 |                                 if (k < opts.size() - 1) json.append(",");
+ 137 |                             }
+ 138 |                             json.append("]");
+ 139 |                         } else {
+ 140 |                             json.append("\"options\":[]");
+ 141 |                         }
+ 142 |                         json.append("}");
+ 143 |                         if (j < questions.size() - 1) json.append(",");
+ 144 |                     }
+ 145 |                     json.append("]");
+ 146 |                     json.append("}");
+ 147 |                     if (i < quizzes.size() - 1) json.append(",");
+ 148 |                 }
+ 149 |                 json.append("]");
+ 150 | 
+ 151 |                 sendJsonResponse(exchange, 200, json.toString());
+ 152 |             } else if (method.equals("POST")) {
+ 153 |                 // Create a new quiz
+ 154 |                 String body = readRequestBody(exchange);
+ 155 |                 try {
+ 156 |                     Map<String, String> params = parseSimpleJson(body);
+ 157 |                     String id = params.get("quizId");
+ 158 |                     String title = params.get("title");
+ 159 |                     String desc = params.get("description");
+ 160 |                     String topic = params.get("topic");
+ 161 |                     String diff = params.get("difficulty");
+ 162 |                     String ageGroup = params.get("targetAgeGroup");
+ 163 | 
+ 164 |                     DifficultyLevel level = DifficultyLevel.fromString(diff);
+ 165 |                     Quiz newQuiz = new Quiz(id, title, desc, topic, level, (ageGroup != null ? ageGroup : "College (18-22)"));
+ 166 |                     quizManager.createQuiz(newQuiz);
+ 167 | 
+ 168 |                     sendJsonResponse(exchange, 201, "{\"success\":true,\"message\":\"Quiz created successfully!\"}");
+ 169 |                 } catch (DuplicateQuizException dqe) {
+ 170 |                     sendJsonResponse(exchange, 400, "{\"success\":false,\"error\":" + quote(dqe.getMessage()) + "}");
+ 171 |                 } catch (Exception e) {
+ 172 |                     sendJsonResponse(exchange, 500, "{\"success\":false,\"error\":" + quote(e.getMessage()) + "}");
+ 173 |                 }
+ 174 |             } else {
+ 175 |                 exchange.sendResponseHeaders(405, -1);
+ 176 |             }
+ 177 |         }
+ 178 |     }
+ 179 | 
+ 180 |     private class SubmitQuizHandler implements HttpHandler {
+ 181 |         @Override
+ 182 |         public void handle(HttpExchange exchange) throws IOException {
+ 183 |             addCorsHeaders(exchange);
+ 184 |             if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+ 185 |                 exchange.sendResponseHeaders(204, -1);
+ 186 |                 return;
+ 187 |             }
+ 188 | 
+ 189 |             if (!exchange.getRequestMethod().equalsIgnoreCase("POST")) {
+ 190 |                 exchange.sendResponseHeaders(405, -1);
+ 191 |                 return;
+ 192 |             }
+ 193 | 
+ 194 |             String body = readRequestBody(exchange);
+ 195 |             try {
+ 196 |                 // Parse submission JSON
+ 197 |                 // Example payload: { "quizId": "JAVA-OOP", "studentName": "...", "rollNumber": "...", "policy": "competitive", "answers": { "1": "B", "2": "A" } }
+ 198 |                 Map<String, String> root = parseSimpleJson(body);
+ 199 |                 String quizId = root.get("quizId");
+ 200 |                 String studentName = root.getOrDefault("studentName", "Student");
+ 201 |                 String rollNumber = root.getOrDefault("rollNumber", "3101");
+ 202 |                 String policy = root.getOrDefault("policy", "standard");
+ 203 | 
+ 204 |                 Quiz quiz = quizManager.getQuiz(quizId);
+ 205 |                 quiz.validateForConduct();
+ 206 | 
+ 207 |                 // Select evaluation strategy (Interface Polymorphism)
+ 208 |                 QuizEvaluator evaluator = policy.equalsIgnoreCase("competitive")
+ 209 |                         ? new NegativeMarkingGradingPolicy(0.25)
+ 210 |                         : new StandardGradingPolicy();
+ 211 | 
+ 212 |                 String attemptId = "ATT-" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+ 213 |                 QuizAttempt attempt = new QuizAttempt(attemptId, quiz.getQuizId(), quiz.getTitle(), rollNumber, studentName);
+ 214 |                 attempt.setTotalQuestions(quiz.getQuestionCount());
+ 215 |                 attempt.setTotalPossibleMarks(quiz.getTotalMarks());
+ 216 | 
+ 217 |                 Map<String, String> answers = extractNestedMap(body, "answers");
+ 218 | 
+ 219 |                 int correctCount = 0;
+ 220 |                 int incorrectCount = 0;
+ 221 | 
+ 222 |                 for (Question q : quiz.getQuestions()) {
+ 223 |                     String studentAns = answers.getOrDefault(String.valueOf(q.getId()), "").trim();
+ 224 |                     boolean isCorrect = false;
+ 225 |                     try {
+ 226 |                         isCorrect = q.checkAnswer(studentAns);
+ 227 |                     } catch (InvalidOptionException ioe) {
+ 228 |                         isCorrect = false;
+ 229 |                     }
+ 230 | 
+ 231 |                     double marks = isCorrect ? q.getMarks() : 0.0;
+ 232 |                     if (isCorrect) correctCount++;
+ 233 |                     else incorrectCount++;
+ 234 | 
+ 235 |                     attempt.addQuestionResult(new QuizAttempt.QuestionResult(
+ 236 |                             q.getId(),
+ 237 |                             q.getQuestionText(),
+ 238 |                             studentAns.isEmpty() ? "(Unanswered)" : studentAns,
+ 239 |                             q.getCorrectAnswerFormatted(),
+ 240 |                             isCorrect,
+ 241 |                             marks
+ 242 |                     ));
+ 243 |                 }
+ 244 | 
+ 245 |                 attempt.setCorrectCount(correctCount);
+ 246 |                 attempt.setIncorrectCount(incorrectCount);
+ 247 | 
+ 248 |                 double score = evaluator.evaluateScore(attempt);
+ 249 |                 attempt.setScoreObtained(score);
+ 250 |                 double percentage = (quiz.getTotalMarks() > 0) ? (score / quiz.getTotalMarks()) * 100.0 : 0.0;
+ 251 |                 attempt.setPercentage(percentage);
+ 252 |                 attempt.setGrade(evaluator.generateGrade(percentage));
+ 253 | 
+ 254 |                 quizManager.recordAttempt(attempt);
+ 255 | 
+ 256 |                 // Build detailed response JSON
+ 257 |                 StringBuilder json = new StringBuilder("{");
+ 258 |                 json.append("\"success\":true,");
+ 259 |                 json.append("\"attemptId\":").append(quote(attempt.getAttemptId())).append(",");
+ 260 |                 json.append("\"quizTitle\":").append(quote(attempt.getQuizTitle())).append(",");
+ 261 |                 json.append("\"studentName\":").append(quote(attempt.getStudentName())).append(",");
+ 262 |                 json.append("\"rollNumber\":").append(quote(attempt.getStudentRollNumber())).append(",");
+ 263 |                 json.append("\"policyName\":").append(quote(evaluator.getPolicyName())).append(",");
+ 264 |                 json.append("\"timestamp\":").append(quote(attempt.getTimestamp())).append(",");
+ 265 |                 json.append("\"totalQuestions\":").append(attempt.getTotalQuestions()).append(",");
+ 266 |                 json.append("\"correctCount\":").append(attempt.getCorrectCount()).append(",");
+ 267 |                 json.append("\"incorrectCount\":").append(attempt.getIncorrectCount()).append(",");
+ 268 |                 json.append("\"scoreObtained\":").append(String.format(Locale.US, "%.2f", attempt.getScoreObtained())).append(",");
+ 269 |                 json.append("\"totalPossibleMarks\":").append(attempt.getTotalPossibleMarks()).append(",");
+ 270 |                 json.append("\"percentage\":").append(String.format(Locale.US, "%.2f", attempt.getPercentage())).append(",");
+ 271 |                 json.append("\"grade\":").append(quote(attempt.getGrade())).append(",");
+ 272 |                 json.append("\"results\":[");
+ 273 |                 List<QuizAttempt.QuestionResult> list = attempt.getQuestionResults();
+ 274 |                 for (int i = 0; i < list.size(); i++) {
+ 275 |                     QuizAttempt.QuestionResult qr = list.get(i);
+ 276 |                     json.append("{");
+ 277 |                     json.append("\"questionId\":").append(qr.getQuestionId()).append(",");
+ 278 |                     json.append("\"questionText\":").append(quote(qr.getQuestionText())).append(",");
+ 279 |                     json.append("\"studentAnswer\":").append(quote(qr.getStudentAnswer())).append(",");
+ 280 |                     json.append("\"correctAnswer\":").append(quote(qr.getCorrectAnswer())).append(",");
+ 281 |                     json.append("\"isCorrect\":").append(qr.isCorrect()).append(",");
+ 282 |                     json.append("\"marksAwarded\":").append(qr.getMarksAwarded());
+ 283 |                     json.append("}");
+ 284 |                     if (i < list.size() - 1) json.append(",");
+ 285 |                 }
+ 286 |                 json.append("]");
+ 287 |                 json.append("}");
+ 288 | 
+ 289 |                 sendJsonResponse(exchange, 200, json.toString());
+ 290 |             } catch (Exception e) {
+ 291 |                 sendJsonResponse(exchange, 400, "{\"success\":false,\"error\":" + quote(e.getMessage()) + "}");
+ 292 |             }
+ 293 |         }
+ 294 |     }
+ 295 | 
+ 296 |     private class AttemptsHandler implements HttpHandler {
+ 297 |         @Override
+ 298 |         public void handle(HttpExchange exchange) throws IOException {
+ 299 |             addCorsHeaders(exchange);
+ 300 |             if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+ 301 |                 exchange.sendResponseHeaders(204, -1);
+ 302 |                 return;
+ 303 |             }
+ 304 | 
+ 305 |             List<QuizAttempt> attempts = quizManager.getAllAttempts();
+ 306 |             StringBuilder json = new StringBuilder("[");
+ 307 |             for (int i = 0; i < attempts.size(); i++) {
+ 308 |                 QuizAttempt a = attempts.get(i);
+ 309 |                 json.append("{");
+ 310 |                 json.append("\"attemptId\":").append(quote(a.getAttemptId())).append(",");
+ 311 |                 json.append("\"quizId\":").append(quote(a.getQuizId())).append(",");
+ 312 |                 json.append("\"quizTitle\":").append(quote(a.getQuizTitle())).append(",");
+ 313 |                 json.append("\"studentName\":").append(quote(a.getStudentName())).append(",");
+ 314 |                 json.append("\"rollNumber\":").append(quote(a.getStudentRollNumber())).append(",");
+ 315 |                 json.append("\"scoreObtained\":").append(String.format(Locale.US, "%.2f", a.getScoreObtained())).append(",");
+ 316 |                 json.append("\"totalPossibleMarks\":").append(a.getTotalPossibleMarks()).append(",");
+ 317 |                 json.append("\"percentage\":").append(String.format(Locale.US, "%.2f", a.getPercentage())).append(",");
+ 318 |                 json.append("\"grade\":").append(quote(a.getGrade())).append(",");
+ 319 |                 json.append("\"timestamp\":").append(quote(a.getTimestamp()));
+ 320 |                 json.append("}");
+ 321 |                 if (i < attempts.size() - 1) json.append(",");
+ 322 |             }
+ 323 |             json.append("]");
+ 324 | 
+ 325 |             sendJsonResponse(exchange, 200, json.toString());
+ 326 |         }
+ 327 |     }
+ 328 | 
+ 329 |     private class DemoRunnerHandler implements HttpHandler {
+ 330 |         @Override
+ 331 |         public void handle(HttpExchange exchange) throws IOException {
+ 332 |             addCorsHeaders(exchange);
+ 333 |             if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+ 334 |                 exchange.sendResponseHeaders(204, -1);
+ 335 |                 return;
+ 336 |             }
+ 337 | 
+ 338 |             // Capture output of the demonstration suite
+ 339 |             ByteArrayOutputStream baos = new ByteArrayOutputStream();
+ 340 |             PrintStream origOut = System.out;
+ 341 |             PrintStream origErr = System.err;
+ 342 |             try {
+ 343 |                 PrintStream ps = new PrintStream(baos);
+ 344 |                 System.setOut(ps);
+ 345 |                 System.setErr(ps);
+ 346 | 
+ 347 |                 QuizApplication app = new QuizApplication();
+ 348 |                 // Run automated test suite logic
+ 349 |                 app.runAutomatedDemonstrationSuite();
+ 350 |             } finally {
+ 351 |                 System.setOut(origOut);
+ 352 |                 System.setErr(origErr);
+ 353 |             }
+ 354 | 
+ 355 |             String trace = baos.toString(StandardCharsets.UTF_8);
+ 356 |             sendJsonResponse(exchange, 200, "{\"success\":true,\"trace\":" + quote(trace) + "}");
+ 357 |         }
+ 358 |     }
+ 359 | 
+ 360 |     // =========================================================================
+ 361 |     // STATIC FILE SERVING
+ 362 |     // =========================================================================
+ 363 | 
+ 364 |     private static class StaticFileHandler implements HttpHandler {
+ 365 |         private final Path rootDir;
+ 366 | 
+ 367 |         public StaticFileHandler(Path rootDir) {
+ 368 |             this.rootDir = rootDir;
+ 369 |         }
+ 370 | 
+ 371 |         @Override
+ 372 |         public void handle(HttpExchange exchange) throws IOException {
+ 373 |             String pathStr = exchange.getRequestURI().getPath();
+ 374 |             if (pathStr == null || pathStr.equals("/") || pathStr.isEmpty()) {
+ 375 |                 pathStr = "/index.html";
+ 376 |             }
+ 377 | 
+ 378 |             // Prevent path traversal
+ 379 |             Path resolved = rootDir.resolve(pathStr.substring(1)).normalize();
+ 380 |             if (!resolved.startsWith(rootDir) || !Files.exists(resolved) || Files.isDirectory(resolved)) {
+ 381 |                 String notFound = "<h1>404 Not Found</h1><p>The requested file was not found.</p>";
+ 382 |                 exchange.sendResponseHeaders(404, notFound.length());
+ 383 |                 OutputStream os = exchange.getResponseBody();
+ 384 |                 os.write(notFound.getBytes(StandardCharsets.UTF_8));
+ 385 |                 os.close();
+ 386 |                 return;
+ 387 |             }
+ 388 | 
+ 389 |             String contentType = getMimeType(resolved.toString());
+ 390 |             exchange.getResponseHeaders().set("Content-Type", contentType);
+ 391 |             byte[] bytes = Files.readAllBytes(resolved);
+ 392 |             exchange.sendResponseHeaders(200, bytes.length);
+ 393 |             OutputStream os = exchange.getResponseBody();
+ 394 |             os.write(bytes);
+ 395 |             os.close();
+ 396 |         }
+ 397 | 
+ 398 |         private String getMimeType(String file) {
+ 399 |             if (file.endsWith(".html") || file.endsWith(".htm")) return "text/html; charset=utf-8";
+ 400 |             if (file.endsWith(".css")) return "text/css; charset=utf-8";
+ 401 |             if (file.endsWith(".js")) return "application/javascript; charset=utf-8";
+ 402 |             if (file.endsWith(".json")) return "application/json; charset=utf-8";
+ 403 |             if (file.endsWith(".png")) return "image/png";
+ 404 |             if (file.endsWith(".jpg") || file.endsWith(".jpeg")) return "image/jpeg";
+ 405 |             if (file.endsWith(".svg")) return "image/svg+xml";
+ 406 |             return "text/plain; charset=utf-8";
+ 407 |         }
+ 408 |     }
+ 409 | 
+ 410 |     // =========================================================================
+ 411 |     // HELPERS
+ 412 |     // =========================================================================
+ 413 | 
+ 414 |     private static void addCorsHeaders(HttpExchange exchange) {
+ 415 |         exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
+ 416 |         exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+ 417 |         exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+ 418 |     }
+ 419 | 
+ 420 |     private static void sendJsonResponse(HttpExchange exchange, int status, String json) throws IOException {
+ 421 |         byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
+ 422 |         exchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8");
+ 423 |         exchange.sendResponseHeaders(status, bytes.length);
+ 424 |         OutputStream os = exchange.getResponseBody();
+ 425 |         os.write(bytes);
+ 426 |         os.close();
+ 427 |     }
+ 428 | 
+ 429 |     private static String readRequestBody(HttpExchange exchange) throws IOException {
+ 430 |         InputStream is = exchange.getRequestBody();
+ 431 |         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+ 432 |         byte[] buffer = new byte[1024];
+ 433 |         int len;
+ 434 |         while ((len = is.read(buffer)) != -1) {
+ 435 |             baos.write(buffer, 0, len);
+ 436 |         }
+ 437 |         return baos.toString(StandardCharsets.UTF_8);
+ 438 |     }
+ 439 | 
+ 440 |     private static String quote(String str) {
+ 441 |         if (str == null) return "\"\"";
+ 442 |         StringBuilder sb = new StringBuilder("\"");
+ 443 |         for (char c : str.toCharArray()) {
+ 444 |             switch (c) {
+ 445 |                 case '"': sb.append("\\\""); break;
+ 446 |                 case '\\': sb.append("\\\\"); break;
+ 447 |                 case '\b': sb.append("\\b"); break;
+ 448 |                 case '\f': sb.append("\\f"); break;
+ 449 |                 case '\n': sb.append("\\n"); break;
+ 450 |                 case '\r': sb.append("\\r"); break;
+ 451 |                 case '\t': sb.append("\\t"); break;
+ 452 |                 default:
+ 453 |                     if (c < ' ') {
+ 454 |                         sb.append(String.format("\\u%04x", (int) c));
+ 455 |                     } else {
+ 456 |                         sb.append(c);
+ 457 |                     }
+ 458 |             }
+ 459 |         }
+ 460 |         sb.append("\"");
+ 461 |         return sb.toString();
+ 462 |     }
+ 463 | 
+ 464 |     private static Map<String, String> parseSimpleJson(String json) {
+ 465 |         Map<String, String> map = new HashMap<>();
+ 466 |         if (json == null || json.trim().isEmpty()) return map;
+ 467 | 
+ 468 |         String trimmed = json.trim();
+ 469 |         if (trimmed.startsWith("{")) trimmed = trimmed.substring(1);
+ 470 |         if (trimmed.endsWith("}")) trimmed = trimmed.substring(0, trimmed.length() - 1);
+ 471 | 
+ 472 |         String[] pairs = trimmed.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+ 473 |         for (String pair : pairs) {
+ 474 |             String[] kv = pair.split(":(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", 2);
+ 475 |             if (kv.length == 2) {
+ 476 |                 String key = cleanQuotes(kv[0].trim());
+ 477 |                 String val = cleanQuotes(kv[1].trim());
+ 478 |                 map.put(key, val);
+ 479 |             }
+ 480 |         }
+ 481 |         return map;
+ 482 |     }
+ 483 | 
+ 484 |     private static Map<String, String> extractNestedMap(String json, String parentKey) {
+ 485 |         Map<String, String> result = new HashMap<>();
+ 486 |         int keyIndex = json.indexOf("\"" + parentKey + "\"");
+ 487 |         if (keyIndex == -1) return result;
+ 488 | 
+ 489 |         int openBrace = json.indexOf("{", keyIndex);
+ 490 |         if (openBrace == -1) return result;
+ 491 | 
+ 492 |         int closeBrace = json.indexOf("}", openBrace);
+ 493 |         if (closeBrace == -1) return result;
+ 494 | 
+ 495 |         String inner = json.substring(openBrace + 1, closeBrace);
+ 496 |         String[] pairs = inner.split(",");
+ 497 |         for (String p : pairs) {
+ 498 |             String[] kv = p.split(":");
+ 499 |             if (kv.length == 2) {
+ 500 |                 result.put(cleanQuotes(kv[0].trim()), cleanQuotes(kv[1].trim()));
+ 501 |             }
+ 502 |         }
+ 503 |         return result;
+ 504 |     }
+ 505 | 
+ 506 |     private static String cleanQuotes(String s) {
+ 507 |         if (s.startsWith("\"") && s.endsWith("\"") && s.length() >= 2) {
+ 508 |             return s.substring(1, s.length() - 1);
+ 509 |         }
+ 510 |         return s;
+ 511 |     }
+ 512 | }

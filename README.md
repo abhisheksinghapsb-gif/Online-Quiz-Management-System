@@ -30,6 +30,9 @@
 
 - **GitHub Repository:** [https://github.com/abhisheksinghapsb-gif/Online-Quiz-Management-System](https://github.com/abhisheksinghapsb-gif/Online-Quiz-Management-System)
 - **Live Interactive Web Application:** [https://abhisheksinghapsb-gif.github.io/Online-Quiz-Management-System/](https://abhisheksinghapsb-gif.github.io/Online-Quiz-Management-System/)
+- **Complete Java Source Code (Markdown):** [docs/COMPLETE_JAVA_SOURCE_CODE.md](docs/COMPLETE_JAVA_SOURCE_CODE.md) (All 25 files formatted with syntax highlighting)
+- **Consolidated Java Source Code (Text with Line Numbers):** [Online_Quiz_Management_System_Complete_Source_Code.txt](Online_Quiz_Management_System_Complete_Source_Code.txt) (Printable & indexed)
+- **Java Source Code Zip Archive:** [Online_Quiz_Management_System_Java_Source_Code.zip](Online_Quiz_Management_System_Java_Source_Code.zip) (Complete package bundle)
 - **CIE-2 Presentation Deck:** [Online_Quiz_Management_System_Presentation.pptx](Online_Quiz_Management_System_Presentation.pptx) (12 custom visual slides with UML architecture diagrams)
 - **Formal Project Report:** [docs/CIE2_PROJECT_SUBMISSION_REPORT.md](docs/CIE2_PROJECT_SUBMISSION_REPORT.md)
 - **UML & Architecture Diagrams:** [docs/UML_AND_ARCHITECTURE_DIAGRAMS.md](docs/UML_AND_ARCHITECTURE_DIAGRAMS.md)
