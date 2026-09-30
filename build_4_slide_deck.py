@@ -222,31 +222,31 @@ def build_4_slide_presentation():
     # 4 Team Member Cards
     team_data = [
         ("Aditya Yadav", "8108", "GROUP LEADER",
-         [("Role", "System Architect & Integration Lead"),
-          ("Interfaces", "QuizOperations & QuizEvaluator contracts"),
-          ("Patterns", "Strategy Pattern & Polymorphic binding"),
-          ("Coordination", "Submission alignment & Rubric compliance")],
+         [("Role", "System Architect & Model Lead"),
+          ("Unit III", "Abstract Classes (Question & User)"),
+          ("Unit IV", "Types of Error & Constructor Guards"),
+          ("Viva Focus", "IS-A Encapsulation & Abstract Methods")],
          ORANGE_ACCENT),
 
         ("Abhishekh Singh", "8104", "CORE DEVELOPER",
-         [("Role", "OOP & Custom Exceptions Lead"),
-          ("Abstract Classes", "Question & User base hierarchies"),
-          ("Exception Tree", "5-tier checked QuizException hierarchy"),
-          ("Archetypes", "MCQ, True/False & Numeric questions")],
+         [("Role", "Polymorphic Questions Lead"),
+          ("Unit III", "Overriding & Dynamic Binding (vtable)"),
+          ("Unit IV", "Exception Interception (InvalidOption)"),
+          ("Viva Focus", "MCQ/TF/Num Dispatch & Overloading")],
          BLUE_ACCENT),
 
-        ("Priyam Raj", "8134", "WEB DEVELOPER",
-         [("Role", "Full-Stack Web & REST Engineer"),
-          ("Server", "Embedded Java HttpServer on port 8080"),
-          ("Client UI", "Responsive Glassmorphism Web App"),
-          ("Timer & JSON", "Live 10-min countdown & REST APIs")],
+        ("Priyam Raj", "8134", "STRATEGY ENGINEER",
+         [("Role", "Service & Design Pattern Lead"),
+          ("Unit III", "Interfaces & Strategy Pattern (Grading)"),
+          ("Unit IV", "Exception Propagation & 'throws' Signatures"),
+          ("Viva Focus", "QuizEvaluator Decoupling & Open/Closed")],
          PURPLE_ACCENT),
 
         ("Utkarsh Chauhan", "8154", "QA & TESTING",
-         [("Role", "Quality Assurance & Evaluation Lead"),
-          ("Test Suite", "Automated CIE-2 viva demonstration harness"),
-          ("Validation", "Standard vs 25% Negative Marking verification"),
-          ("Defensive Code", "Zero-crash input interceptors & recovery")],
+         [("Role", "Quality Assurance & Exceptions Lead"),
+          ("Unit III", "QuizManager Operations Implementation"),
+          ("Unit IV", "5-Tier Checked Exceptions & try-finally"),
+          ("Viva Focus", "Domain Exception Tree & Crash Prevention")],
          GREEN_ACCENT)
     ]
 

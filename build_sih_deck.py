@@ -707,27 +707,31 @@ def build_sih_presentation():
     team_alloc = [
         ("Aditya Yadav", "Roll No: 8108",
          [("Assigned Role", "Group Leader & System Architect"),
-          ("Core Ownership", "abstract class Question, abstract class User, Quiz aggregation model"),
-          ("Implementation", "Encapsulated shared state, validated constructor bounds, defined abstract displayQuestion() & checkAnswer() signatures."),
-          ("Viva Defense Focus", "Why use an abstract class? What is the difference between an abstract class and an interface?")]),
+          ("Unit III Topics", "Abstract Classes & Methods; Shared State Encapsulation (IS-A Model)"),
+          ("Unit IV Topics", "Types of Error (Syntax vs Logic) & Defensive Constructor Validation"),
+          ("Implementation", "abstract class Question & User; Quiz aggregation; marks > 0 guards"),
+          ("Viva Defense", "Why abstract classes? Abstract class vs Interface; forced specialization.")]),
 
         ("Abhishekh Singh", "Roll No: 8104",
          [("Assigned Role", "Polymorphic Question Specialist"),
-          ("Core Ownership", "MultipleChoiceQuestion, TrueFalseQuestion, NumericQuestion"),
-          ("Implementation", "Implemented specialized option parsing (A–D), boolean validation (T/F), and mathematical floating-point tolerance delta comparisons."),
-          ("Viva Defense Focus", "Where is runtime polymorphism used? How does dynamic method dispatch resolve method calls via JVM vtable?")]),
+          ("Unit III Topics", "Polymorphism, Method Overriding (@Override) & Dynamic Binding (vtable)"),
+          ("Unit IV Topics", "Exception Interception & Handling in Answers (InvalidOptionException)"),
+          ("Implementation", "MultipleChoiceQuestion, TrueFalseQuestion, NumericQuestion; Overloading"),
+          ("Viva Defense", "Where is polymorphism used? Dynamic dispatch via JVM virtual method table.")]),
 
         ("Priyam Raj", "Roll No: 8134",
          [("Assigned Role", "Service & Strategy Pattern Engineer"),
-          ("Core Ownership", "QuizOperations, QuizEvaluator, StandardGradingPolicy, NegativeMarkingGradingPolicy"),
-          ("Implementation", "Architected Strategy Pattern for interchangeable linear vs 25% negative marking scoring models and letter grade generation (O, A+, A, B, F)."),
-          ("Viva Defense Focus", "Why create the QuizEvaluator interface? How does it satisfy the Open/Closed Principle?")]),
+          ("Unit III Topics", "Interfaces (QuizOperations, QuizEvaluator) & Strategy Design Pattern"),
+          ("Unit IV Topics", "Exception Propagation & Interface Method 'throws' Contract Signatures"),
+          ("Implementation", "StandardGradingPolicy (linear) vs NegativeMarkingGradingPolicy (25% penalty)"),
+          ("Viva Defense", "Why QuizEvaluator interface? Open/Closed Principle; decoupling logic.")]),
 
         ("Utkarsh Chauhan", "Roll No: 8154",
          [("Assigned Role", "Quality Assurance & Exception Architect"),
-          ("Core Ownership", "QuizException tree (5 checked exceptions), InputValidator, Automated Test Suite"),
-          ("Implementation", "Engineered domain checked exceptions, try-catch-finally handlers, scanner buffer clearing, and the automated test harness (run_tests.bat)."),
-          ("Viva Defense Focus", "What exceptions can occur and how are they handled? What is the purpose of try, catch, and finally?")])
+          ("Unit III Topics", "Interface Implementation (QuizManager) & Pluggable Service Wiring"),
+          ("Unit IV Topics", "User-Defined Exceptions (5 Checked) & Structured try-catch-finally"),
+          ("Implementation", "QuizException tree (5 domain exceptions); InputValidator; run_tests.bat"),
+          ("Viva Defense", "Checked vs unchecked exceptions; purpose of try, catch, and finally blocks.")])
     ]
 
     coords_s11 = [
@@ -739,7 +743,7 @@ def build_sih_presentation():
 
     for i, (name, roll, details) in enumerate(team_alloc):
         left, top = coords_s11[i]
-        add_card(s11, left, top, Inches(5.7), Inches(2.6), f"{name} ({roll})", details, badge_text="Team Member (IT B)", font_size=8.5)
+        add_card(s11, left, top, Inches(5.7), Inches(2.6), f"{name} ({roll})", details, badge_text="Team Member (IT B)", font_size=8)
 
     # =========================================================================
     # SLIDE 12: Continuous Project Roadmap & References (Matching Reference Slide 6)
