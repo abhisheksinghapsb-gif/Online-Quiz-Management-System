@@ -36,7 +36,9 @@ def build_4_slide_presentation():
 
     base_dir = r"g:\aunty gravity projects\java project"
     assets_dir = os.path.join(base_dir, "ppt_assets")
-    ait_badge_path = os.path.join(assets_dir, "ait_badge.jpg")
+    ait_badge_path = os.path.join(assets_dir, "ait_official_badge.png")
+    if not os.path.exists(ait_badge_path):
+        ait_badge_path = os.path.join(assets_dir, "ait_badge.jpg")
     tech_brain_path = os.path.join(assets_dir, "quiz_tech_brain.jpg")
     core_innov_path = os.path.join(assets_dir, "quiz_core_innovation.jpg")
     process_flow_path = os.path.join(assets_dir, "quiz_process_workflow.jpg")
@@ -219,34 +221,34 @@ def build_4_slide_presentation():
     p_th.font.bold = True
     p_th.font.color.rgb = TOP_BAR_NAVY
 
-    # 4 Team Member Cards
+    # 4 Team Member Cards with Explicit Unit 3 & 4 Mappings
     team_data = [
-        ("Aditya Yadav", "8108", "GROUP LEADER",
-         [("Role", "System Architect & Model Lead"),
-          ("Unit III", "Abstract Classes (Question & User)"),
-          ("Unit IV", "Types of Error & Constructor Guards"),
-          ("Viva Focus", "IS-A Encapsulation & Abstract Methods")],
+        ("Aditya Yadav", "8108", "GROUP LEADER & ARCHITECT",
+         [("Unit III", "Abstract Classes (Question & User)"),
+          ("Unit IV", "Types of Errors & Parameter Boundary Checks"),
+          ("Implementation", "Base class hierarchies & abstract signatures"),
+          ("Viva Focus", "Why use abstract class? vs Interface")],
          ORANGE_ACCENT),
 
-        ("Abhishekh Singh", "8104", "CORE DEVELOPER",
-         [("Role", "Polymorphic Questions Lead"),
-          ("Unit III", "Overriding & Dynamic Binding (vtable)"),
-          ("Unit IV", "Exception Interception (InvalidOption)"),
-          ("Viva Focus", "MCQ/TF/Num Dispatch & Overloading")],
+        ("Abhishekh Singh", "8104", "POLYMORPHISM SPECIALIST",
+         [("Unit III", "Polymorphism & Dynamic Dispatch (vtable)"),
+          ("Unit IV", "Checked vs Unchecked Exceptions"),
+          ("Implementation", "MCQ, True/False, Numeric & checkAnswer()"),
+          ("Viva Focus", "Dynamic method dispatch resolution via vtable")],
          BLUE_ACCENT),
 
-        ("Priyam Raj", "8134", "STRATEGY ENGINEER",
-         [("Role", "Service & Design Pattern Lead"),
-          ("Unit III", "Interfaces & Strategy Pattern (Grading)"),
-          ("Unit IV", "Exception Propagation & 'throws' Signatures"),
-          ("Viva Focus", "QuizEvaluator Decoupling & Open/Closed")],
+        ("Priyam Raj", "8134", "STRATEGY PATTERN LEAD",
+         [("Unit III", "Interfaces & Pluggable Strategy Pattern"),
+          ("Unit IV", "try, catch, finally, throw, throws"),
+          ("Implementation", "QuizOperations & Standard vs Negative grading"),
+          ("Viva Focus", "QuizEvaluator design & Open/Closed Principle")],
          PURPLE_ACCENT),
 
-        ("Utkarsh Chauhan", "8154", "QA & TESTING",
-         [("Role", "Quality Assurance & Exceptions Lead"),
-          ("Unit III", "QuizManager Operations Implementation"),
-          ("Unit IV", "5-Tier Checked Exceptions & try-finally"),
-          ("Viva Focus", "Domain Exception Tree & Crash Prevention")],
+        ("Utkarsh Chauhan", "8154", "QA & EXCEPTION ARCHITECT",
+         [("Unit III", "Interface Implementation & Collections"),
+          ("Unit IV", "5-Tier Custom Checked Exceptions"),
+          ("Implementation", "QuizException tree, InputValidator & Tests"),
+          ("Viva Focus", "Handling custom exceptions & try-catch-finally")],
          GREEN_ACCENT)
     ]
 

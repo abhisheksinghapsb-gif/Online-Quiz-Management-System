@@ -29,11 +29,19 @@ def build_sih_presentation():
     ORANGE_ACCENT = RGBColor(234, 88, 12)   # #ea580c
     GREEN_ACCENT = RGBColor(22, 163, 74)    # #16a34a
     BLUE_ACCENT = RGBColor(37, 99, 235)     # #2563eb
+    PURPLE_ACCENT = RGBColor(126, 34, 206)  # #7e22ce
     RED_ACCENT = RGBColor(220, 38, 38)      # #dc2626
     TEXT_MUTED = RGBColor(100, 116, 139)
+    GOLD_ACCENT = RGBColor(203, 161, 53)
+    CODE_BG = RGBColor(241, 245, 249)
 
     assets_dir = r"g:\aunty gravity projects\java project\ppt_assets"
-    ait_badge_path = os.path.join(assets_dir, "ait_badge.jpg")
+    
+    # Official AIT Pune Logo Badge (100% authentic, transparent circular emblem)
+    ait_badge_path = os.path.join(assets_dir, "ait_official_badge.png")
+    if not os.path.exists(ait_badge_path):
+        ait_badge_path = os.path.join(assets_dir, "ait_badge.jpg")
+
     tech_brain_path = os.path.join(assets_dir, "quiz_tech_brain.jpg")
     core_innov_path = os.path.join(assets_dir, "quiz_core_innovation.jpg")
     process_flow_path = os.path.join(assets_dir, "quiz_process_workflow.jpg")
@@ -76,7 +84,7 @@ def build_sih_presentation():
             p2.font.bold = True
             p2.font.color.rgb = ORANGE_ACCENT
 
-        # Add AIT Badge in Top Right
+        # Add Official AIT Badge in Top Right
         if os.path.exists(ait_badge_path):
             slide.shapes.add_picture(ait_badge_path, Inches(11.8), Inches(0.35), Inches(0.95), Inches(0.95))
 
@@ -120,31 +128,26 @@ def build_sih_presentation():
         p_title.font.size = Pt(12)
         p_title.font.bold = True
         p_title.font.color.rgb = TOP_BAR_NAVY
-        p_title.space_after = Pt(5)
+        p_title.space_after = Pt(4)
 
-        for itm in items:
-            p = tf.add_paragraph()
-            p.font.name = "Arial"
-            p.font.size = Pt(font_size)
-            p.space_after = Pt(2.5)
-            
-            if isinstance(itm, tuple):
-                bold_prefix, rest = itm
-                run_b = p.add_run()
-                run_b.text = "• " + bold_prefix + ": "
-                run_b.font.bold = True
-                run_b.font.color.rgb = NAVY_TEXT
-                run_r = p.add_run()
-                run_r.text = rest
-                run_r.font.color.rgb = RGBColor(51, 65, 85)
-            else:
-                p.text = "• " + itm
-                p.font.color.rgb = RGBColor(51, 65, 85)
+        for heading, body in items:
+            p_item = tf.add_paragraph()
+            p_item.space_after = Pt(3)
+            r_head = p_item.add_run()
+            r_head.text = heading + " — " if heading else ""
+            r_head.font.name = "Arial"
+            r_head.font.bold = True
+            r_head.font.size = Pt(font_size)
+            r_head.font.color.rgb = NAVY_TEXT
 
-        return shape
+            r_body = p_item.add_run()
+            r_body.text = body
+            r_body.font.name = "Arial"
+            r_body.font.size = Pt(font_size)
+            r_body.font.color.rgb = NAVY_TEXT
 
     # =========================================================================
-    # SLIDE 1: Title Slide (Removed Problem Statement ID per user request!)
+    # SLIDE 1: COVER / TITLE SLIDE
     # =========================================================================
     s1 = prs.slides.add_slide(blank_layout)
     bg1 = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, prs.slide_height)
@@ -152,17 +155,24 @@ def build_sih_presentation():
     bg1.fill.fore_color.rgb = BG_CREAM
     bg1.line.fill.background()
 
-    # Top Banner Header
-    tb1_head = s1.shapes.add_textbox(Inches(0.8), Inches(0.6), Inches(10.5), Inches(1.1))
-    tf1_head = tb1_head.text_frame
-    p1_h1 = tf1_head.paragraphs[0]
+    # Top thin line
+    l1 = s1.shapes.add_shape(MSO_SHAPE.RECTANGLE, Inches(0.8), Inches(0.4), Inches(11.7), Inches(0.04))
+    l1.fill.solid()
+    l1.fill.fore_color.rgb = TOP_BAR_NAVY
+    l1.line.fill.background()
+
+    # Institution Header
+    tb1_inst = s1.shapes.add_textbox(Inches(0.8), Inches(0.45), Inches(10.5), Inches(0.8))
+    tf1_inst = tb1_inst.text_frame
+    tf1_inst.word_wrap = True
+    p1_h1 = tf1_inst.paragraphs[0]
     p1_h1.text = "ARMY INSTITUTE OF TECHNOLOGY, PUNE"
     p1_h1.font.name = "Arial"
-    p1_h1.font.size = Pt(26)
+    p1_h1.font.size = Pt(22)
     p1_h1.font.bold = True
     p1_h1.font.color.rgb = TOP_BAR_NAVY
 
-    p1_h2 = tf1_head.add_paragraph()
+    p1_h2 = tf1_inst.add_paragraph()
     p1_h2.text = "DEPARTMENT OF INFORMATION TECHNOLOGY • SKILL DEVELOPMENT LAB (BIT25434A0X)"
     p1_h2.font.name = "Arial"
     p1_h2.font.size = Pt(11)
@@ -172,291 +182,139 @@ def build_sih_presentation():
     if os.path.exists(ait_badge_path):
         s1.shapes.add_picture(ait_badge_path, Inches(11.5), Inches(0.5), Inches(1.2), Inches(1.2))
 
-    # Left Column: Project and Team Info (Cleaned up: Problem Statement ID removed!)
+    # Left Column: Project and Team Info
     card_info = s1.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(1.9), Inches(6.8), Inches(4.9))
     card_info.fill.solid()
     card_info.fill.fore_color.rgb = CARD_BG
     card_info.line.color.rgb = CARD_BORDER
     card_info.line.width = Pt(1.5)
-    tfi = card_info.text_frame
-    tfi.margin_left = Inches(0.4)
-    tfi.margin_top = Inches(0.35)
-    tfi.margin_right = Inches(0.4)
+    tf_info = card_info.text_frame
+    tf_info.word_wrap = True
+    tf_info.margin_left = tf_info.margin_right = Inches(0.3)
+    tf_info.margin_top = Inches(0.25)
 
-    info_items = [
+    meta_items = [
         ("Project Title", "ONLINE QUIZ MANAGEMENT SYSTEM"),
         ("Assessment & Mode", "CIE–2: Java Problem Solving (Unit III & IV) | 20 Marks"),
         ("Course Name & Code", "Skill Development Laboratory using Java (BIT25434A0X)"),
         ("Class & Division", "SE IT B (Academic Year 2026–2027)"),
         ("Course In-Charge / Examiner", "Mrs. Trupti Najan (Assistant Professor, Dept of IT)"),
-        ("Project Team Members", ""),
-        ("  1. Aditya Yadav", "Roll No: 8108 (Group Leader)"),
-        ("  2. Abhishekh Singh", "Roll No: 8104"),
-        ("  3. Priyam Raj", "Roll No: 8134"),
-        ("  4. Utkarsh Chauhan", "Roll No: 8154")
+        ("Project Team Members (Class: IT B)",
+         "\n      1. Aditya Yadav — Roll No: 8108 (Group Leader & Architect)\n"
+         "      2. Abhishekh Singh — Roll No: 8104 (Polymorphic Questions & Dispatch)\n"
+         "      3. Priyam Raj — Roll No: 8134 (Interfaces & Strategy Pattern)\n"
+         "      4. Utkarsh Chauhan — Roll No: 8154 (Custom Exceptions & QA)")
     ]
 
-    p_first = tfi.paragraphs[0]
-    p_first.text = "• " + info_items[0][0] + " — " + info_items[0][1]
-    p_first.font.name = "Arial"
-    p_first.font.size = Pt(13)
-    p_first.font.bold = True
-    p_first.font.color.rgb = NAVY_TEXT
-    p_first.space_after = Pt(6)
+    for i, (k, v) in enumerate(meta_items):
+        p = tf_info.paragraphs[0] if i == 0 else tf_info.add_paragraph()
+        p.space_after = Pt(6)
+        r_k = p.add_run()
+        r_k.text = "• " + k + " — "
+        r_k.font.bold = True
+        r_k.font.size = Pt(11)
+        r_k.font.color.rgb = TOP_BAR_NAVY
+        r_v = p.add_run()
+        r_v.text = v
+        r_v.font.size = Pt(10.5)
+        r_v.font.color.rgb = NAVY_TEXT
+        if "Project Title" in k:
+            r_v.font.bold = True
+            r_v.font.color.rgb = BLUE_ACCENT
 
-    for label, val in info_items[1:]:
-        p = tfi.add_paragraph()
-        p.space_after = Pt(4.5)
-        if label.startswith("  "):
-            r1 = p.add_run()
-            r1.text = "    " + label + " — "
-            r1.font.bold = True
-            r1.font.size = Pt(11)
-            r1.font.color.rgb = BLUE_ACCENT
-            r2 = p.add_run()
-            r2.text = val
-            r2.font.size = Pt(11)
-            r2.font.color.rgb = NAVY_TEXT
-        elif label == "Project Team Members":
-            p.text = "• " + label + " (Class: IT B):"
-            p.font.bold = True
-            p.font.size = Pt(12)
-            p.font.color.rgb = ORANGE_ACCENT
-        else:
-            r1 = p.add_run()
-            r1.text = "• " + label + " — "
-            r1.font.bold = True
-            r1.font.size = Pt(11.5)
-            r1.font.color.rgb = NAVY_TEXT
-            r2 = p.add_run()
-            r2.text = val
-            r2.font.size = Pt(11.5)
-            r2.font.color.rgb = RGBColor(71, 85, 105)
-
-    # Right side: Tech Brain Illustration
+    # Right Column: Visual Graphic
     if os.path.exists(tech_brain_path):
         s1.shapes.add_picture(tech_brain_path, Inches(8.0), Inches(1.9), Inches(4.5), Inches(4.5))
 
-    tb_num1 = s1.shapes.add_textbox(Inches(12.2), Inches(7.0), Inches(0.8), Inches(0.4))
-    tb_num1.text_frame.paragraphs[0].text = "1"
-    tb_num1.text_frame.paragraphs[0].font.size = Pt(12)
+    # Bottom Slide Number
+    tb_n1 = s1.shapes.add_textbox(Inches(12.2), Inches(7.0), Inches(0.8), Inches(0.4))
+    p_n1 = tb_n1.text_frame.paragraphs[0]
+    p_n1.text = "1"
+    p_n1.font.size = Pt(12)
+    p_n1.font.color.rgb = TEXT_MUTED
 
     # =========================================================================
-    # SLIDE 2: Problem Formulation & Risk vs Solution (Matching Reference Slide 2)
+    # SLIDE 2: PROBLEM STATEMENT, INNOVATION & RISK-SOLUTION MATRIX
     # =========================================================================
     s2 = prs.slides.add_slide(blank_layout)
     apply_base_slide(s2, "Online Quiz System: Automated & Robust Academic Assessment", 2,
                      "PROBLEM STATEMENT, CORE INNOVATION & RISK-SOLUTION MATRIX")
 
-    left_cards = [
-        ("Real-world issue",
-         "Colleges face heavy administrative overhead conducting manual paper tests. Subjective evaluation leads to grading delays, human scoring errors, and lack of immediate student performance analytics.",
-         Inches(1.6)),
-        ("Why important",
-         "Faculty spend 15+ hours grading internal tests. Commercial tools fail on rigid formats, lack dual grading strategies (Standard vs Negative), and crash completely on typographic user input errors.",
-         Inches(3.3)),
-        ("Solution",
-         "A modular Core Java assessment framework incorporating Unit III (Abstract Classes, Interfaces, Polymorphism) and Unit IV (5-tier Custom Checked Exceptions) for zero-crash immunity and instant scorecards.",
-         Inches(5.0))
-    ]
+    add_card(s2, Inches(0.8), Inches(1.6), Inches(4.2), Inches(5.2),
+             "Real-World Problem & Core Solution",
+             [
+                 ("REAL-WORLD ISSUE",
+                  "Colleges face heavy administrative overhead conducting manual paper tests. Subjective evaluation leads to grading delays, human scoring errors, and lack of immediate student performance analytics."),
+                 ("WHY IMPORTANT",
+                  "Faculty spend 15+ hours grading internal tests. Commercial tools fail on rigid formats, lack dual grading strategies (Standard vs Negative), and crash completely on typographic user input errors."),
+                 ("SOLUTION",
+                  "A modular Core Java assessment framework incorporating Unit III (Abstract Classes, Interfaces, Polymorphism) and Unit IV (5-tier Custom Checked Exceptions) for zero-crash immunity and instant scorecards.")
+             ], badge_text="Academic Problem Statement", font_size=9)
 
-    for title, text, top in left_cards:
-        card = s2.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), top, Inches(3.6), Inches(1.5))
-        card.fill.solid()
-        card.fill.fore_color.rgb = DARK_CARD_BG
-        card.line.color.rgb = DARK_CARD_BORDER
-        tf = card.text_frame
-        tf.margin_left = tf.margin_right = Inches(0.2)
-        tf.margin_top = Inches(0.15)
-        p1 = tf.paragraphs[0]
-        p1.text = title.upper() + ":"
-        p1.font.name = "Arial"
-        p1.font.size = Pt(11)
-        p1.font.bold = True
-        p1.font.color.rgb = ORANGE_ACCENT
-        p1.space_after = Pt(3)
-        p2 = tf.add_paragraph()
-        p2.text = text
-        p2.font.name = "Arial"
-        p2.font.size = Pt(9.5)
-        p2.font.color.rgb = RGBColor(226, 232, 240)
-
-    # Center: Core Innovation Graphic
     if os.path.exists(core_innov_path):
-        s2.shapes.add_picture(core_innov_path, Inches(4.6), Inches(1.6), Inches(4.3), Inches(4.9))
+        s2.shapes.add_picture(core_innov_path, Inches(5.2), Inches(1.6), Inches(4.3), Inches(5.2))
 
-    # Right Column: Risk -> Solution Pairs
-    right_top = Inches(1.6)
-    tb_rs = s2.shapes.add_textbox(Inches(9.1), right_top, Inches(3.4), Inches(0.4))
-    p_rs = tb_rs.text_frame.paragraphs[0]
-    p_rs.text = "OPERATIONAL RISK  ➔  TECHNICAL SOLUTION"
-    p_rs.font.name = "Arial"
-    p_rs.font.size = Pt(11)
-    p_rs.font.bold = True
-    p_rs.font.color.rgb = TOP_BAR_NAVY
-
-    pairs = [
-        ("Input Mismatches / Typos", "Student enters non-numeric or illegal chars like 'Z' crashing console.",
-         "5-Tier Custom Exceptions", "try-catch InvalidOptionException catches format, prompts retry safely."),
-        ("Rigid Single-Format Que", "Traditional apps only allow standard single-type multiple choice.",
-         "Polymorphic Archetypes", "Abstract Question extended by MCQ, TrueFalse, and NumericQuestion."),
-        ("Inflexible Scoring Rules", "University linear grading vs competitive exams require different math.",
-         "Pluggable Strategy Pattern", "QuizEvaluator swaps Standard vs 25% Negative Marking dynamically.")
-    ]
-
-    for i, (r_title, r_desc, s_title, s_desc) in enumerate(pairs):
-        card_r = s2.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(9.1), Inches(2.1 + i * 1.5), Inches(3.4), Inches(1.35))
-        card_r.fill.solid()
-        card_r.fill.fore_color.rgb = CARD_BG
-        card_r.line.color.rgb = CARD_BORDER
-        tf = card_r.text_frame
-        tf.margin_left = tf.margin_right = Inches(0.2)
-        tf.margin_top = Inches(0.12)
-        p_r = tf.paragraphs[0]
-        r_run = p_r.add_run()
-        r_run.text = "Risk: " + r_title + "\n"
-        r_run.font.bold = True
-        r_run.font.size = Pt(9.5)
-        r_run.font.color.rgb = RED_ACCENT
-        r_sub = p_r.add_run()
-        r_sub.text = r_desc + "\n"
-        r_sub.font.size = Pt(8.5)
-        r_sub.font.color.rgb = TEXT_MUTED
-
-        p_s = tf.add_paragraph()
-        s_run = p_s.add_run()
-        s_run.text = "➔ Solution: " + s_title + "\n"
-        s_run.font.bold = True
-        s_run.font.size = Pt(9.5)
-        s_run.font.color.rgb = GREEN_ACCENT
-        s_sub = p_s.add_run()
-        s_sub.text = s_desc
-        s_sub.font.size = Pt(8.5)
-        s_sub.font.color.rgb = NAVY_TEXT
+    add_card(s2, Inches(9.7), Inches(1.6), Inches(2.8), Inches(5.2),
+             "Risk Mitigation Strategy",
+             [
+                 ("Risk: Input Mismatches / Typos",
+                  "Student enters non-numeric or illegal chars like 'Z' crashing console.\n➔ Solution: 5-Tier Custom Exceptions\ntry-catch InvalidOptionException catches format, prompts retry safely."),
+                 ("Risk: Rigid Single-Format Que",
+                  "Traditional apps only allow standard single-type multiple choice.\n➔ Solution: Polymorphic Archetypes\nAbstract Question extended by MCQ, TrueFalse, and NumericQuestion."),
+                 ("Risk: Inflexible Scoring Rules",
+                  "University linear grading vs competitive exams require different math.\n➔ Solution: Pluggable Strategy Pattern\nQuizEvaluator swaps Standard vs 25% Negative Marking dynamically.")
+             ], badge_text="Operational Risk  ➔  Technical Solution", border_color=ORANGE_ACCENT, font_size=8)
 
     # =========================================================================
-    # SLIDE 3: Technical Approach & Methodology (Matching Reference Slide 3)
+    # SLIDE 3: TECHNICAL APPROACH & IMPLEMENTATION METHODOLOGY
     # =========================================================================
     s3 = prs.slides.add_slide(blank_layout)
     apply_base_slide(s3, "Technical Approach & Implementation Methodology", 3,
                      "PROCESS LIFECYCLE, PIPELINE STAGES & ARCHITECTURE")
 
-    # Left: Numbered Pipeline (1 to 6)
-    card_pipe = s3.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(1.6), Inches(3.5), Inches(5.0))
-    card_pipe.fill.solid()
-    card_pipe.fill.fore_color.rgb = CARD_BG
-    card_pipe.line.color.rgb = CARD_BORDER
-    tf_p = card_pipe.text_frame
-    tf_p.margin_left = tf_p.margin_right = Inches(0.25)
-    tf_p.margin_top = Inches(0.2)
+    add_card(s3, Inches(0.8), Inches(1.6), Inches(3.2), Inches(5.2),
+             "6-Stage Assessment Pipeline",
+             [
+                 ("[1] Multi-Tier Quiz Ingestion", "Validates unique ID, age demographic & questionCount > 0."),
+                 ("[2] Strategy Configuration", "Injects Standard or Competitive 25% negative marking."),
+                 ("[3] Dynamic Question Dispatch", "Iterates List<Question> invoking subclass display."),
+                 ("[4] Defensive Input Interception", "Guards parsing with try-catch InvalidOptionException."),
+                 ("[5] Strategy Evaluation", "Calculates net scores, percentages, and letter grades."),
+                 ("[6] Scorecard & Audit Generation", "Generates detailed question-by-question breakdown.")
+             ], badge_text="Pipeline Stages", font_size=8.5)
 
-    p_phead = tf_p.paragraphs[0]
-    p_phead.text = "PIPELINE STAGES"
-    p_phead.font.bold = True
-    p_phead.font.size = Pt(12)
-    p_phead.font.color.rgb = TOP_BAR_NAVY
-    p_phead.space_after = Pt(8)
-
-    pipe_steps = [
-        ("1", "Multi-Tier Quiz Ingestion", "Validates unique ID, age demographic & questionCount > 0."),
-        ("2", "Strategy Configuration", "Injects Standard or Competitive 25% negative marking."),
-        ("3", "Dynamic Question Dispatch", "Iterates List<Question> invoking subclass display."),
-        ("4", "Defensive Input Interception", "Guards parsing with try-catch InvalidOptionException."),
-        ("5", "Strategy Evaluation", "Calculates net scores, percentages, and letter grades."),
-        ("6", "Scorecard & Audit Generation", "Generates detailed question-by-question breakdown.")
-    ]
-
-    for num, title, desc in pipe_steps:
-        p = tf_p.add_paragraph()
-        p.space_after = Pt(5)
-        r_num = p.add_run()
-        r_num.text = f"[{num}] "
-        r_num.font.bold = True
-        r_num.font.size = Pt(10)
-        r_num.font.color.rgb = BLUE_ACCENT
-        r_title = p.add_run()
-        r_title.text = title + "\n"
-        r_title.font.bold = True
-        r_title.font.size = Pt(9.5)
-        r_title.font.color.rgb = NAVY_TEXT
-        r_desc = p.add_run()
-        r_desc.text = "     " + desc
-        r_desc.font.size = Pt(8.5)
-        r_desc.font.color.rgb = TEXT_MUTED
-
-    # Center: Process Workflow Infographic
     if os.path.exists(process_flow_path):
-        s3.shapes.add_picture(process_flow_path, Inches(4.5), Inches(1.6), Inches(5.4), Inches(3.2))
+        s3.shapes.add_picture(process_flow_path, Inches(4.2), Inches(1.6), Inches(4.8), Inches(5.2))
 
-    card_arch = s3.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(4.5), Inches(5.0), Inches(5.4), Inches(1.6))
-    card_arch.fill.solid()
-    card_arch.fill.fore_color.rgb = DARK_CARD_BG
-    card_arch.line.color.rgb = DARK_CARD_BORDER
-    tf_a = card_arch.text_frame
-    tf_a.margin_left = tf_a.margin_right = Inches(0.25)
-    tf_a.margin_top = Inches(0.15)
-    pa1 = tf_a.paragraphs[0]
-    pa1.text = "DUAL-MODE EXECUTION MODEL"
-    pa1.font.bold = True
-    pa1.font.size = Pt(11)
-    pa1.font.color.rgb = ORANGE_ACCENT
-    pa1.space_after = Pt(4)
-    pa2 = tf_a.add_paragraph()
-    pa2.text = "• Terminal CLI (run.bat): Interactive ANSI boxed console interface.\n• Web Application (run_web.bat): Embedded Java HttpServer at http://localhost:8080.\n• Automated Test Suite (run_tests.bat): 60-second test harness for live viva demonstration."
-    pa2.font.size = Pt(9)
-    pa2.font.color.rgb = RGBColor(226, 232, 240)
-
-    # Right: Technologies Used Panel
-    card_tech = s3.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(10.1), Inches(1.6), Inches(2.4), Inches(5.0))
-    card_tech.fill.solid()
-    card_tech.fill.fore_color.rgb = CARD_BG
-    card_tech.line.color.rgb = CARD_BORDER
-    tf_t = card_tech.text_frame
-    tf_t.margin_left = tf_t.margin_right = Inches(0.2)
-    tf_t.margin_top = Inches(0.2)
-
-    pt_h = tf_t.paragraphs[0]
-    pt_h.text = "TECHNOLOGIES"
-    pt_h.font.bold = True
-    pt_h.font.size = Pt(11)
-    pt_h.font.color.rgb = TOP_BAR_NAVY
-    pt_h.space_after = Pt(8)
-
-    techs = [
-        ("Core Java", "JDK 26 SE runtime, OOP principles, dynamic binding."),
-        ("Design Patterns", "Strategy Pattern (QuizEvaluator) & Aggregation."),
-        ("Exception Tree", "5-tier custom checked exception hierarchy."),
-        ("Collections", "LinkedHashMap, ArrayList, and Map."),
-        ("Java HttpServer", "Built-in com.sun.net.httpserver with zero external JARs."),
-        ("Web Frontend", "Modern HTML5, CSS3, and JavaScript Glassmorphism UI.")
+    right_col_s3 = [
+        ("Execution Runtimes",
+         [("Terminal CLI (run.bat)", "Interactive ANSI boxed console interface."),
+          ("Web Application (run_web.bat)", "Embedded Java HttpServer at http://localhost:8080."),
+          ("Automated Test Suite (run_tests.bat)", "60-second test harness for live viva demonstration.")],
+         "Dual-Mode Execution Model", Inches(1.6)),
+        ("Core Stack",
+         [("Core Java", "JDK 26 SE runtime, OOP principles, dynamic binding."),
+          ("Design Patterns", "Strategy Pattern (QuizEvaluator) & Aggregation."),
+          ("Exception Tree", "5-tier custom checked exception hierarchy."),
+          ("Collections", "LinkedHashMap, ArrayList, and Map."),
+          ("Java HttpServer", "Built-in com.sun.net.httpserver with zero external JARs."),
+          ("Web Frontend", "Modern HTML5, CSS3, and JavaScript Glassmorphism UI.")],
+         "Technologies", Inches(4.0))
     ]
-
-    for name, sub in techs:
-        p = tf_t.add_paragraph()
-        p.space_after = Pt(4)
-        r1 = p.add_run()
-        r1.text = "• " + name + "\n"
-        r1.font.bold = True
-        r1.font.size = Pt(9.5)
-        r1.font.color.rgb = BLUE_ACCENT
-        r2 = p.add_run()
-        r2.text = "  " + sub
-        r2.font.size = Pt(8)
-        r2.font.color.rgb = TEXT_MUTED
+    for title, items, badge, top_pos in right_col_s3:
+        add_card(s3, Inches(9.2), top_pos, Inches(3.3), Inches(2.7 if "Core" in title else 2.2), title, items, badge_text=badge, font_size=8)
 
     # =========================================================================
-    # SLIDE 4: Java Concept 1 - Abstract Classes (RE-DESIGNED WITH VISUAL DIAGRAM!)
+    # SLIDE 4: CORE JAVA CONCEPT 1 - ABSTRACT CLASSES (QUESTION & USER)
     # =========================================================================
     s4 = prs.slides.add_slide(blank_layout)
     apply_base_slide(s4, "Core Java Concept 1: Abstract Classes (Question & User)", 4,
                      "UML DOMAIN MODEL, ENCAPSULATED STATE & FORCED SPECIALIZATION")
 
-    # Top: Visual Architectural Diagram Image!
     if os.path.exists(abstract_diagram_path):
-        s4.shapes.add_picture(abstract_diagram_path, Inches(0.8), Inches(1.5), Inches(11.7), Inches(3.3))
+        s4.shapes.add_picture(abstract_diagram_path, Inches(0.8), Inches(1.6), Inches(6.8), Inches(5.2))
 
-    # Bottom Left Card: Abstract Class Question
-    add_card(s4, Inches(0.8), Inches(4.95), Inches(5.7), Inches(1.85),
+    add_card(s4, Inches(7.8), Inches(1.6), Inches(4.7), Inches(2.55),
              "Abstract Base Class: Question",
              [
                  ("Why Abstract Class?", "Encapsulates shared fields (id, marks, topic, difficulty) and displayHeader(), but cannot be instantiated directly without choice logic."),
@@ -464,8 +322,7 @@ def build_sih_presentation():
                  ("Subclass Archetypes", "MultipleChoiceQuestion (A-D options), TrueFalseQuestion (Boolean T/F), NumericQuestion (tolerance delta).")
              ], badge_text="Core Domain Model", font_size=8.5)
 
-    # Bottom Right Card: User Hierarchy
-    add_card(s4, Inches(6.8), Inches(4.95), Inches(5.7), Inches(1.85),
+    add_card(s4, Inches(7.8), Inches(4.25), Inches(4.7), Inches(2.55),
              "Subclasses & User Hierarchy",
              [
                  ("Abstract Class: User", "Encapsulates common user identity (userId, name, email) and enforces abstract void displayDashboard();."),
@@ -474,18 +331,16 @@ def build_sih_presentation():
              ], badge_text="Inheritance & Dashboards", font_size=8.5)
 
     # =========================================================================
-    # SLIDE 5: Java Concept 2 - Interfaces & Strategy Pattern (WITH VISUAL DIAGRAM!)
+    # SLIDE 5: CORE JAVA CONCEPT 2 - INTERFACES & STRATEGY PATTERN
     # =========================================================================
     s5 = prs.slides.add_slide(blank_layout)
     apply_base_slide(s5, "Core Java Concept 2: Interfaces & Strategy Pattern", 5,
                      "BEHAVIORAL CONTRACTS & RUNTIME SCORING DECOUPLING")
 
-    # Top: Visual Strategy Pattern Diagram Image!
     if os.path.exists(strategy_diagram_path):
-        s5.shapes.add_picture(strategy_diagram_path, Inches(0.8), Inches(1.5), Inches(11.7), Inches(3.3))
+        s5.shapes.add_picture(strategy_diagram_path, Inches(0.8), Inches(1.6), Inches(6.8), Inches(5.2))
 
-    # Bottom Left Card: Interface QuizOperations
-    add_card(s5, Inches(0.8), Inches(4.95), Inches(5.7), Inches(1.85),
+    add_card(s5, Inches(7.8), Inches(1.6), Inches(4.7), Inches(2.55),
              "Interface: QuizOperations (Lifecycle Contract)",
              [
                  ("Contract Definition", "Defines createQuiz, addQuestionToQuiz, getQuiz, searchQuiz, deleteQuiz without coupling to persistence."),
@@ -493,8 +348,7 @@ def build_sih_presentation():
                  ("Service Implementation", "Implemented by QuizManager using Collections Framework (LinkedHashMap and ArrayList).")
              ], badge_text="CRUD Lifecycle Contract", font_size=8.5)
 
-    # Bottom Right Card: Strategy Pattern
-    add_card(s5, Inches(6.8), Inches(4.95), Inches(5.7), Inches(1.85),
+    add_card(s5, Inches(7.8), Inches(4.25), Inches(4.7), Inches(2.55),
              "Interface: QuizEvaluator (Pluggable Strategies)",
              [
                  ("The Strategy Design Pattern", "Decouples scoring logic from test conduction. Injected dynamically at runtime based on exam type."),
@@ -503,18 +357,16 @@ def build_sih_presentation():
              ], badge_text="Interchangeable Grading Strategies", font_size=8.5)
 
     # =========================================================================
-    # SLIDE 6: Java Concept 3 - Polymorphism in Action (WITH VISUAL DIAGRAM!)
+    # SLIDE 6: CORE JAVA CONCEPT 3 - POLYMORPHISM IN ACTION
     # =========================================================================
     s6 = prs.slides.add_slide(blank_layout)
     apply_base_slide(s6, "Core Java Concept 3: Polymorphism in Action", 6,
                      "DYNAMIC METHOD DISPATCH (vtable) & STATIC METHOD OVERLOADING")
 
-    # Top: Visual Polymorphism Diagram Image!
     if os.path.exists(poly_diagram_path):
-        s6.shapes.add_picture(poly_diagram_path, Inches(0.8), Inches(1.5), Inches(11.7), Inches(3.3))
+        s6.shapes.add_picture(poly_diagram_path, Inches(0.8), Inches(1.6), Inches(6.8), Inches(5.2))
 
-    # Bottom Left: Runtime Polymorphism
-    add_card(s6, Inches(0.8), Inches(4.95), Inches(5.7), Inches(1.85),
+    add_card(s6, Inches(7.8), Inches(1.6), Inches(4.7), Inches(2.55),
              "Runtime Polymorphism (Dynamic Method Dispatch)",
              [
                  ("Dynamic Question Dispatch", "Iterating List<Question>: q.displayQuestion() and q.checkAnswer() dynamically resolve to MCQ, TrueFalse, or Numeric via JVM vtable."),
@@ -522,8 +374,7 @@ def build_sih_presentation():
                  ("Dashboard Dispatch", "User userRef = currentStudent; userRef.displayDashboard(); dynamically binds to Student's dashboard.")
              ], badge_text="Dynamic Binding (vtable)", font_size=8.5)
 
-    # Bottom Right: Compile-time Polymorphism
-    add_card(s6, Inches(6.8), Inches(4.95), Inches(5.7), Inches(1.85),
+    add_card(s6, Inches(7.8), Inches(4.25), Inches(4.7), Inches(2.55),
              "Compile-Time Polymorphism (Method Overloading)",
              [
                  ("Overloaded searchQuiz", "searchQuiz(String topic); filters by topic; searchQuiz(String topic, DifficultyLevel level); filters topic & difficulty."),
@@ -532,18 +383,16 @@ def build_sih_presentation():
              ], badge_text="Static Binding / Overloading", font_size=8.5)
 
     # =========================================================================
-    # SLIDE 7: Java Concept 4 - Exception Handling Hierarchy (WITH VISUAL DIAGRAM!)
+    # SLIDE 7: CORE JAVA CONCEPT 4 - EXCEPTION HANDLING HIERARCHY
     # =========================================================================
     s7 = prs.slides.add_slide(blank_layout)
     apply_base_slide(s7, "Core Java Concept 4: Exception Handling Hierarchy", 7,
                      "CUSTOM CHECKED EXCEPTIONS & DEFENSIVE EXECUTION")
 
-    # Top: Visual Exception Tree Diagram Image!
     if os.path.exists(exception_diagram_path):
-        s7.shapes.add_picture(exception_diagram_path, Inches(0.8), Inches(1.5), Inches(11.7), Inches(3.3))
+        s7.shapes.add_picture(exception_diagram_path, Inches(0.8), Inches(1.6), Inches(6.8), Inches(5.2))
 
-    # Bottom Left: Custom Exception Tree
-    add_card(s7, Inches(0.8), Inches(4.95), Inches(5.7), Inches(1.85),
+    add_card(s7, Inches(7.8), Inches(1.6), Inches(4.7), Inches(2.55),
              "Custom Checked Exception Hierarchy",
              [
                  ("Root: QuizException", "Extends java.lang.Exception. Root checked exception for domain integrity."),
@@ -553,8 +402,7 @@ def build_sih_presentation():
                  ("EmptyQuizException", "Thrown if an attempt is made to conduct a quiz containing zero questions.")
              ], badge_text="Custom Exception Tree", font_size=8.5)
 
-    # Bottom Right: try-catch-finally execution
-    add_card(s7, Inches(6.8), Inches(4.95), Inches(5.7), Inches(1.85),
+    add_card(s7, Inches(7.8), Inches(4.25), Inches(4.7), Inches(2.55),
              "Structured Try-Catch-Finally Architecture",
              [
                  ("The 'try' Block", "Isolates critical operations: reading console inputs, invoking domain services, and validating student answers."),
@@ -564,104 +412,95 @@ def build_sih_presentation():
              ], badge_text="Fault-Tolerant Execution", font_size=8.5)
 
     # =========================================================================
-    # SLIDE 8: Feasibility and Viability (Matching Reference Slide 4)
+    # SLIDE 8: FEASIBILITY, VIABILITY & EDUCATIONAL VERIFICATION
     # =========================================================================
     s8 = prs.slides.add_slide(blank_layout)
     apply_base_slide(s8, "Feasibility, Viability & Educational Verification", 8,
                      "INFRASTRUCTURE READINESS, SCALABILITY & ACADEMIC VALUE")
 
-    col_w = Inches(3.7)
-    cols = [
-        ("FEASIBILITY ANALYSIS",
-         [("Zero External Dependencies", "Built strictly with standard Java SE (JDK 8–26). No Maven/Gradle or third-party JARs required."),
-          ("Dual-Mode Deployability", "Runs seamlessly in terminal console (run.bat) or modern web browser (run_web.bat) via embedded HttpServer."),
-          ("Cross-Platform Portability", "Executes identically on Windows, Linux, and macOS runtimes."),
-          ("Faculty Time Efficiency", "Eliminates 100% of manual grading time and scorecard calculation errors.")],
-         Inches(0.8), "Feasibility"),
+    add_card(s8, Inches(0.8), Inches(1.6), Inches(3.7), Inches(5.2),
+             "FEASIBILITY ANALYSIS",
+             [
+                 ("Zero External Dependencies", "Built strictly with standard Java SE (JDK 8–26). No Maven/Gradle or third-party JARs required."),
+                 ("Dual-Mode Deployability", "Runs seamlessly in terminal console (run.bat) or modern web browser (run_web.bat) via embedded HttpServer."),
+                 ("Cross-Platform Portability", "Executes identically on Windows, Linux, and macOS runtimes."),
+                 ("Faculty Time Efficiency", "Eliminates 100% of manual grading time and scorecard calculation errors.")
+             ], badge_text="Feasibility", font_size=9)
 
-        ("VIABILITY & TRUST",
-         [("Proven Design Patterns", "Builds on industry-standard Strategy Pattern and SOLID Object-Oriented principles."),
-          ("Zero-Crash Guarantee", "Defensive input validation prevents fatal session terminations on typographical mistakes."),
-          ("Accountability & Audits", "Comprehensive question-by-question breakdown provides transparent verification for students."),
-          ("Academic Alignment", "100% compliant with SPPU / AIT Pune BIT25434A0X course outcomes (CO3, CO4).")],
-         Inches(0.8 + 1 * (3.7 + 0.3)), "Viability"),
+    add_card(s8, Inches(4.8), Inches(1.6), Inches(3.7), Inches(5.2),
+             "VIABILITY & TRUST",
+             [
+                 ("Proven Design Patterns", "Builds on industry-standard Strategy Pattern and SOLID Object-Oriented principles."),
+                 ("Zero-Crash Guarantee", "Defensive input validation prevents fatal session terminations on typographical mistakes."),
+                 ("Accountability & Audits", "Comprehensive question-by-question breakdown provides transparent verification for students."),
+                 ("Academic Alignment", "100% compliant with SPPU / AIT Pune BIT25434A0X course outcomes (CO3, CO4).")
+             ], badge_text="Viability", font_size=9)
 
-        ("ACADEMIC POTENTIAL",
-         [("Multi-Age Demographics", "Serves 4 distinct learner tiers: Kids (8-12), Teens (13-17), College (18-22), and Pro (20+)."),
-          ("Department-Wide Scalability", "Easily adoptable across all departments at Army Institute of Technology, Pune."),
-          ("Competitive Exam Prep", "Prepares engineering students for GATE / TCS NQT competitive negative marking examinations."),
-          ("Extensible Roadmap", "Provides an ideal prototype foundation for Phase 2/3 MySQL database and Spring Boot integration.")],
-         Inches(0.8 + 2 * (3.7 + 0.3)), "Educational Impact")
-    ]
-
-    for title, items, left, badge in cols:
-        add_card(s8, left, Inches(1.6), col_w, Inches(5.2), title, items, badge_text=badge, bg_color=CARD_BG, font_size=9)
+    add_card(s8, Inches(8.8), Inches(1.6), Inches(3.7), Inches(5.2),
+             "ACADEMIC POTENTIAL",
+             [
+                 ("Multi-Age Demographics", "Serves 4 distinct learner tiers: Kids (8-12), Teens (13-17), College (18-22), and Pro (20+)."),
+                 ("Department-Wide Scalability", "Easily adoptable across all departments at Army Institute of Technology, Pune."),
+                 ("Competitive Exam Prep", "Prepares engineering students for GATE / TCS NQT competitive negative marking examinations."),
+                 ("Extensible Roadmap", "Provides an ideal prototype foundation for Phase 2/3 MySQL database and Spring Boot integration.")
+             ], badge_text="Educational Impact", font_size=9)
 
     # =========================================================================
-    # SLIDE 9: Impact and Benefits (Matching Reference Slide 5)
+    # SLIDE 9: IMPACT AND BENEFITS - TRADITIONAL VS JAVA QUIZ SYSTEM
     # =========================================================================
     s9 = prs.slides.add_slide(blank_layout)
     apply_base_slide(s9, "Impact and Benefits: Traditional vs Java Quiz System", 9,
                      "SYSTEM PERFORMANCE BENCHMARKS & VALUE PROPOSITION")
 
-    # Left: Benefits Wheel Infographic
     if os.path.exists(benefits_wheel_path):
-        s9.shapes.add_picture(benefits_wheel_path, Inches(0.8), Inches(1.6), Inches(4.8), Inches(4.8))
+        s9.shapes.add_picture(benefits_wheel_path, Inches(0.8), Inches(1.6), Inches(5.2), Inches(5.2))
 
-    # Right: Metric Comparison Table (Like Reference Slide 5)
-    card_table = s9.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(5.8), Inches(1.6), Inches(6.7), Inches(5.0))
-    card_table.fill.solid()
-    card_table.fill.fore_color.rgb = CARD_BG
-    card_table.line.color.rgb = CARD_BORDER
-    tf_tbl = card_table.text_frame
-    tf_tbl.margin_left = tf_tbl.margin_right = Inches(0.25)
-    tf_tbl.margin_top = Inches(0.2)
+    card_bench = s9.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(6.3), Inches(1.6), Inches(6.2), Inches(5.2))
+    card_bench.fill.solid()
+    card_bench.fill.fore_color.rgb = DARK_CARD_BG
+    card_bench.line.color.rgb = DARK_CARD_BORDER
+    tf_b = card_bench.text_frame
+    tf_b.word_wrap = True
+    tf_b.margin_left = tf_b.margin_right = Inches(0.3)
+    tf_b.margin_top = Inches(0.2)
 
-    p_th = tf_tbl.paragraphs[0]
-    p_th.text = "ACADEMIC SCREENING: CURRENT VS ONLINE QUIZ SYSTEM"
-    p_th.font.name = "Arial"
-    p_th.font.size = Pt(12)
-    p_th.font.bold = True
-    p_th.font.color.rgb = TOP_BAR_NAVY
-    p_th.space_after = Pt(10)
+    pb_h = tf_b.paragraphs[0]
+    pb_h.text = "ACADEMIC SCREENING: CURRENT VS ONLINE QUIZ SYSTEM"
+    pb_h.font.bold = True
+    pb_h.font.size = Pt(12)
+    pb_h.font.color.rgb = ORANGE_ACCENT
+    pb_h.space_after = Pt(8)
 
-    metrics = [
-        ("Grading Accuracy", "70%", "100%", "Human error vs Automated mathematical precision"),
-        ("Result Turnaround", "3 to 7 Days", "< 1 Second", "Paper collection vs Instant scorecard generation"),
-        ("Crash / Failure Rate", "40% (Fatal)", "0% (Immune)", "Typos crash app vs 5-tier exception recovery"),
-        ("Grading Flexibility", "Rigid Linear", "Dual Dynamic", "Single format vs Standard + Negative Marking"),
-        ("Performance Feedback", "Score Only", "Granular Audit", "Minimal review vs Question-by-question breakdown"),
-        ("Faculty Workload", "15+ Hours", "Automated", "Manual grading burden vs Instant report tabulation")
+    benchmarks = [
+        ("Grading Accuracy", "Manual: 70%", "With Java System: 100%", "Human error vs Automated mathematical precision"),
+        ("Result Turnaround", "Manual: 3 to 7 Days", "With Java System: < 1 Second", "Paper collection vs Instant scorecard generation"),
+        ("Crash / Failure Rate", "Manual: 40% (Fatal)", "With Java System: 0% (Immune)", "Typos crash app vs 5-tier exception recovery"),
+        ("Grading Flexibility", "Manual: Rigid Linear", "With Java System: Dual Dynamic", "Single format vs Standard + Negative Marking"),
+        ("Performance Feedback", "Manual: Score Only", "With Java System: Granular Audit", "Minimal review vs Question-by-question breakdown"),
+        ("Faculty Workload", "Manual: 15+ Hours", "With Java System: Automated", "Manual grading burden vs Instant report tabulation")
     ]
 
-    for m_name, curr, with_sys, note in metrics:
-        p = tf_tbl.add_paragraph()
+    for metric, before, after, impact in benchmarks:
+        p = tf_b.add_paragraph()
         p.space_after = Pt(4)
-        r_m = p.add_run()
-        r_m.text = m_name + " — "
-        r_m.font.bold = True
-        r_m.font.size = Pt(9.5)
-        r_m.font.color.rgb = NAVY_TEXT
+        rm = p.add_run()
+        rm.text = metric + " — "
+        rm.font.bold = True
+        rm.font.size = Pt(9.5)
+        rm.font.color.rgb = RGBColor(255, 255, 255)
 
-        r_curr = p.add_run()
-        r_curr.text = f"[Manual: {curr}] "
-        r_curr.font.size = Pt(9)
-        r_curr.font.bold = True
-        r_curr.font.color.rgb = RED_ACCENT
+        rb = p.add_run()
+        rb.text = f"[{before}] ➔ [{after}]\n   "
+        rb.font.size = Pt(9)
+        rb.font.color.rgb = GREEN_ACCENT if "100%" in after or "< 1" in after or "0%" in after else BLUE_ACCENT
 
-        r_sys = p.add_run()
-        r_sys.text = f"➔ [With Java System: {with_sys}]\n"
-        r_sys.font.size = Pt(9)
-        r_sys.font.bold = True
-        r_sys.font.color.rgb = GREEN_ACCENT
-
-        r_note = p.add_run()
-        r_note.text = "   " + note
-        r_note.font.size = Pt(8)
-        r_note.font.color.rgb = TEXT_MUTED
+        ri = p.add_run()
+        ri.text = impact
+        ri.font.size = Pt(8.5)
+        ri.font.color.rgb = RGBColor(203, 213, 225)
 
     # =========================================================================
-    # SLIDE 10: Implementation & Live Demonstration
+    # SLIDE 10: SYSTEM IMPLEMENTATION & DEMONSTRATION HIGHLIGHTS
     # =========================================================================
     s10 = prs.slides.add_slide(blank_layout)
     apply_base_slide(s10, "System Implementation & Demonstration Highlights", 10,
@@ -675,7 +514,7 @@ def build_sih_presentation():
                  ("Diverse Library", "9 pre-loaded quizzes across 4 age demographics with tabular age display."),
                  ("Graceful Recovery", "Try entering 'Z' on MCQ question 1 — system alerts and re-prompts."),
                  ("Detailed Audit", "Generates full item-by-item breakdown with earned marks and letter grades.")
-             ], badge_text="Console CLI", border_color=CARD_BORDER, font_size=9)
+             ], badge_text="Console CLI", border_color=ORANGE_ACCENT, font_size=9)
 
     add_card(s10, Inches(4.8), Inches(1.6), Inches(3.7), Inches(5.2),
              "Mode 2: Modern Web Application",
@@ -698,40 +537,40 @@ def build_sih_presentation():
              ], badge_text="Automated Test Harness", border_color=GREEN_ACCENT, font_size=9)
 
     # =========================================================================
-    # SLIDE 11: Individual Work Allocation & Team Contributions
+    # SLIDE 11: INDIVIDUAL CONTRIBUTION & WORK ALLOCATION (SUMMARY MATRIX)
     # =========================================================================
     s11 = prs.slides.add_slide(blank_layout)
     apply_base_slide(s11, "Individual Contribution & Work Allocation (SE IT B)", 11,
-                     "EXPLICIT RUBRIC RESPONSIBILITY MATRIX & CLASS ASSIGNMENT")
+                     "EXPLICIT RUBRIC RESPONSIBILITY MATRIX: UNIT III & UNIT IV TOPIC MAPPING")
 
     team_alloc = [
         ("Aditya Yadav", "Roll No: 8108",
          [("Assigned Role", "Group Leader & System Architect"),
-          ("Unit III Topics", "Abstract Classes & Methods; Shared State Encapsulation (IS-A Model)"),
-          ("Unit IV Topics", "Types of Error (Syntax vs Logic) & Defensive Constructor Validation"),
-          ("Implementation", "abstract class Question & User; Quiz aggregation; marks > 0 guards"),
-          ("Viva Defense", "Why abstract classes? Abstract class vs Interface; forced specialization.")]),
+          ("Unit III Allocation", "Abstract Classes & Methods (Question & User hierarchies)"),
+          ("Unit IV Allocation", "Types of Errors & Compile-Time Parameter Validation"),
+          ("Core Implementation", "abstract class Question, User, constructor boundary checks, and Quiz model aggregation."),
+          ("Viva Focus", "Why use an abstract class? What is the difference between an abstract class and an interface?")]),
 
         ("Abhishekh Singh", "Roll No: 8104",
-         [("Assigned Role", "Polymorphic Question Specialist"),
-          ("Unit III Topics", "Polymorphism, Method Overriding (@Override) & Dynamic Binding (vtable)"),
-          ("Unit IV Topics", "Exception Interception & Handling in Answers (InvalidOptionException)"),
-          ("Implementation", "MultipleChoiceQuestion, TrueFalseQuestion, NumericQuestion; Overloading"),
-          ("Viva Defense", "Where is polymorphism used? Dynamic dispatch via JVM virtual method table.")]),
+         [("Assigned Role", "Polymorphic Question Specialist & Core Dev"),
+          ("Unit III Allocation", "Polymorphism, Method Overriding & Dynamic Binding (vtable)"),
+          ("Unit IV Allocation", "Types of Exceptions (Checked vs Unchecked) & Propagation"),
+          ("Core Implementation", "MultipleChoiceQuestion, TrueFalseQuestion, NumericQuestion, and overloaded searchQuiz()."),
+          ("Viva Focus", "Where is runtime polymorphism used? How does dynamic method dispatch resolve method calls via vtable?")]),
 
         ("Priyam Raj", "Roll No: 8134",
          [("Assigned Role", "Service & Strategy Pattern Engineer"),
-          ("Unit III Topics", "Interfaces (QuizOperations, QuizEvaluator) & Strategy Design Pattern"),
-          ("Unit IV Topics", "Exception Propagation & Interface Method 'throws' Contract Signatures"),
-          ("Implementation", "StandardGradingPolicy (linear) vs NegativeMarkingGradingPolicy (25% penalty)"),
-          ("Viva Defense", "Why QuizEvaluator interface? Open/Closed Principle; decoupling logic.")]),
+          ("Unit III Allocation", "Interfaces & Behavioral Contracts (Strategy Design Pattern)"),
+          ("Unit IV Allocation", "Exception Handling Mechanism (try, catch, finally, throws)"),
+          ("Core Implementation", "QuizOperations & QuizEvaluator interfaces, Standard & Negative Marking grading policies."),
+          ("Viva Focus", "Why create the QuizEvaluator interface? How does it satisfy the Open/Closed Principle?")]),
 
         ("Utkarsh Chauhan", "Roll No: 8154",
-         [("Assigned Role", "Quality Assurance & Exception Architect"),
-          ("Unit III Topics", "Interface Implementation (QuizManager) & Pluggable Service Wiring"),
-          ("Unit IV Topics", "User-Defined Exceptions (5 Checked) & Structured try-catch-finally"),
-          ("Implementation", "QuizException tree (5 domain exceptions); InputValidator; run_tests.bat"),
-          ("Viva Defense", "Checked vs unchecked exceptions; purpose of try, catch, and finally blocks.")])
+         [("Assigned Role", "Quality Assurance & Custom Exception Architect"),
+          ("Unit III Allocation", "Interface Implementation & Collections Architecture"),
+          ("Unit IV Allocation", "User-Defined Checked Exceptions & Zero-Crash Input Recovery"),
+          ("Core Implementation", "QuizManager, 5-tier QuizException tree, defensive InputValidator, and run_tests.bat test suite."),
+          ("Viva Focus", "What custom exceptions can occur and how are they handled? Purpose of try-catch-finally?")])
     ]
 
     coords_s11 = [
@@ -743,16 +582,192 @@ def build_sih_presentation():
 
     for i, (name, roll, details) in enumerate(team_alloc):
         left, top = coords_s11[i]
-        add_card(s11, left, top, Inches(5.7), Inches(2.6), f"{name} ({roll})", details, badge_text="Team Member (IT B)", font_size=8)
+        add_card(s11, left, top, Inches(5.7), Inches(2.6), f"{name} ({roll})", details, badge_text="Team Member (IT B)", font_size=8.5)
+
+    # Helper function for dedicated Teammate Deep Dive Slides
+    def add_teammate_slide(slide_num, name, roll, role, tag_color, u3_title, u3_items, u4_title, u4_items):
+        slide = prs.slides.add_slide(blank_layout)
+        apply_base_slide(slide, f"Teammate Defense: {name} (Roll: {roll})", slide_num,
+                         f"SE IT B • ASSIGNED ROLE: {role.upper()} • UNIT III & IV TOPIC DEEP DIVE")
+
+        # Top Profile Banner
+        profile_bar = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(1.5), Inches(11.733), Inches(0.75))
+        profile_bar.fill.solid()
+        profile_bar.fill.fore_color.rgb = DARK_CARD_BG
+        profile_bar.line.color.rgb = tag_color
+        profile_bar.line.width = Pt(1.5)
+        tf_p = profile_bar.text_frame
+        tf_p.word_wrap = True
+        tf_p.margin_left = tf_p.margin_right = Inches(0.25)
+        tf_p.margin_top = Inches(0.12)
+
+        pp1 = tf_p.paragraphs[0]
+        r_name = pp1.add_run()
+        r_name.text = f"STUDENT: {name}  "
+        r_name.font.bold = True
+        r_name.font.size = Pt(13)
+        r_name.font.color.rgb = RGBColor(255, 255, 255)
+
+        r_roll = pp1.add_run()
+        r_roll.text = f"•  ROLL NO: {roll}  •  CLASS: SE IT B  •  "
+        r_roll.font.bold = True
+        r_roll.font.size = Pt(11)
+        r_roll.font.color.rgb = ORANGE_ACCENT
+
+        r_role = pp1.add_run()
+        r_role.text = f"ROLE: {role}  •  SPPU BIT25434A0X (CO3, CO4)"
+        r_role.font.bold = True
+        r_role.font.size = Pt(11)
+        r_role.font.color.rgb = tag_color
+
+        # Left Column: Unit III Deep Dive Card
+        add_card(slide, Inches(0.8), Inches(2.35), Inches(5.75), Inches(4.8),
+                 u3_title, u3_items, badge_text="Unit III: Polymorphism & Interfaces", border_color=BLUE_ACCENT, font_size=8.5)
+
+        # Right Column: Unit IV Deep Dive Card
+        add_card(slide, Inches(6.78), Inches(2.35), Inches(5.75), Inches(4.8),
+                 u4_title, u4_items, badge_text="Unit IV: Error & Exception Handling", border_color=ORANGE_ACCENT, font_size=8.5)
 
     # =========================================================================
-    # SLIDE 12: Continuous Project Roadmap & References (Matching Reference Slide 6)
+    # SLIDE 12: DEEP DIVE - ADITYA YADAV (ROLL NO: 8108)
     # =========================================================================
-    s12 = prs.slides.add_slide(blank_layout)
-    apply_base_slide(s12, "Continuous Project Roadmap & Academic References", 12,
+    add_teammate_slide(
+        12, "Aditya Yadav", "8108", "Group Leader & System Architect", BLUE_ACCENT,
+        "Unit III: Abstract Classes & Pure Abstract Methods",
+        [
+            ("Syllabus Topic & Definition",
+             "Abstract Classes and Methods (SPPU Unit III). An abstract class cannot be instantiated directly with 'new'; it defines a shared structural contract containing both implemented state/methods and pure abstract method signatures that derived classes must override."),
+            ("Why Used in Architecture",
+             "A generic 'Question' or 'User' does not exist in isolation without specialized choice or role behavior. Declaring them abstract prevents naked instantiation while allowing shared state reuse (id, marks, topic, user identity)."),
+            ("Project Implementation",
+             "Architected abstract class Question (fields: id, questionText, marks, topic, difficulty) with pure abstract signatures: displayQuestion(), checkAnswer(String) throws InvalidOptionException, and getCorrectAnswerFormatted(). Created abstract class User with abstract void displayDashboard()."),
+            ("Code Snippet",
+             "public abstract class Question {\n    protected String id, questionText, topic; protected int marks;\n    public abstract void displayQuestion();\n    public abstract boolean checkAnswer(String s) throws InvalidOptionException;\n}"),
+            ("Viva Defense (Rubric Answer)",
+             "Q: Why use an abstract class instead of an interface here?\nA: Because all questions share persistent state (fields: id, marks, topic) and concrete helper logic (displayHeader()). Interfaces cannot declare mutable instance state or constructors.")
+        ],
+        "Unit IV: Types of Errors & Parameter Boundary Validation",
+        [
+            ("Syllabus Topic & Definition",
+             "Types of Error (SPPU Unit IV). Errors are categorized into: (1) Compile-time / Syntax errors caught by javac, (2) Logical errors (faulty algorithms resulting in wrong calculations), and (3) Runtime errors/exceptions (abnormal conditions during JVM execution)."),
+            ("Operational Failure & Mitigation",
+             "Unchecked question creation could allow negative marks, zero-question quizzes, or empty IDs, corrupting database state and causing division-by-zero during percentage calculation."),
+            ("Project Implementation",
+             "Enforced defensive constructor parameter checking in Question and Quiz entities. Throws checked InvalidQuestionException if marks <= 0 or id is blank, and EmptyQuizException if conducting a quiz with 0 questions."),
+            ("Code Snippet",
+             "if (marks <= 0) throw new InvalidQuestionException(\"Marks must be > 0: \" + marks);\nif (id == null || id.trim().isEmpty()) throw new InvalidQuestionException(\"ID empty\");"),
+            ("Viva Defense (Rubric Answer)",
+             "Q: How does defensive validation prevent runtime errors in your project?\nA: By enforcing strict preconditions in entity constructors, invalid state is intercepted at creation time, preventing downstream NullPointerExceptions and scoring calculation crashes.")
+        ]
+    )
+
+    # =========================================================================
+    # SLIDE 13: DEEP DIVE - ABHISHEKH SINGH (ROLL NO: 8104)
+    # =========================================================================
+    add_teammate_slide(
+        13, "Abhishekh Singh", "8104", "Polymorphic Question Specialist & Core Dev", ORANGE_ACCENT,
+        "Unit III: Polymorphism, Method Overriding & Dynamic Binding",
+        [
+            ("Syllabus Topic & Definition",
+             "Polymorphism, Method Overriding & Dynamic Binding (SPPU Unit III). Runtime polymorphism enables an overridden method to be resolved dynamically at execution time via the JVM Virtual Method Table (vtable) based on the actual object instance rather than the reference type."),
+            ("Why Used in Architecture",
+             "Allows the central QuizRunner engine to iterate through a heterogeneous list of questions without knowing their concrete types. Adding new question types requires zero modifications to the examination engine."),
+            ("Project Implementation",
+             "Extended Question into 3 polymorphic archetypes: (1) MultipleChoiceQuestion (A-D choices & index validation), (2) TrueFalseQuestion (binary T/F parsing), (3) NumericQuestion (floating-point tolerance delta: |actual - expected| <= delta). Built overloaded searchQuiz(topic) and searchQuiz(topic, level)."),
+            ("Code Snippet",
+             "// Dynamic Method Dispatch loop in QuizRunner:\nfor (Question q : currentQuiz.getQuestions()) {\n    q.displayQuestion(); // Dynamically binds to MCQ / TF / Numeric via vtable\n    boolean isCorrect = q.checkAnswer(userInput); // Dynamic runtime dispatch\n}"),
+            ("Viva Defense (Rubric Answer)",
+             "Q: Where is runtime polymorphism used? Explain the dispatch mechanism.\nA: In QuizRunner when calling q.displayQuestion(). Although q is typed as Question, the JVM inspects the object header at runtime and invokes MultipleChoiceQuestion.displayQuestion() or NumericQuestion.displayQuestion().")
+        ],
+        "Unit IV: Types of Exceptions & Exception Propagation",
+        [
+            ("Syllabus Topic & Definition",
+             "Types of Exceptions and Propagation (SPPU Unit IV). Java divides throwables into unchecked RuntimeException (subclasses of RuntimeException that the compiler ignores) and checked Exception (enforced by compiler requiring explicit 'throws' or 'try-catch')."),
+            ("Operational Failure & Mitigation",
+             "If students enter non-numeric input for numeric questions or invalid letters for MCQs, unhandled exceptions would abruptly terminate the examination process, losing all student answers."),
+            ("Project Implementation",
+             "Protected question evaluation by declaring checked InvalidOptionException on checkAnswer(). Traps NumberFormatException internally for numeric types and bubbles InvalidOptionException up to the caller to prompt the student for an immediate retry."),
+            ("Code Snippet",
+             "@Override\npublic boolean checkAnswer(String answer) throws InvalidOptionException {\n    if (answer == null || answer.trim().isEmpty())\n        throw new InvalidOptionException(\"Option cannot be empty.\");\n    // Validate range and return comparison...\n}"),
+            ("Viva Defense (Rubric Answer)",
+             "Q: Why is InvalidOptionException a checked exception rather than unchecked?\nA: To force the calling UI/runner at compile time to implement a try-catch block, ensuring that an invalid input can never slip through and terminate the student's exam session.")
+        ]
+    )
+
+    # =========================================================================
+    # SLIDE 14: DEEP DIVE - PRIYAM RAJ (ROLL NO: 8134)
+    # =========================================================================
+    add_teammate_slide(
+        14, "Priyam Raj", "8134", "Service Architect & Strategy Pattern Engineer", PURPLE_ACCENT,
+        "Unit III: Interfaces & Behavioral Strategy Design Pattern",
+        [
+            ("Syllabus Topic & Definition",
+             "Interfaces (SPPU Unit III). An interface is a pure contract declaring abstract methods without instance fields. Classes realize interfaces via 'implements'. Facilitates loose coupling and the Strategy Design Pattern where algorithms are encapsulated and swapped at runtime."),
+            ("Why Used in Architecture",
+             "Colleges conduct standard tests (no penalty) and competitive mock tests (25% negative marking). Hardcoding math inside QuizRunner violates Open/Closed Principle. Abstracting scoring behind QuizEvaluator enables pluggable scoring rules."),
+            ("Project Implementation",
+             "Designed QuizOperations interface for CRUD operations. Designed QuizEvaluator strategy interface implemented by: (1) StandardGradingPolicy (linear 100% score, 0% penalty) and (2) NegativeMarkingGradingPolicy (competitive 25% negative penalty deduction for wrong answers)."),
+            ("Code Snippet",
+             "public interface QuizEvaluator { double evaluateScore(QuizAttempt attempt); }\n// Pluggable strategy execution:\nQuizEvaluator evaluator = isCompetitive ? \n    new NegativeMarkingGradingPolicy() : new StandardGradingPolicy();\ndouble finalScore = evaluator.evaluateScore(attempt);"),
+            ("Viva Defense (Rubric Answer)",
+             "Q: Why create the QuizEvaluator interface? How does it satisfy Open/Closed Principle?\nA: It decouples grading algorithms from test conduction. To add a new grading policy (e.g. 50% penalty), we create a new class implementing QuizEvaluator without changing a single line in QuizRunner.")
+        ],
+        "Unit IV: Exception Handling Mechanism (try, catch, finally, throws)",
+        [
+            ("Syllabus Topic & Definition",
+             "Exception Handling Mechanism (SPPU Unit IV). Uses 5 keywords: 'try' isolates risky code; 'catch' handles specific exceptions; 'finally' guarantees unconditional execution for cleanup; 'throw' raises exceptions; 'throws' declares exceptions in method signatures."),
+            ("Operational Failure & Mitigation",
+             "System resource leaks (open scanners, uncommitted audit logs) occur if exceptions disrupt execution. Unregistered quiz lookups crash the application if missing IDs are not caught."),
+            ("Project Implementation",
+             "Declared checked exceptions in interface contracts (throws QuizNotFoundException, DuplicateQuizException). Wrapped quiz execution inside try-catch-finally, where 'finally' guarantees session audit logging and clean resource termination."),
+            ("Code Snippet",
+             "try {\n    Quiz quiz = quizManager.getQuiz(quizId);\n    conductQuiz(quiz, evaluator);\n} catch (QuizNotFoundException | EmptyQuizException e) {\n    System.err.println(\"Quiz Error: \" + e.getMessage());\n} finally {\n    auditLogger.recordSessionClosure(); // Always executes\n}"),
+            ("Viva Defense (Rubric Answer)",
+             "Q: What is the purpose of try, catch, and finally? Does finally always run?\nA: 'try' monitors critical blocks; 'catch' provides recovery; 'finally' guarantees cleanup (closing files, streams). Yes, finally executes unconditionally even if an exception or return occurs in try/catch.")
+        ]
+    )
+
+    # =========================================================================
+    # SLIDE 15: DEEP DIVE - UTKARSH CHAUHAN (ROLL NO: 8154)
+    # =========================================================================
+    add_teammate_slide(
+        15, "Utkarsh Chauhan", "8154", "Quality Assurance & Custom Exception Architect", GREEN_ACCENT,
+        "Unit III: Interface Implementation & Collections Architecture",
+        [
+            ("Syllabus Topic & Definition",
+             "Interface Implementation & Collections (SPPU Unit III). Classes implement interface contracts to provide concrete data management. Heterogeneous polymorphic objects are organized using the Java Collections framework (ArrayList, LinkedHashMap) with type-safe generics."),
+            ("Why Used in Architecture",
+             "Encapsulates repository operations behind QuizOperations. Storing questions as List<Question> enables polymorphic handling of mixed question types, while LinkedHashMap<String, Quiz> guarantees predictable O(1) lookups and insertion order."),
+            ("Project Implementation",
+             "Engineered QuizManager implementing QuizOperations. Manages in-memory quiz registry via Map<String, Quiz> = new LinkedHashMap<>(). Organizes questions polymorphically within Quiz entities using List<Question> = new ArrayList<>()."),
+            ("Code Snippet",
+             "public class QuizManager implements QuizOperations {\n    private final Map<String, Quiz> repository = new LinkedHashMap<>();\n    @Override\n    public void addQuiz(Quiz q) throws DuplicateQuizException { ... }\n}"),
+            ("Viva Defense (Rubric Answer)",
+             "Q: How does your implementation achieve loose coupling with collections?\nA: High-level controllers only interact with the interface QuizOperations. If we transition storage from LinkedHashMap to a MySQL database via JDBC, client application code remains completely untouched.")
+        ],
+        "Unit IV: User-Defined Checked Exceptions & Zero-Crash Interception",
+        [
+            ("Syllabus Topic & Definition",
+             "User-Defined Exceptions (SPPU Unit IV). Custom exceptions extend java.lang.Exception to represent distinct business failure scenarios. Combined with defensive input loops, they prevent unhandled aborts and provide domain-specific diagnostic feedback."),
+            ("Operational Failure & Mitigation",
+             "Typographical mistakes by students (e.g. entering 'Z' or special symbols) traditionally cause fatal console crashes, ruining examination flow and causing frustration."),
+            ("Project Implementation",
+             "Engineered 5-tier checked exception hierarchy rooted at QuizException: QuizNotFoundException, DuplicateQuizException, InvalidOptionException, InvalidQuestionException, and EmptyQuizException. Built defensive InputValidator with while(true) loops wrapping NumberFormatException. Built run_tests.bat."),
+            ("Code Snippet",
+             "public class InvalidOptionException extends QuizException {\n    public InvalidOptionException(String msg) {\n        super(\"INVALID OPTION: \" + msg);\n    }\n}\n// Zero-crash input loop:\nwhile(true) { try { return Integer.parseInt(s.nextLine()); }\ncatch(NumberFormatException e) { System.out.print(\"Invalid. Re-enter: \"); } }"),
+            ("Viva Defense (Rubric Answer)",
+             "Q: What custom exceptions can occur and how are they handled?\nA: 5 custom checked exceptions exist. Every exception is intercepted with targeted try-catch blocks that print actionable feedback and allow the student/faculty to recover without crashing the JVM.")
+        ]
+    )
+
+    # =========================================================================
+    # SLIDE 16: CONTINUOUS PROJECT ROADMAP & REFERENCES
+    # =========================================================================
+    s16 = prs.slides.add_slide(blank_layout)
+    apply_base_slide(s16, "Continuous Project Roadmap & Academic References", 16,
                      "EXPANSION PHASES & OFFICIAL COURSE CITATIONS")
 
-    add_card(s12, Inches(0.8), Inches(1.6), Inches(11.7), Inches(2.2),
+    add_card(s16, Inches(0.8), Inches(1.6), Inches(11.7), Inches(2.2),
              "Ongoing Mini-Project Roadmap (CIE-2 Phase 1 to Phase 3 Expansion)",
              [
                  ("Phase 1 (Completed for CIE-2)", "Core Java OOP Prototype with Abstract Classes, Interfaces, Polymorphism, and 5-tier Custom Exceptions."),
@@ -760,7 +775,7 @@ def build_sih_presentation():
                  ("Phase 3 (Full Mini-Project Expansion)", "JDBC connectivity with MySQL / PostgreSQL, Spring Boot REST migration, Multithreaded question timers (ScheduledExecutorService), and exportable PDF certificates.")
              ], badge_text="Continuous Project Plan", bg_color=CARD_BG, font_size=9)
 
-    card_ref = s12.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(4.0), Inches(11.7), Inches(2.8))
+    card_ref = s16.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(4.0), Inches(11.7), Inches(2.8))
     card_ref.fill.solid()
     card_ref.fill.fore_color.rgb = DARK_CARD_BG
     card_ref.line.color.rgb = DARK_CARD_BORDER
@@ -802,7 +817,7 @@ def build_sih_presentation():
     # Save
     out_file = r"g:\aunty gravity projects\java project\Online_Quiz_Management_System_Presentation.pptx"
     prs.save(out_file)
-    print(f"Presentation successfully updated and saved at: {out_file}")
+    print(f"Presentation successfully updated and saved at: {out_file} (Total Slides: {len(prs.slides)})")
 
 if __name__ == "__main__":
     build_sih_presentation()
