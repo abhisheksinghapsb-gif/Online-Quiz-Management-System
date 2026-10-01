@@ -200,10 +200,10 @@ def build_sih_presentation():
         ("Class & Division", "SE IT B (Academic Year 2026–2027)"),
         ("Course In-Charge / Examiner", "Mrs. Trupti Najan (Assistant Professor, Dept of IT)"),
         ("Project Team Members (Class: IT B)",
-         "\n      1. Aditya Yadav — Roll No: 8108 (Group Leader & Architect)\n"
-         "      2. Abhishekh Singh — Roll No: 8104 (Polymorphic Questions & Dispatch)\n"
-         "      3. Priyam Raj — Roll No: 8134 (Interfaces & Strategy Pattern)\n"
-         "      4. Utkarsh Chauhan — Roll No: 8154 (Custom Exceptions & QA)")
+         "\n      1. Aditya Yadav — Roll No: 8108 (Group Leader)\n"
+         "      2. Abhishekh Singh — Roll No: 8104\n"
+         "      3. Priyam Raj — Roll No: 8134\n"
+         "      4. Utkarsh Chauhan — Roll No: 8154")
     ]
 
     for i, (k, v) in enumerate(meta_items):
@@ -537,237 +537,13 @@ def build_sih_presentation():
              ], badge_text="Automated Test Harness", border_color=GREEN_ACCENT, font_size=9)
 
     # =========================================================================
-    # SLIDE 11: INDIVIDUAL CONTRIBUTION & WORK ALLOCATION (SUMMARY MATRIX)
+    # SLIDE 11: CONTINUOUS PROJECT ROADMAP & REFERENCES
     # =========================================================================
     s11 = prs.slides.add_slide(blank_layout)
-    apply_base_slide(s11, "Individual Contribution & Work Allocation (SE IT B)", 11,
-                     "EXPLICIT RUBRIC RESPONSIBILITY MATRIX: UNIT III & UNIT IV TOPIC MAPPING")
-
-    team_alloc = [
-        ("Aditya Yadav", "Roll No: 8108",
-         [("Assigned Role", "Group Leader & System Architect"),
-          ("Unit III Allocation", "Abstract Classes & Methods (Question & User hierarchies)"),
-          ("Unit IV Allocation", "Types of Errors & Compile-Time Parameter Validation"),
-          ("Core Implementation", "abstract class Question, User, constructor boundary checks, and Quiz model aggregation."),
-          ("Viva Focus", "Why use an abstract class? What is the difference between an abstract class and an interface?")]),
-
-        ("Abhishekh Singh", "Roll No: 8104",
-         [("Assigned Role", "Polymorphic Question Specialist & Core Dev"),
-          ("Unit III Allocation", "Polymorphism, Method Overriding & Dynamic Binding (vtable)"),
-          ("Unit IV Allocation", "Types of Exceptions (Checked vs Unchecked) & Propagation"),
-          ("Core Implementation", "MultipleChoiceQuestion, TrueFalseQuestion, NumericQuestion, and overloaded searchQuiz()."),
-          ("Viva Focus", "Where is runtime polymorphism used? How does dynamic method dispatch resolve method calls via vtable?")]),
-
-        ("Priyam Raj", "Roll No: 8134",
-         [("Assigned Role", "Service & Strategy Pattern Engineer"),
-          ("Unit III Allocation", "Interfaces & Behavioral Contracts (Strategy Design Pattern)"),
-          ("Unit IV Allocation", "Exception Handling Mechanism (try, catch, finally, throws)"),
-          ("Core Implementation", "QuizOperations & QuizEvaluator interfaces, Standard & Negative Marking grading policies."),
-          ("Viva Focus", "Why create the QuizEvaluator interface? How does it satisfy the Open/Closed Principle?")]),
-
-        ("Utkarsh Chauhan", "Roll No: 8154",
-         [("Assigned Role", "Quality Assurance & Custom Exception Architect"),
-          ("Unit III Allocation", "Interface Implementation & Collections Architecture"),
-          ("Unit IV Allocation", "User-Defined Checked Exceptions & Zero-Crash Input Recovery"),
-          ("Core Implementation", "QuizManager, 5-tier QuizException tree, defensive InputValidator, and run_tests.bat test suite."),
-          ("Viva Focus", "What custom exceptions can occur and how are they handled? Purpose of try-catch-finally?")])
-    ]
-
-    coords_s11 = [
-        (Inches(0.8), Inches(1.6)),
-        (Inches(6.8), Inches(1.6)),
-        (Inches(0.8), Inches(4.35)),
-        (Inches(6.8), Inches(4.35))
-    ]
-
-    for i, (name, roll, details) in enumerate(team_alloc):
-        left, top = coords_s11[i]
-        add_card(s11, left, top, Inches(5.7), Inches(2.6), f"{name} ({roll})", details, badge_text="Team Member (IT B)", font_size=8.5)
-
-    # Helper function for dedicated Teammate Deep Dive Slides
-    def add_teammate_slide(slide_num, name, roll, role, tag_color, u3_title, u3_items, u4_title, u4_items):
-        slide = prs.slides.add_slide(blank_layout)
-        apply_base_slide(slide, f"Teammate Defense: {name} (Roll: {roll})", slide_num,
-                         f"SE IT B • ASSIGNED ROLE: {role.upper()} • UNIT III & IV TOPIC DEEP DIVE")
-
-        # Top Profile Banner
-        profile_bar = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(1.5), Inches(11.733), Inches(0.75))
-        profile_bar.fill.solid()
-        profile_bar.fill.fore_color.rgb = DARK_CARD_BG
-        profile_bar.line.color.rgb = tag_color
-        profile_bar.line.width = Pt(1.5)
-        tf_p = profile_bar.text_frame
-        tf_p.word_wrap = True
-        tf_p.margin_left = tf_p.margin_right = Inches(0.25)
-        tf_p.margin_top = Inches(0.12)
-
-        pp1 = tf_p.paragraphs[0]
-        r_name = pp1.add_run()
-        r_name.text = f"STUDENT: {name}  "
-        r_name.font.bold = True
-        r_name.font.size = Pt(13)
-        r_name.font.color.rgb = RGBColor(255, 255, 255)
-
-        r_roll = pp1.add_run()
-        r_roll.text = f"•  ROLL NO: {roll}  •  CLASS: SE IT B  •  "
-        r_roll.font.bold = True
-        r_roll.font.size = Pt(11)
-        r_roll.font.color.rgb = ORANGE_ACCENT
-
-        r_role = pp1.add_run()
-        r_role.text = f"ROLE: {role}  •  SPPU BIT25434A0X (CO3, CO4)"
-        r_role.font.bold = True
-        r_role.font.size = Pt(11)
-        r_role.font.color.rgb = tag_color
-
-        # Left Column: Unit III Deep Dive Card
-        add_card(slide, Inches(0.8), Inches(2.35), Inches(5.75), Inches(4.8),
-                 u3_title, u3_items, badge_text="Unit III: Polymorphism & Interfaces", border_color=BLUE_ACCENT, font_size=8.5)
-
-        # Right Column: Unit IV Deep Dive Card
-        add_card(slide, Inches(6.78), Inches(2.35), Inches(5.75), Inches(4.8),
-                 u4_title, u4_items, badge_text="Unit IV: Error & Exception Handling", border_color=ORANGE_ACCENT, font_size=8.5)
-
-    # =========================================================================
-    # SLIDE 12: DEEP DIVE - ADITYA YADAV (ROLL NO: 8108)
-    # =========================================================================
-    add_teammate_slide(
-        12, "Aditya Yadav", "8108", "Group Leader & System Architect", BLUE_ACCENT,
-        "Unit III: Abstract Classes & Pure Abstract Methods",
-        [
-            ("Syllabus Topic & Definition",
-             "Abstract Classes and Methods (SPPU Unit III). An abstract class cannot be instantiated directly with 'new'; it defines a shared structural contract containing both implemented state/methods and pure abstract method signatures that derived classes must override."),
-            ("Why Used in Architecture",
-             "A generic 'Question' or 'User' does not exist in isolation without specialized choice or role behavior. Declaring them abstract prevents naked instantiation while allowing shared state reuse (id, marks, topic, user identity)."),
-            ("Project Implementation",
-             "Architected abstract class Question (fields: id, questionText, marks, topic, difficulty) with pure abstract signatures: displayQuestion(), checkAnswer(String) throws InvalidOptionException, and getCorrectAnswerFormatted(). Created abstract class User with abstract void displayDashboard()."),
-            ("Code Snippet",
-             "public abstract class Question {\n    protected String id, questionText, topic; protected int marks;\n    public abstract void displayQuestion();\n    public abstract boolean checkAnswer(String s) throws InvalidOptionException;\n}"),
-            ("Viva Defense (Rubric Answer)",
-             "Q: Why use an abstract class instead of an interface here?\nA: Because all questions share persistent state (fields: id, marks, topic) and concrete helper logic (displayHeader()). Interfaces cannot declare mutable instance state or constructors.")
-        ],
-        "Unit IV: Types of Errors & Parameter Boundary Validation",
-        [
-            ("Syllabus Topic & Definition",
-             "Types of Error (SPPU Unit IV). Errors are categorized into: (1) Compile-time / Syntax errors caught by javac, (2) Logical errors (faulty algorithms resulting in wrong calculations), and (3) Runtime errors/exceptions (abnormal conditions during JVM execution)."),
-            ("Operational Failure & Mitigation",
-             "Unchecked question creation could allow negative marks, zero-question quizzes, or empty IDs, corrupting database state and causing division-by-zero during percentage calculation."),
-            ("Project Implementation",
-             "Enforced defensive constructor parameter checking in Question and Quiz entities. Throws checked InvalidQuestionException if marks <= 0 or id is blank, and EmptyQuizException if conducting a quiz with 0 questions."),
-            ("Code Snippet",
-             "if (marks <= 0) throw new InvalidQuestionException(\"Marks must be > 0: \" + marks);\nif (id == null || id.trim().isEmpty()) throw new InvalidQuestionException(\"ID empty\");"),
-            ("Viva Defense (Rubric Answer)",
-             "Q: How does defensive validation prevent runtime errors in your project?\nA: By enforcing strict preconditions in entity constructors, invalid state is intercepted at creation time, preventing downstream NullPointerExceptions and scoring calculation crashes.")
-        ]
-    )
-
-    # =========================================================================
-    # SLIDE 13: DEEP DIVE - ABHISHEKH SINGH (ROLL NO: 8104)
-    # =========================================================================
-    add_teammate_slide(
-        13, "Abhishekh Singh", "8104", "Polymorphic Question Specialist & Core Dev", ORANGE_ACCENT,
-        "Unit III: Polymorphism, Method Overriding & Dynamic Binding",
-        [
-            ("Syllabus Topic & Definition",
-             "Polymorphism, Method Overriding & Dynamic Binding (SPPU Unit III). Runtime polymorphism enables an overridden method to be resolved dynamically at execution time via the JVM Virtual Method Table (vtable) based on the actual object instance rather than the reference type."),
-            ("Why Used in Architecture",
-             "Allows the central QuizRunner engine to iterate through a heterogeneous list of questions without knowing their concrete types. Adding new question types requires zero modifications to the examination engine."),
-            ("Project Implementation",
-             "Extended Question into 3 polymorphic archetypes: (1) MultipleChoiceQuestion (A-D choices & index validation), (2) TrueFalseQuestion (binary T/F parsing), (3) NumericQuestion (floating-point tolerance delta: |actual - expected| <= delta). Built overloaded searchQuiz(topic) and searchQuiz(topic, level)."),
-            ("Code Snippet",
-             "// Dynamic Method Dispatch loop in QuizRunner:\nfor (Question q : currentQuiz.getQuestions()) {\n    q.displayQuestion(); // Dynamically binds to MCQ / TF / Numeric via vtable\n    boolean isCorrect = q.checkAnswer(userInput); // Dynamic runtime dispatch\n}"),
-            ("Viva Defense (Rubric Answer)",
-             "Q: Where is runtime polymorphism used? Explain the dispatch mechanism.\nA: In QuizRunner when calling q.displayQuestion(). Although q is typed as Question, the JVM inspects the object header at runtime and invokes MultipleChoiceQuestion.displayQuestion() or NumericQuestion.displayQuestion().")
-        ],
-        "Unit IV: Types of Exceptions & Exception Propagation",
-        [
-            ("Syllabus Topic & Definition",
-             "Types of Exceptions and Propagation (SPPU Unit IV). Java divides throwables into unchecked RuntimeException (subclasses of RuntimeException that the compiler ignores) and checked Exception (enforced by compiler requiring explicit 'throws' or 'try-catch')."),
-            ("Operational Failure & Mitigation",
-             "If students enter non-numeric input for numeric questions or invalid letters for MCQs, unhandled exceptions would abruptly terminate the examination process, losing all student answers."),
-            ("Project Implementation",
-             "Protected question evaluation by declaring checked InvalidOptionException on checkAnswer(). Traps NumberFormatException internally for numeric types and bubbles InvalidOptionException up to the caller to prompt the student for an immediate retry."),
-            ("Code Snippet",
-             "@Override\npublic boolean checkAnswer(String answer) throws InvalidOptionException {\n    if (answer == null || answer.trim().isEmpty())\n        throw new InvalidOptionException(\"Option cannot be empty.\");\n    // Validate range and return comparison...\n}"),
-            ("Viva Defense (Rubric Answer)",
-             "Q: Why is InvalidOptionException a checked exception rather than unchecked?\nA: To force the calling UI/runner at compile time to implement a try-catch block, ensuring that an invalid input can never slip through and terminate the student's exam session.")
-        ]
-    )
-
-    # =========================================================================
-    # SLIDE 14: DEEP DIVE - PRIYAM RAJ (ROLL NO: 8134)
-    # =========================================================================
-    add_teammate_slide(
-        14, "Priyam Raj", "8134", "Service Architect & Strategy Pattern Engineer", PURPLE_ACCENT,
-        "Unit III: Interfaces & Behavioral Strategy Design Pattern",
-        [
-            ("Syllabus Topic & Definition",
-             "Interfaces (SPPU Unit III). An interface is a pure contract declaring abstract methods without instance fields. Classes realize interfaces via 'implements'. Facilitates loose coupling and the Strategy Design Pattern where algorithms are encapsulated and swapped at runtime."),
-            ("Why Used in Architecture",
-             "Colleges conduct standard tests (no penalty) and competitive mock tests (25% negative marking). Hardcoding math inside QuizRunner violates Open/Closed Principle. Abstracting scoring behind QuizEvaluator enables pluggable scoring rules."),
-            ("Project Implementation",
-             "Designed QuizOperations interface for CRUD operations. Designed QuizEvaluator strategy interface implemented by: (1) StandardGradingPolicy (linear 100% score, 0% penalty) and (2) NegativeMarkingGradingPolicy (competitive 25% negative penalty deduction for wrong answers)."),
-            ("Code Snippet",
-             "public interface QuizEvaluator { double evaluateScore(QuizAttempt attempt); }\n// Pluggable strategy execution:\nQuizEvaluator evaluator = isCompetitive ? \n    new NegativeMarkingGradingPolicy() : new StandardGradingPolicy();\ndouble finalScore = evaluator.evaluateScore(attempt);"),
-            ("Viva Defense (Rubric Answer)",
-             "Q: Why create the QuizEvaluator interface? How does it satisfy Open/Closed Principle?\nA: It decouples grading algorithms from test conduction. To add a new grading policy (e.g. 50% penalty), we create a new class implementing QuizEvaluator without changing a single line in QuizRunner.")
-        ],
-        "Unit IV: Exception Handling Mechanism (try, catch, finally, throws)",
-        [
-            ("Syllabus Topic & Definition",
-             "Exception Handling Mechanism (SPPU Unit IV). Uses 5 keywords: 'try' isolates risky code; 'catch' handles specific exceptions; 'finally' guarantees unconditional execution for cleanup; 'throw' raises exceptions; 'throws' declares exceptions in method signatures."),
-            ("Operational Failure & Mitigation",
-             "System resource leaks (open scanners, uncommitted audit logs) occur if exceptions disrupt execution. Unregistered quiz lookups crash the application if missing IDs are not caught."),
-            ("Project Implementation",
-             "Declared checked exceptions in interface contracts (throws QuizNotFoundException, DuplicateQuizException). Wrapped quiz execution inside try-catch-finally, where 'finally' guarantees session audit logging and clean resource termination."),
-            ("Code Snippet",
-             "try {\n    Quiz quiz = quizManager.getQuiz(quizId);\n    conductQuiz(quiz, evaluator);\n} catch (QuizNotFoundException | EmptyQuizException e) {\n    System.err.println(\"Quiz Error: \" + e.getMessage());\n} finally {\n    auditLogger.recordSessionClosure(); // Always executes\n}"),
-            ("Viva Defense (Rubric Answer)",
-             "Q: What is the purpose of try, catch, and finally? Does finally always run?\nA: 'try' monitors critical blocks; 'catch' provides recovery; 'finally' guarantees cleanup (closing files, streams). Yes, finally executes unconditionally even if an exception or return occurs in try/catch.")
-        ]
-    )
-
-    # =========================================================================
-    # SLIDE 15: DEEP DIVE - UTKARSH CHAUHAN (ROLL NO: 8154)
-    # =========================================================================
-    add_teammate_slide(
-        15, "Utkarsh Chauhan", "8154", "Quality Assurance & Custom Exception Architect", GREEN_ACCENT,
-        "Unit III: Interface Implementation & Collections Architecture",
-        [
-            ("Syllabus Topic & Definition",
-             "Interface Implementation & Collections (SPPU Unit III). Classes implement interface contracts to provide concrete data management. Heterogeneous polymorphic objects are organized using the Java Collections framework (ArrayList, LinkedHashMap) with type-safe generics."),
-            ("Why Used in Architecture",
-             "Encapsulates repository operations behind QuizOperations. Storing questions as List<Question> enables polymorphic handling of mixed question types, while LinkedHashMap<String, Quiz> guarantees predictable O(1) lookups and insertion order."),
-            ("Project Implementation",
-             "Engineered QuizManager implementing QuizOperations. Manages in-memory quiz registry via Map<String, Quiz> = new LinkedHashMap<>(). Organizes questions polymorphically within Quiz entities using List<Question> = new ArrayList<>()."),
-            ("Code Snippet",
-             "public class QuizManager implements QuizOperations {\n    private final Map<String, Quiz> repository = new LinkedHashMap<>();\n    @Override\n    public void addQuiz(Quiz q) throws DuplicateQuizException { ... }\n}"),
-            ("Viva Defense (Rubric Answer)",
-             "Q: How does your implementation achieve loose coupling with collections?\nA: High-level controllers only interact with the interface QuizOperations. If we transition storage from LinkedHashMap to a MySQL database via JDBC, client application code remains completely untouched.")
-        ],
-        "Unit IV: User-Defined Checked Exceptions & Zero-Crash Interception",
-        [
-            ("Syllabus Topic & Definition",
-             "User-Defined Exceptions (SPPU Unit IV). Custom exceptions extend java.lang.Exception to represent distinct business failure scenarios. Combined with defensive input loops, they prevent unhandled aborts and provide domain-specific diagnostic feedback."),
-            ("Operational Failure & Mitigation",
-             "Typographical mistakes by students (e.g. entering 'Z' or special symbols) traditionally cause fatal console crashes, ruining examination flow and causing frustration."),
-            ("Project Implementation",
-             "Engineered 5-tier checked exception hierarchy rooted at QuizException: QuizNotFoundException, DuplicateQuizException, InvalidOptionException, InvalidQuestionException, and EmptyQuizException. Built defensive InputValidator with while(true) loops wrapping NumberFormatException. Built run_tests.bat."),
-            ("Code Snippet",
-             "public class InvalidOptionException extends QuizException {\n    public InvalidOptionException(String msg) {\n        super(\"INVALID OPTION: \" + msg);\n    }\n}\n// Zero-crash input loop:\nwhile(true) { try { return Integer.parseInt(s.nextLine()); }\ncatch(NumberFormatException e) { System.out.print(\"Invalid. Re-enter: \"); } }"),
-            ("Viva Defense (Rubric Answer)",
-             "Q: What custom exceptions can occur and how are they handled?\nA: 5 custom checked exceptions exist. Every exception is intercepted with targeted try-catch blocks that print actionable feedback and allow the student/faculty to recover without crashing the JVM.")
-        ]
-    )
-
-    # =========================================================================
-    # SLIDE 16: CONTINUOUS PROJECT ROADMAP & REFERENCES
-    # =========================================================================
-    s16 = prs.slides.add_slide(blank_layout)
-    apply_base_slide(s16, "Continuous Project Roadmap & Academic References", 16,
+    apply_base_slide(s11, "Continuous Project Roadmap & Academic References", 11,
                      "EXPANSION PHASES & OFFICIAL COURSE CITATIONS")
 
-    add_card(s16, Inches(0.8), Inches(1.6), Inches(11.7), Inches(2.2),
+    add_card(s11, Inches(0.8), Inches(1.6), Inches(11.7), Inches(2.2),
              "Ongoing Mini-Project Roadmap (CIE-2 Phase 1 to Phase 3 Expansion)",
              [
                  ("Phase 1 (Completed for CIE-2)", "Core Java OOP Prototype with Abstract Classes, Interfaces, Polymorphism, and 5-tier Custom Exceptions."),
@@ -775,7 +551,7 @@ def build_sih_presentation():
                  ("Phase 3 (Full Mini-Project Expansion)", "JDBC connectivity with MySQL / PostgreSQL, Spring Boot REST migration, Multithreaded question timers (ScheduledExecutorService), and exportable PDF certificates.")
              ], badge_text="Continuous Project Plan", bg_color=CARD_BG, font_size=9)
 
-    card_ref = s16.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(4.0), Inches(11.7), Inches(2.8))
+    card_ref = s11.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(0.8), Inches(4.0), Inches(11.7), Inches(2.8))
     card_ref.fill.solid()
     card_ref.fill.fore_color.rgb = DARK_CARD_BG
     card_ref.line.color.rgb = DARK_CARD_BORDER
