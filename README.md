@@ -17,12 +17,12 @@
 
 ## 👥 Project Team Members
 
-| Roll Number | Full Name | Academic Role / Contribution |
-| :---: | :--- | :--- |
-| **8108** | **Aditya Yadav** *(Group Leader)* | Project Architecture, Interface Design (`QuizOperations`, `QuizEvaluator`), System Integration |
-| **8104** | **Abhishekh Singh** | Domain Model Hierarchy (`Question`, `User`), Runtime Polymorphism, Custom Exception Tree |
-| **8134** | **Priyam Raj** | Embedded Web Server (`QuizWebServer`), REST APIs, Client-Side JavaScript Controller & UI |
-| **8154** | **Utkarsh Chauhan** | Automated Test Matrix (`run_tests.bat`), Grading Strategies, Validation & Quality Assurance |
+| Roll Number | Full Name | Class & Division | Academic Role |
+| :---: | :--- | :---: | :--- |
+| **8108** | **Aditya Yadav** | SE IT B | Group Leader & System Architect |
+| **8104** | **Abhishekh Singh** | SE IT B | Core Developer & Polymorphism Specialist |
+| **8134** | **Priyam Raj** | SE IT B | Web Application & Strategy Pattern Lead |
+| **8154** | **Utkarsh Chauhan** | SE IT B | QA, Testing & Custom Exceptions Architect |
 
 ---
 
@@ -30,10 +30,12 @@
 
 - **GitHub Repository:** [https://github.com/abhisheksinghapsb-gif/Online-Quiz-Management-System](https://github.com/abhisheksinghapsb-gif/Online-Quiz-Management-System)
 - **Live Interactive Web Application:** [https://abhisheksinghapsb-gif.github.io/Online-Quiz-Management-System/](https://abhisheksinghapsb-gif.github.io/Online-Quiz-Management-System/)
+- **CIE-2 Master Presentation Deck (11 Slides):** [Online_Quiz_Management_System_Presentation.pptx](Online_Quiz_Management_System_Presentation.pptx)
+  - 🌐 **[View Online in Browser (Office Live Viewer)](https://view.officeapps.live.com/op/view.aspx?src=https://raw.githubusercontent.com/abhisheksinghapsb-gif/Online-Quiz-Management-System/main/Online_Quiz_Management_System_Presentation.pptx)**
+  - 🌐 **[View Online in Browser (Google Docs Viewer)](https://docs.google.com/viewer?url=https://raw.githubusercontent.com/abhisheksinghapsb-gif/Online-Quiz-Management-System/main/Online_Quiz_Management_System_Presentation.pptx)**
 - **Complete Java Source Code (Markdown):** [docs/COMPLETE_JAVA_SOURCE_CODE.md](docs/COMPLETE_JAVA_SOURCE_CODE.md) (All 25 files formatted with syntax highlighting)
 - **Consolidated Java Source Code (Text with Line Numbers):** [Online_Quiz_Management_System_Complete_Source_Code.txt](Online_Quiz_Management_System_Complete_Source_Code.txt) (Printable & indexed)
 - **Java Source Code Zip Archive:** [Online_Quiz_Management_System_Java_Source_Code.zip](Online_Quiz_Management_System_Java_Source_Code.zip) (Complete package bundle)
-- **CIE-2 Presentation Deck:** [Online_Quiz_Management_System_Presentation.pptx](Online_Quiz_Management_System_Presentation.pptx) (12 custom visual slides with UML architecture diagrams)
 - **Formal Project Report:** [docs/CIE2_PROJECT_SUBMISSION_REPORT.md](docs/CIE2_PROJECT_SUBMISSION_REPORT.md)
 - **UML & Architecture Diagrams:** [docs/UML_AND_ARCHITECTURE_DIAGRAMS.md](docs/UML_AND_ARCHITECTURE_DIAGRAMS.md)
 - **Viva Preparation & Questions Guide:** [docs/VIVA_PREPARATION_AND_ANSWERS.md](docs/VIVA_PREPARATION_AND_ANSWERS.md)
