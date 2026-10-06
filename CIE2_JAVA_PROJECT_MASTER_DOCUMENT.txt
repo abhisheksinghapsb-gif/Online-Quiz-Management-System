@@ -1,0 +1,684 @@
+================================================================================
+ONLINE QUIZ MANAGEMENT SYSTEM - CIE-2 MASTER DEFENSE & CODE DOCUMENT
+Army Institute of Technology (AIT), Pune | Dept. of Information Technology
+Course: Skill Development Laboratory using Java (BIT25434A0X)
+Class: SE IT B | Faculty Guide: Mrs. Trupti Najan
+Team: Aditya Yadav (8108), Abhishekh Singh (8104), Priyam Raj (8134), Utkarsh Chauhan (8154)
+================================================================================
+
+SYLLABUS COVERAGE & IN-DEPTH TECHNICAL GUIDE:
+• Unit III: Polymorphism & Interfaces (Abstract classes, Interfaces, Method Overriding, Dynamic Binding, Polymorphism)
+• Unit IV: Error & Exception Handling (Types of Errors, Checked vs Unchecked Exceptions, try-catch-finally-throw-throws, 5-Tier User-Defined Exception Hierarchy)
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+1. SYSTEM ARCHITECTURE & PROJECT OVERVIEW
+2. SYLLABUS MATRIX & COURSE OUTCOME MAPPINGS
+3. UNIT III: POLYMORPHISM & INTERFACES (THEORY & COMPLETE CODE)
+   3.1 Abstract Classes and Methods (Question.java & User.java)
+   3.2 Inheritance & Constructor Chaining (MultipleChoiceQuestion.java, TrueFalseQuestion.java, NumericQuestion.java)
+   3.3 Interfaces & Strategy Design Pattern (QuizOperations.java & QuizEvaluator.java)
+   3.4 Method Overriding & Dynamic Binding (Runtime Polymorphism in QuizApplication.java)
+   3.5 Compile-Time Polymorphism (Method Overloading in QuizManager.java)
+4. UNIT IV: ERROR & EXCEPTION HANDLING (THEORY & COMPLETE CODE)
+   4.1 Taxonomy of Software Faults (Compile-Time vs Runtime vs Logical Errors)
+   4.2 Types of Exceptions (Checked vs Unchecked)
+   4.3 Java Exception Mechanism (try, catch, finally, throw, throws, multi-catch)
+   4.4 Exception Translation & Defensive Input Validation (NumericQuestion.java)
+   4.5 5-Tier User-Defined Exception Hierarchy (QuizException, QuizNotFoundException, etc.)
+   4.6 Graceful Degradation Loop (Crash-Resilient Console Loop)
+5. 3 MODES OF EXECUTION & 9 BUILT-IN QUIZZES
+6. COMPREHENSIVE VIVA VOCE QUESTIONS & HIGH-SCORING ANSWERS
+
+================================================================================
+1. SYSTEM ARCHITECTURE & PROJECT OVERVIEW
+================================================================================
+The Online Quiz Management System is an enterprise-grade academic evaluation
+platform engineered in pure Java SE (compatible with JDK 8 through 26).
+It provides three robust runtime environments:
+  A. Web Application: Built-in multi-threaded HTTP server (port 8080) with interactive
+     countdown timers, dynamic strategy toggles, and live scorecards.
+  B. Terminal CLI: Interactive console with role-based student and instructor portals.
+  C. Automated 60-Second Viva Suite: Automatic test matrix executing all polymorphic
+     dispatches, grading strategies, and triggering all 5 custom exceptions.
+
+================================================================================
+2. SYLLABUS MATRIX & COURSE OUTCOME MAPPINGS
+================================================================================
+UNIT III: Polymorphism & Interfaces (3 Hours)
+  • Abstract classes and methods: Implemented via Question and User abstract bases.
+  • Interfaces: Implemented via QuizOperations and QuizEvaluator.
+  • Method Overriding & Dynamic Binding: Implemented across question types and user roles.
+  • Polymorphism: Runtime dynamic method dispatch and compile-time method overloading.
+  • Mapped Outcomes: PO1, PO2, PO3, PO5, PO11, PSO1, PSO2, PSO3.
+
+UNIT IV: Error & Exception Handling (2 Hours)
+  • Types of Error: Systematic categorization of Compile-time, Runtime, and Logical errors.
+  • Types of Exceptions: Rigorous distinction between Checked and Unchecked exceptions.
+  • Exception Handling Mechanism: try, catch, finally, throw, throws, multi-catch, and exception chaining.
+  • User-defined Exceptions: 5-tier checked hierarchy extending java.lang.Exception.
+  • Mapped Outcomes: PO1, PO2, PO3, PO5, PO11, PSO1, PSO2, PSO3.
+
+================================================================================
+3. UNIT III: POLYMORPHISM & INTERFACES (THEORY & COMPLETE CODE)
+================================================================================
+
+--------------------------------------------------------------------------------
+3.1 ABSTRACT CLASSES AND METHODS
+--------------------------------------------------------------------------------
+Theory:
+An abstract class cannot be instantiated directly with 'new'. It acts as an
+architectural superclass that defines common encapsulated state, concrete helper
+methods, and abstract method contracts that every derived subclass must implement.
+
+Why used in this project:
+A generic "Question" cannot exist in isolation without a concrete format (MCQ,
+True/False, or Numeric). The abstract class Question encapsulates common fields
+(id, questionText, marks, topic, difficulty) and provides shared concrete logic
+(displayHeader()), while mandating that subclasses implement displayQuestion()
+and checkAnswer().
+
+SOURCE CODE: src/com/ait/quiz/model/Question.java
+--------------------------------------------------------------------------------
+package com.ait.quiz.model;
+
+import com.ait.quiz.exception.InvalidOptionException;
+import com.ait.quiz.exception.InvalidQuestionException;
+
+public abstract class Question {
+    // Encapsulated state (Private fields with public getters)
+    private final int id;
+    private String questionText;
+    private int marks;
+    private String topic;
+    private DifficultyLevel difficulty;
+
+    // Superclass Constructor enforcing domain constraints
+    public Question(int id, String questionText, int marks, String topic, DifficultyLevel difficulty) 
+            throws InvalidQuestionException {
+        if (questionText == null || questionText.trim().isEmpty()) {
+            throw new InvalidQuestionException("Question text cannot be null or blank!");
+        }
+        if (marks <= 0) {
+            throw new InvalidQuestionException("Question marks must be strictly positive! Provided: " + marks);
+        }
+        this.id = id;
+        this.questionText = questionText.trim();
+        this.marks = marks;
+        this.topic = (topic != null && !topic.trim().isEmpty()) ? topic.trim() : "General";
+        this.difficulty = (difficulty != null) ? difficulty : DifficultyLevel.MEDIUM;
+    }
+
+    public int getId() { return id; }
+    public String getQuestionText() { return questionText; }
+    public int getMarks() { return marks; }
+    public String getTopic() { return topic; }
+    public DifficultyLevel getDifficulty() { return difficulty; }
+
+    // Concrete utility method inherited by all derived subclasses
+    public void displayHeader() {
+        System.out.printf("[Q%d] [%s | %s | Marks: %d]%n", id, getQuestionType(), difficulty.getDisplayName(), marks);
+        System.out.println("Topic: " + topic);
+        System.out.println("Prompt: " + questionText);
+    }
+
+    // Abstract methods: Must be implemented polymorphically by subclasses
+    public abstract void displayQuestion();
+    public abstract boolean checkAnswer(String studentAnswer) throws InvalidOptionException;
+    public abstract String getCorrectAnswerFormatted();
+    public abstract String getQuestionType();
+}
+
+--------------------------------------------------------------------------------
+3.2 INHERITANCE & CONSTRUCTOR CHAINING (super)
+--------------------------------------------------------------------------------
+Theory:
+Subclasses inherit non-private members of their superclass. In Java, constructor
+chaining requires subclasses to call super(...) as the first statement in their
+constructor, ensuring that superclass invariants and validations execute first.
+
+SOURCE CODE: src/com/ait/quiz/model/MultipleChoiceQuestion.java
+--------------------------------------------------------------------------------
+package com.ait.quiz.model;
+
+import com.ait.quiz.exception.InvalidOptionException;
+import com.ait.quiz.exception.InvalidQuestionException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class MultipleChoiceQuestion extends Question {
+    private final List<String> options;
+    private final int correctOptionIndex; // 0-indexed: 0 -> A, 1 -> B, etc.
+
+    public MultipleChoiceQuestion(int id, String questionText, int marks, String topic,
+                                  DifficultyLevel difficulty, List<String> options, int correctOptionIndex)
+            throws InvalidQuestionException {
+        // Constructor Chaining: Delegates common field validation to Question superclass
+        super(id, questionText, marks, topic, difficulty);
+
+        if (options == null || options.size() < 2) {
+            throw new InvalidQuestionException("MCQ must have at least 2 options! Found: " 
+                    + (options == null ? 0 : options.size()));
+        }
+        if (correctOptionIndex < 0 || correctOptionIndex >= options.size()) {
+            throw new InvalidQuestionException("Correct option index (" + correctOptionIndex 
+                    + ") is out of valid range [0 to " + (options.size() - 1) + "]!");
+        }
+
+        this.options = new ArrayList<>(options);
+        this.correctOptionIndex = correctOptionIndex;
+    }
+
+    public List<String> getOptions() {
+        return Collections.unmodifiableList(options);
+    }
+
+    @Override
+    public void displayQuestion() {
+        displayHeader(); // Calls concrete parent method
+        char label = 'A';
+        for (String option : options) {
+            System.out.printf("   [%c] %s%n", label++, option);
+        }
+        System.out.println("   (Enter choice A-" + (char)('A' + options.size() - 1) + ")");
+    }
+
+    @Override
+    public boolean checkAnswer(String studentAnswer) throws InvalidOptionException {
+        if (studentAnswer == null || studentAnswer.trim().isEmpty()) {
+            throw new InvalidOptionException("Empty input", "A to " + (char)('A' + options.size() - 1));
+        }
+
+        String cleaned = studentAnswer.trim().toUpperCase();
+        if (cleaned.length() != 1) {
+            throw new InvalidOptionException(studentAnswer, "Single character A to " + (char)('A' + options.size() - 1));
+        }
+
+        char choice = cleaned.charAt(0);
+        int selectedIndex = choice - 'A';
+
+        if (selectedIndex < 0 || selectedIndex >= options.size()) {
+            throw new InvalidOptionException(studentAnswer, "A to " + (char)('A' + options.size() - 1));
+        }
+
+        return selectedIndex == correctOptionIndex;
+    }
+
+    @Override
+    public String getCorrectAnswerFormatted() {
+        char correctChar = (char) ('A' + correctOptionIndex);
+        return String.format("[%c] %s", correctChar, options.get(correctOptionIndex));
+    }
+
+    @Override
+    public String getQuestionType() {
+        return "Multiple Choice (MCQ)";
+    }
+}
+
+SOURCE CODE: src/com/ait/quiz/model/TrueFalseQuestion.java
+--------------------------------------------------------------------------------
+package com.ait.quiz.model;
+
+import com.ait.quiz.exception.InvalidOptionException;
+import com.ait.quiz.exception.InvalidQuestionException;
+
+public class TrueFalseQuestion extends Question {
+    private final boolean correctAnswer;
+
+    public TrueFalseQuestion(int id, String questionText, int marks, String topic,
+                              DifficultyLevel difficulty, boolean correctAnswer)
+            throws InvalidQuestionException {
+        super(id, questionText, marks, topic, difficulty);
+        this.correctAnswer = correctAnswer;
+    }
+
+    @Override
+    public void displayQuestion() {
+        displayHeader();
+        System.out.println("   [T] True");
+        System.out.println("   [F] False");
+        System.out.println("   (Enter choice T or F)");
+    }
+
+    @Override
+    public boolean checkAnswer(String studentAnswer) throws InvalidOptionException {
+        if (studentAnswer == null || studentAnswer.trim().isEmpty()) {
+            throw new InvalidOptionException("Empty input", "T / F / True / False");
+        }
+
+        String cleaned = studentAnswer.trim().toUpperCase();
+        boolean parsedAnswer;
+        if (cleaned.equals("T") || cleaned.equals("TRUE")) {
+            parsedAnswer = true;
+        } else if (cleaned.equals("F") || cleaned.equals("FALSE")) {
+            parsedAnswer = false;
+        } else {
+            throw new InvalidOptionException(studentAnswer, "T, F, TRUE, or FALSE");
+        }
+
+        return parsedAnswer == correctAnswer;
+    }
+
+    @Override
+    public String getCorrectAnswerFormatted() {
+        return correctAnswer ? "True" : "False";
+    }
+
+    @Override
+    public String getQuestionType() {
+        return "True / False";
+    }
+}
+
+--------------------------------------------------------------------------------
+3.3 INTERFACES & STRATEGY DESIGN PATTERN
+--------------------------------------------------------------------------------
+Theory:
+An Interface establishes a pure behavioral contract. The Strategy Design Pattern
+defines a family of interchangeable algorithms, encapsulates each algorithm inside
+a separate class, and allows them to be swapped dynamically at runtime without
+altering client code.
+
+SOURCE CODE: src/com/ait/quiz/service/QuizEvaluator.java (Strategy Interface)
+--------------------------------------------------------------------------------
+package com.ait.quiz.service;
+
+import com.ait.quiz.model.QuizAttempt;
+
+public interface QuizEvaluator {
+    // Strategy scoring contract
+    double evaluateScore(QuizAttempt attempt);
+
+    // Overloaded method demonstrating Compile-time Polymorphism (Method Overloading)
+    double evaluateScore(double earnedMarks, int incorrectCount, double penaltyPerIncorrect);
+
+    String generateGrade(double percentage);
+    String getPolicyName();
+    void printDetailedReport(QuizAttempt attempt);
+}
+
+SOURCE CODE: src/com/ait/quiz/service/StandardGradingPolicy.java (Linear Strategy)
+--------------------------------------------------------------------------------
+package com.ait.quiz.service;
+
+import com.ait.quiz.model.QuizAttempt;
+
+public class StandardGradingPolicy implements QuizEvaluator {
+    @Override
+    public double evaluateScore(QuizAttempt attempt) {
+        double rawScore = 0.0;
+        for (QuizAttempt.QuestionResult res : attempt.getQuestionResults()) {
+            if (res.isCorrect()) {
+                rawScore += res.getMarksAwarded();
+            }
+        }
+        return rawScore; // 0 penalty for wrong answers
+    }
+
+    @Override
+    public double evaluateScore(double earnedMarks, int incorrectCount, double penaltyPerIncorrect) {
+        return earnedMarks;
+    }
+
+    @Override
+    public String generateGrade(double percentage) {
+        if (percentage >= 80.0) return "Distinction";
+        if (percentage >= 60.0) return "First Class";
+        if (percentage >= 40.0) return "Pass";
+        return "Fail";
+    }
+
+    @Override
+    public String getPolicyName() {
+        return "Standard Linear Evaluation (0% Penalty)";
+    }
+
+    @Override
+    public void printDetailedReport(QuizAttempt attempt) { /* prints report */ }
+}
+
+SOURCE CODE: src/com/ait/quiz/service/NegativeMarkingGradingPolicy.java (Competitive Strategy)
+--------------------------------------------------------------------------------
+package com.ait.quiz.service;
+
+import com.ait.quiz.model.QuizAttempt;
+
+public class NegativeMarkingGradingPolicy implements QuizEvaluator {
+    private final double penaltyRate; // e.g. 0.25 (25% deduction)
+
+    public NegativeMarkingGradingPolicy(double penaltyRate) {
+        if (penaltyRate < 0.0 || penaltyRate > 1.0) {
+            throw new IllegalArgumentException("Penalty rate must be between 0.0 and 1.0!");
+        }
+        this.penaltyRate = penaltyRate;
+    }
+
+    @Override
+    public double evaluateScore(QuizAttempt attempt) {
+        double rawScore = 0.0;
+        for (QuizAttempt.QuestionResult res : attempt.getQuestionResults()) {
+            if (res.isCorrect()) {
+                rawScore += res.getMarksAwarded();
+            } else {
+                // Deduct 25% of question's marks
+                double penalty = res.getMarksAwarded() * penaltyRate;
+                rawScore -= penalty;
+            }
+        }
+        return Math.max(0.0, rawScore); // Floored at 0
+    }
+
+    @Override
+    public double evaluateScore(double earnedMarks, int incorrectCount, double penaltyPerIncorrect) {
+        return Math.max(0.0, earnedMarks - (incorrectCount * penaltyPerIncorrect));
+    }
+
+    @Override
+    public String generateGrade(double percentage) {
+        if (percentage >= 75.0) return "Rank 1 (Qualified with Distinction)";
+        if (percentage >= 50.0) return "Qualified";
+        return "Not Qualified (Below cutoff with penalties)";
+    }
+
+    @Override
+    public String getPolicyName() {
+        return String.format("Competitive Evaluation (%.0f%% Negative Penalty)", penaltyRate * 100);
+    }
+
+    @Override
+    public void printDetailedReport(QuizAttempt attempt) { /* prints scorecard */ }
+}
+
+--------------------------------------------------------------------------------
+3.4 METHOD OVERRIDING & DYNAMIC BINDING (RUNTIME POLYMORPHISM)
+--------------------------------------------------------------------------------
+Theory:
+Dynamic binding occurs when an overridden method is called through a superclass
+reference. The Java compiler generates the 'invokevirtual' bytecode instruction.
+At runtime, the JVM inspects the object's Virtual Method Table (vtable) and
+routes execution to the subclass's overridden implementation based on the actual
+heap instance.
+
+SOURCE CODE: Runtime Execution Loop in src/com/ait/quiz/main/QuizApplication.java
+--------------------------------------------------------------------------------
+// Heterogeneous collection of questions (MCQ, TrueFalse, Numeric)
+for (Question q : quiz.getQuestions()) {
+    System.out.println("----------------------------------------------------------------");
+
+    // DYNAMIC METHOD DISPATCH:
+    // If q is MultipleChoiceQuestion -> displays choices A, B, C, D
+    // If q is TrueFalseQuestion       -> displays choices [T] True, [F] False
+    // If q is NumericQuestion         -> displays numeric prompt with tolerance
+    q.displayQuestion();
+
+    boolean answeredValidly = false;
+    while (!answeredValidly) {
+        System.out.print(">> Your Answer: ");
+        String studentAns = scanner.nextLine();
+        try {
+            // Polymorphic answer evaluation
+            boolean isCorrect = q.checkAnswer(studentAns);
+            answeredValidly = true;
+        } catch (InvalidOptionException ioe) {
+            System.out.println("[Input Error] " + ioe.getMessage());
+            System.out.println("   Please re-enter conforming to the format.");
+        }
+    }
+}
+
+--------------------------------------------------------------------------------
+3.5 COMPILE-TIME POLYMORPHISM (METHOD OVERLOADING)
+--------------------------------------------------------------------------------
+Theory:
+Method Overloading occurs when multiple methods in the same class share the same
+name but have different parameter lists (count or type). Binding is resolved
+statically by the compiler at compile-time.
+
+SOURCE CODE: src/com/ait/quiz/service/QuizManager.java
+--------------------------------------------------------------------------------
+// Overload 1: Takes 1 parameter (topic keyword)
+@Override
+public List<Quiz> searchQuiz(String topic) {
+    if (topic == null || topic.trim().isEmpty()) return getAllQuizzes();
+    String query = topic.trim().toLowerCase();
+    List<Quiz> matched = new ArrayList<>();
+    for (Quiz q : quizMap.values()) {
+        if (q.getTopic().toLowerCase().contains(query) || q.getTitle().toLowerCase().contains(query)) {
+            matched.add(q);
+        }
+    }
+    return matched;
+}
+
+// Overload 2: Takes 2 parameters (topic keyword AND DifficultyLevel enum)
+@Override
+public List<Quiz> searchQuiz(String topic, DifficultyLevel level) {
+    List<Quiz> topicMatches = searchQuiz(topic); // Reuses Overload 1
+    if (level == null) return topicMatches;
+    List<Quiz> finalMatches = new ArrayList<>();
+    for (Quiz q : topicMatches) {
+        if (q.getDifficulty() == level) {
+            finalMatches.add(q);
+        }
+    }
+    return finalMatches;
+}
+
+================================================================================
+4. UNIT IV: ERROR & EXCEPTION HANDLING (THEORY & COMPLETE CODE)
+================================================================================
+
+--------------------------------------------------------------------------------
+4.1 TAXONOMY OF SOFTWARE FAULTS
+--------------------------------------------------------------------------------
+1. Compile-Time Errors: Syntax errors, missing brackets, or type mismatches caught
+   by javac before bytecode is generated.
+2. Runtime Errors: Abnormal conditions encountered during bytecode execution.
+   • java.lang.Error: Fatal JVM/hardware failures (OutOfMemoryError, StackOverflowError).
+     Cannot be recovered by application code.
+   • java.lang.Exception: Conditions that application software can catch and recover from.
+3. Logical Errors: The program compiles and runs without crashing, but calculates
+   incorrect outputs due to flawed logic (e.g. wrong penalty formula).
+
+--------------------------------------------------------------------------------
+4.2 TYPES OF EXCEPTIONS (CHECKED VS UNCHECKED)
+--------------------------------------------------------------------------------
+• Unchecked Exceptions (Subclasses of RuntimeException):
+  Examples: NullPointerException, ArithmeticException. The compiler does NOT mandate
+  handling. They represent programming bugs that should be avoided by clean code.
+• Checked Exceptions (Subclasses of Exception, excluding RuntimeException):
+  Examples: IOException, QuizException. The compiler mandates that callers MUST
+  either handle them with try-catch or declare them with 'throws'.
+
+Why our system uses Checked Exceptions:
+In an assessment platform, conditions like an invalid quiz lookup or illegal option
+selection are expected domain boundary events. Making them checked exceptions guarantees
+that our user interface code handles them defensively.
+
+--------------------------------------------------------------------------------
+4.3 EXCEPTION HANDLING KEYWORDS & MECHANISMS
+--------------------------------------------------------------------------------
+1. try: Blocks code that might trigger an exception.
+2. catch: Intercepts and resolves a specific exception type.
+3. finally: Guaranteed cleanup block executing regardless of whether an exception occurred.
+4. throw: Explicitly triggers an exception instance (throw new DuplicateQuizException(...)).
+5. throws: Method signature declaration warning callers of potential checked exceptions.
+
+Java 7+ Multi-Catch Block in src/com/ait/quiz/main/QuizApplication.java:
+--------------------------------------------------------------------------------
+try {
+    Quiz quiz = quizManager.getQuiz(selectedQuizId);
+    if (quiz.getQuestionCount() == 0) {
+        throw new EmptyQuizException(selectedQuizId);
+    }
+    launchQuiz(quiz);
+} catch (QuizNotFoundException | EmptyQuizException e) {
+    // Multi-catch: Handles both disjoint checked exceptions cleanly
+    ConsoleUI.printError("Quiz launch failed: " + e.getMessage());
+    return;
+}
+
+--------------------------------------------------------------------------------
+4.4 EXCEPTION TRANSLATION / WRAPPING (NumericQuestion.java)
+--------------------------------------------------------------------------------
+Catching standard unchecked exceptions and converting them to domain-specific checked exceptions:
+
+SOURCE CODE: src/com/ait/quiz/model/NumericQuestion.java
+--------------------------------------------------------------------------------
+@Override
+public boolean checkAnswer(String studentAnswer) throws InvalidOptionException {
+    if (studentAnswer == null || studentAnswer.trim().isEmpty()) {
+        throw new InvalidOptionException("Empty input", "A valid number");
+    }
+    try {
+        double parsedVal = Double.parseDouble(studentAnswer.trim());
+        return Math.abs(parsedVal - correctAnswer) <= tolerance;
+    } catch (NumberFormatException nfe) {
+        // EXCEPTION TRANSLATION:
+        // Converts unchecked NumberFormatException into checked InvalidOptionException
+        throw new InvalidOptionException(studentAnswer, "Valid numeric value (e.g., 4 or 3.14)");
+    }
+}
+
+--------------------------------------------------------------------------------
+4.5 5-TIER USER-DEFINED EXCEPTION HIERARCHY
+--------------------------------------------------------------------------------
+Hierarchy Tree:
+java.lang.Throwable
+   └── java.lang.Exception (Checked Root)
+         └── com.ait.quiz.exception.QuizException
+               ├── QuizNotFoundException      (Non-existent quiz lookup)
+               ├── DuplicateQuizException     (Quiz ID collision on creation)
+               ├── EmptyQuizException         (Attempting to launch empty quiz)
+               ├── InvalidQuestionException   (Negative marks or blank prompt)
+               └── InvalidOptionException     (Illegal student response format)
+
+SOURCE CODE: src/com/ait/quiz/exception/QuizException.java (Base Checked Exception)
+--------------------------------------------------------------------------------
+package com.ait.quiz.exception;
+
+public class QuizException extends Exception {
+    public QuizException(String message) { super(message); }
+    public QuizException(String message, Throwable cause) { super(message, cause); }
+}
+
+SOURCE CODE: src/com/ait/quiz/exception/QuizNotFoundException.java
+--------------------------------------------------------------------------------
+package com.ait.quiz.exception;
+
+public class QuizNotFoundException extends QuizException {
+    private final String quizId;
+    public QuizNotFoundException(String quizId) {
+        super("Quiz not found with ID: '" + quizId + "'. Please check the Quiz ID and try again.");
+        this.quizId = quizId;
+    }
+    public String getQuizId() { return quizId; }
+}
+
+SOURCE CODE: src/com/ait/quiz/exception/DuplicateQuizException.java
+--------------------------------------------------------------------------------
+package com.ait.quiz.exception;
+
+public class DuplicateQuizException extends QuizException {
+    private final String quizId;
+    public DuplicateQuizException(String quizId) {
+        super("A quiz with ID '" + quizId + "' already exists! Please use a unique identifier.");
+        this.quizId = quizId;
+    }
+    public String getQuizId() { return quizId; }
+}
+
+SOURCE CODE: src/com/ait/quiz/exception/EmptyQuizException.java
+--------------------------------------------------------------------------------
+package com.ait.quiz.exception;
+
+public class EmptyQuizException extends QuizException {
+    private final String quizId;
+    public EmptyQuizException(String quizId) {
+        super("Quiz '" + quizId + "' contains no questions! Please add questions before conducting.");
+        this.quizId = quizId;
+    }
+    public String getQuizId() { return quizId; }
+}
+
+SOURCE CODE: src/com/ait/quiz/exception/InvalidQuestionException.java
+--------------------------------------------------------------------------------
+package com.ait.quiz.exception;
+
+public class InvalidQuestionException extends QuizException {
+    public InvalidQuestionException(String message) { super(message); }
+}
+
+SOURCE CODE: src/com/ait/quiz/exception/InvalidOptionException.java
+--------------------------------------------------------------------------------
+package com.ait.quiz.exception;
+
+public class InvalidOptionException extends QuizException {
+    private final String chosenOption;
+    private final String expectedFormat;
+
+    public InvalidOptionException(String chosenOption, String expectedFormat) {
+        super("Invalid option selected: '" + chosenOption + "'. Expected format/range: [" + expectedFormat + "]");
+        this.chosenOption = chosenOption;
+        this.expectedFormat = expectedFormat;
+    }
+
+    public String getChosenOption() { return chosenOption; }
+    public String getExpectedFormat() { return expectedFormat; }
+}
+
+================================================================================
+5. 3 MODES OF EXECUTION & 9 BUILT-IN QUIZZES
+================================================================================
+Execution Commands:
+1. Web Application: run_web.bat -> Open browser at http://localhost:8080
+2. Terminal CLI:    run.bat
+3. Automated Tests: run_tests.bat
+
+Built-In Demographics:
+• Kids (8-12 Yrs):      KIDS-SCI (Science), KIDS-MATH (Math & Riddles)
+• Teens (13-17 Yrs):    TEEN-CODE (Python & Logic), TEEN-STEM (Physics & Tech)
+• College (18-22 Yrs):  JAVA-OOP (Polymorphism & OOP), JAVA-EXC (Exception Handling), JAVA-GEN (Collections)
+• Competitive (20+):    PRO-APT (Logical Aptitude), PRO-SE (SOLID Principles & Architecture)
+
+================================================================================
+6. COMPREHENSIVE VIVA VOCE QUESTIONS & HIGH-SCORING ANSWERS
+================================================================================
+Q1: What is the primary difference between an Abstract Class and an Interface in Java?
+A1: An abstract class can have instance state (non-static fields like 'id', 'marks' in Question)
+    and concrete methods with shared implementations (displayHeader()). An interface defines pure
+    behavioral contracts without mutable instance variables. In our project, Question is an abstract
+    class because questions share properties, whereas QuizEvaluator is an interface because grading
+    policies are purely algorithmic strategies.
+
+Q2: How does Dynamic Method Dispatch operate under the hood in Java?
+A2: When an overridden method is invoked on a superclass reference (q.displayQuestion()), the compiler
+    emits the 'invokevirtual' opcode. At runtime, the JVM looks up the object's Virtual Method Table
+    (vtable) using the concrete heap instance, routing execution to the subclass's overridden implementation.
+
+Q3: Why did you implement the Strategy Pattern for QuizEvaluator?
+A3: It separates the grading calculation from the quiz execution engine, fulfilling the Open/Closed
+    and Single Responsibility Principles. We can add new grading strategies (e.g. partial credit)
+    without modifying the quiz conduction loop.
+
+Q4: Why choose Checked Exceptions over Unchecked Exceptions?
+A4: Checked exceptions enforce compile-time verification. When an instructor registers a quiz or a
+    student submits answers, issues like duplicate IDs or illegal options are business boundary
+    conditions that the system must handle defensively to prevent application crashes.
+
+Q5: What is Exception Translation (Wrapping)?
+A5: Exception Translation is intercepting a low-level or standard exception and re-throwing a meaningful
+    domain-specific exception. In NumericQuestion.java, NumberFormatException is caught and wrapped
+    into InvalidOptionException, preserving application-level context for the user.
+
+Q6: How does your system achieve Graceful Degradation / Crash Resilience?
+A6: In QuizApplication.java, user input collection is wrapped in a while(!answeredValidly) loop with a
+    try-catch block targeting InvalidOptionException. If a student enters an invalid option (e.g. typing 'Z'),
+    the exception is caught, a friendly error is displayed, and the student is prompted again without
+    terminating the application.
+================================================================================
+END OF DOCUMENT
+================================================================================
